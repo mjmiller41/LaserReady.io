@@ -2,52 +2,49 @@
 title: LaserReady — Build Plan & Tech Stack
 owner: Michael J. Miller (Timber Trace Crafts)
 created: 2026-07-05
-target: Phase 0 on Hostinger shared hosting → Phase 1 graduates the geometry engine to a VPS
-inputs: product-spec.md, validator-checklist-spec.md, phase0-landing-copy.md
+target: Hostinger KVM 2 VPS (2 vCPU / 8 GB / 100 GB NVMe), co-tenant with a sibling LightBurn-clone app
+inputs: product-spec.md, validator-checklist-spec.md, phase0-landing-copy.md, server-cohabitation-plan.md
 ---
 
 # LaserReady — Build Plan & Stack
 
-## 0. The one honest constraint that shapes everything
+## 0. The architecture in one idea
 
-Shared hosting is great at serving files and running a little PHP, and bad at running a heavy, long-running
-geometry engine (native GEOS/Shapely, polygon offset, nesting). Fighting that is a trap. So the architecture
-that is *both* shared-host-friendly *and* genuinely fast:
+You already have the box — a **Hostinger KVM 2** (2 vCPU / 8 GB / 100 GB NVMe) that LaserReady **co-tenants**
+with a sibling browser-based LightBurn-style editor under the same business. So this isn't a "can it run on
+cheap hosting" problem; it's a "be a good neighbor on a shared box" problem.
 
-**Do the geometry where the compute already is — the browser. Keep the server thin. Graduate the heavy engine
-to a small VPS only when Phase 1 (repair/export/guarantee) actually needs it.**
+The design that answers both "lightweight fast front" and "fast powerful back":
 
-This gives you exactly what you asked for: the front is lightweight because it's static, and "fast" because
-each check runs locally with zero server round-trip; the back is "fast and powerful" by doing almost nothing in
-Phase 0, then becoming a dedicated Python geometry service in Phase 1. Bonus: **files never leave the browser**
-in Phase 0 — a real privacy selling point (StencilCut uses the same line), and it's free because you're not
-paying to move or process files server-side.
+**Do the Phase-0 geometry where the compute already is — the user's browser. Keep the box's job small. When
+Phase 1 (repair/export/guarantee) needs a heavy geometry engine, run it on the same VPS as a queued,
+concurrency-capped, CPU-niced service so it never steals cycles from the interactive editor.**
+
+The front is lightweight because it's static; "fast" because each check runs locally with zero server
+round-trip. The back is "fast and powerful" by doing almost nothing in Phase 0, then becoming a dedicated
+Python geometry service in Phase 1 — on hardware you already pay for. Bonus: **files never leave the browser**
+in Phase 0 — a real privacy selling point, and it adds zero load to a box that's also running the editor.
 
 ## 1. Recommended stack
 
-### Phase 0 (runs on any Hostinger shared tier)
+### Phase 0 (the free checker — build + test first)
 
 | Layer | Recommendation | Why |
 |---|---|---|
-| **Front** | **Preact + Vite + TypeScript + Tailwind**, static build | Your React mental model, ~4 KB runtime, tiny fast bundles, static output drops straight into `public_html`. (Alt: Svelte if you want the absolute lightest; plain React if you want zero context-switch.) |
-| **Validator** | **Standalone TypeScript package**, runs **in the browser** | The spine from `validator-checklist-spec.md`. No server compute; instant results; private by default. |
+| **Front** | **Preact + Vite + TypeScript + Tailwind**, static build | Your React mental model, ~4 KB runtime, tiny fast bundles. (Alt: Svelte for the absolute lightest; plain React for zero context-switch.) |
+| **Validator** | **Standalone TypeScript package**, runs **in the browser** (Web Worker) | The spine from `validator-checklist-spec.md`. No server compute; instant results; private by default. |
 | Validator deps | `dxf-parser`, `svg-pathdata` (+ small custom geometry) | Parse DXF entities and SVG path data; endpoint/overlap/units math is light TS. Heavy polygon ops deferred to Phase 1. |
-| Heavy check runs | **Web Worker** | Keeps the UI smooth on big files; off the main thread. |
-| **Email list** | **MailerLite** (free tier) or ConvertKit | Hosted list = free announcements + double-opt-in + GDPR handling. Don't build list management. Embed form or call their API. |
-| **Thin API** (optional) | **Plain PHP 8 + PDO** (or Slim 4) + MySQL | Only for saved reports + basic analytics if you want them. Works on every shared plan (no Business tier needed). |
-| Web server / SSL | hPanel: free Let's Encrypt SSL + **Git deploy (GitHub OAuth)** | Push-to-deploy without SSH keys. Confirm your plan's web server (LiteSpeed vs Apache) — doesn't change the design. |
+| Heavy check runs | **Web Worker** | Keeps the UI smooth on big files; off the main thread. Uses the browser's CPU, not the box's. |
+| **Thin API** (optional) | **Node/TS or PHP 8** container on the VPS + Postgres (shared engine) | Only for saved reports + basic analytics if wanted. Not required to ship the checker. |
+| **Email list** | **MailerLite** (free tier) | Hosted list = free announcements + double-opt-in + GDPR handling. Don't build list management. Added in the go-to-market step (0b), not before. |
 
-**Note:** Hostinger's Node.js/Python *app* hosting requires the **Business plan or Cloud**. Phase 0 deliberately
-needs neither — static front + optional PHP run on the cheapest tier. If you're already on Business, you *can*
-run the validator server-side in Node too, but you don't need to yet.
-
-### Phase 1 (graduation — when repair/export/guarantee ship)
+### Phase 1 (repair / export / guarantee — same box, later)
 
 | Layer | Recommendation | Why |
 |---|---|---|
-| **Geometry engine** | **Python FastAPI** service: Shapely 2.x, ezdxf, an SVGnest/Deepnest-derived nester | Shapely 2 bundles GEOS in its wheels (installs without root), giving robust close/dedupe/offset/union; ezdxf writes clean R12/mm DXF. This is your "fast + powerful" back. |
-| Where it runs | **Hostinger VPS (KVM, ~$5–10/mo)** or Fly.io / Render / Railway | Shared hosting can't give it headroom; a small VPS can. |
-| **Guarantee audit** | Reuse the **same TS validator** via Node (serverless or on the VPS) | One source of truth for the guaranteed checks → determinism. Clean split: **TS validator = verdicts** (client + audit); **Python = geometry mutation + file generation**. |
+| **Geometry engine** | **Python FastAPI** service: Shapely 2.x, ezdxf, an SVGnest/Deepnest-derived nester | Shapely 2 bundles GEOS in its wheels (installs without root); robust close/dedupe/offset/union; ezdxf writes clean R12/mm DXF. This is your "fast + powerful" back. |
+| Where it runs | **The same KVM 2**, as a **queued, concurrency-capped, CPU-niced** service | No new hosting spend. The queue + nice keep the interactive editor responsive (see `server-cohabitation-plan.md`). |
+| **Guarantee audit** | Reuse the **same TS validator** via Node on the box | One source of truth for the guaranteed checks → determinism. Clean split: **TS validator = verdicts** (client + audit); **Python = geometry mutation + file generation**. |
 | Canonical storage | **Cloudflare R2** (S3-compatible) | Store the exact exported bytes + report per `report_id` for the guarantee's audit trail. Cheap, no egress fees. |
 | **Billing** | **Stripe** | Subscriptions + auto-apply the free-month coupon when a stored-copy guaranteed check fails. |
 
@@ -57,63 +54,89 @@ run the validator server-side in Node too, but you don't need to yet.
 laserready/
   packages/validator/     # TS, framework-agnostic, unit-tested — the spine. Runs in browser AND Node.
   apps/web/               # Preact + Vite front (imports @laserready/validator)
-  apps/api/               # PHP (Slim/flat) — email relay, saved reports, analytics (Phase 0)
+  apps/api/               # (optional) Node/PHP thin API — saved reports, analytics
   services/geometry/      # Python FastAPI — repair, offset/kerf, nesting, DXF/G-code export (Phase 1)
   samples/                # real + synthetic test files (open paths, dupes, unit-less DXF, embedded raster…)
+  deploy/                 # docker-compose.yml, Caddyfile snippet, DEPLOY.md
+  docs/
 ```
 
 The **validator being a standalone package is the key design decision.** It runs client-side for Phase 0 and,
 unchanged, server-side (Node) for the Phase 1 guarantee re-check — so the client and the audit can never
 disagree. Ship it with a real test suite against `samples/` from day one.
 
-## 3. Why this is fast
+## 3. Why this is fast (and a good co-tenant)
 
-- **Front:** static Preact, tiny JS, Tailwind purged to a few KB, assets cached/compressed by the host. First
-  paint is near-instant; there's nothing to server-render.
-- **Per-check latency:** zero network — the validator runs locally in a Web Worker. A report appears as fast as
-  the browser can parse the file.
-- **Server load:** ~nothing in Phase 0 (an email POST, maybe a report save). Scales on cheap hosting.
-- **Phase 1 power:** the Python engine does one hard job well on a box sized for it, not shoehorned into shared hosting.
+- **Front:** static Preact, tiny JS, Tailwind purged to a few KB. First paint near-instant; nothing to server-render.
+- **Per-check latency:** zero network — the validator runs locally in a Web Worker on the user's machine.
+- **Box load in Phase 0:** ~nothing (an optional email POST / report save). The checker adds no CPU pressure on
+  the shared box, so it can't slow the sibling editor.
+- **Phase 1 power:** the Python engine does one hard job well, run as a background job with a concurrency cap so
+  bursts (nesting/offset/export) never peg both vCPUs and stall the editor.
 
-## 4. Milestones (map to the landing + validator spec)
+## 4. Milestones
 
+Phase 0 splits into **0a (build + test the checker)** and **0b (go-to-market layer)**. Landing copy and email
+capture are deliberately **0b — after the checker is built, tested, and deployed.** Build the thing, prove it
+works, then wrap it in marketing.
+
+**Phase 0a — build & test the checker**
 1. **M1 — Validator core.** `packages/validator`: PC-01 (open paths), PC-02 (duplicates), SZ-01 (units) + the
-   report JSON schema, with unit tests on real `samples/`. This is 60% of the value; ship it first.
-2. **M2 — Front + report UI.** Drag-drop upload, machine-agnostic report (worst-first), the "honest part" box.
-3. **M3 — Landing + capture.** Wire the copy from `phase0-landing-copy.md`; MailerLite form; two capture points.
-4. **M4 — Breadth.** DXF parsing solid; advisory checks (RS-01 embedded raster, GH-01 node bloat, FM-01 min-feature).
-5. **M5 — Deploy.** Domain + SSL + Git deploy to Hostinger; privacy-friendly analytics (e.g. Plausible); seed
-   the validator with real files gathered from the community.
-6. **GATE — demand check** (per decision-brief) before spending on Phase 1.
-7. **Phase 1** — geometry service, export (SVG/DXF/G-code), machine profiles (LightBurn, Glowforge, colored-layer
-   SVG), canonical-copy storage, Stripe, the free-month guarantee.
+   report JSON schema, with unit tests on real `samples/`. ~60% of the value; ship it first.
+2. **M2 — Minimal functional UI.** Drag-drop upload → Web Worker → worst-first report. Just enough interface to
+   run and eyeball the validator on real files. Not the marketing page.
+3. **M3 — Breadth + tests.** DXF parsing solid; advisory checks (RS-01 embedded raster, GH-01 node bloat,
+   FM-01 min-feature); expand the test suite.
+4. **M4 — Deploy & end-to-end test.** Containerize; deploy behind the shared Caddy on the KVM 2 as a co-tenant
+   (`server-cohabitation-plan.md`); test the live checker on real files.
+
+**Phase 0b — go-to-market (after 0a is proven)**
+5. **M5 — Landing + capture.** Wire the copy from `phase0-landing-copy.md` around the working checker; add the
+   "honest part" box; MailerLite capture (two points); privacy-friendly analytics (e.g. Plausible). Seed with
+   real files gathered from the community.
+
+**GATE — demand check** (per decision-brief) before spending on Phase 1.
+
+**Phase 1** — Python geometry service, export (SVG/DXF/G-code), machine profiles (LightBurn, Glowforge,
+generic colored-layer SVG), canonical-copy storage, Stripe, the free-month guarantee — all on the same box.
 
 ## 5. Costs
 
-- **Phase 0:** domain (~$10–15/yr) + your existing Hostinger plan + MailerLite free = ~$0 extra.
-  (Check name availability — `laserready.com` is likely taken; `laserready.io` / `.app` / `.tools` / `getlaserready.com` are fallbacks.)
-- **Phase 1:** VPS ~$5–10/mo + Cloudflare R2 (pennies) + Stripe (% per txn). Only after the demand gate clears.
+- **Phase 0:** domain (~$10–15/yr) + your **existing KVM 2** (already paid, shared with the editor) + MailerLite
+  free = ~$0 extra. (`laserready.io` is the project domain.)
+- **Phase 1:** Cloudflare R2 (pennies) + Stripe (% per txn). **No new VPS** — it runs on the box you already have,
+  until monitoring shows the two apps are fighting for CPU (then split, see `server-cohabitation-plan.md`).
 
 ## 6. Risks & notes
 
+- **Shared 2 vCPU.** The box runs the interactive editor too. LaserReady's Phase-0 checks are client-side (zero
+  box CPU); Phase-1 geometry **must** be queued, concurrency-capped, and CPU-niced so it never stalls the editor.
 - **Client-side geometry limits.** Very large DXFs (10k+ entities) can lag in-browser — enforce a file-size cap,
-  run in a Web Worker, show progress. If someone routinely hits the cap, that's a signal to move parsing server-side.
+  run in a Web Worker, show progress.
 - **DXF zoo.** Start with LINE / LWPOLYLINE / POLYLINE / ARC / CIRCLE / SPLINE; handle blocks/inserts later.
 - **SVG transforms + unit resolution to mm** is the fiddly correctness work (nested transforms, viewBox, %,
   in/mm/px). Test it hard — most "wrong size" bugs live here.
 - **Determinism = the guarantee.** One shared TS validator (client + server audit), pinned deps, snapshot tests.
-- **Don't pre-build Phase 1.** The geometry service, Stripe, and R2 are real time/money — hold them behind the demand gate.
-- **Web-server uncertainty.** Sources differ on whether your shared plan is LiteSpeed or Apache; confirm in hPanel.
-  Either serves a static Preact app fine — nothing depends on it.
+- **Don't pre-build Phase 1.** The geometry service, Stripe, and R2 are real time — hold them behind the demand gate.
+- **Be a good neighbor.** Explicit `cpus`/`mem_limit` on every container; publish only through the shared proxy;
+  design for easy extraction onto a dedicated box later.
 
-## 7. Today's starter (if you want to move now)
+## 7. Deployment (single-box, co-tenant)
+
+- Build `apps/web` → static `dist/`, served behind the **shared Caddy** proxy (auto-HTTPS) that also fronts the editor.
+- Everything in **Docker Compose** with explicit `cpus`/`mem_limit`; internal ports in LaserReady's assigned range;
+  shared Postgres engine (separate `laserready` DB). Full contract: `docs/server-cohabitation-plan.md`.
+- Deploy via GitHub Actions → SSH `git pull && docker compose up -d`. Enable hPanel weekly VPS snapshots.
+- Optional: put **Cloudflare (free)** in front for CDN caching of the static site + TLS + DDoS shielding.
+
+## 8. Today's starter (if you want to move now)
 
 1. `npm create vite@latest` → Preact + TS; add Tailwind. Commit.
-2. Scaffold `packages/validator` with the report schema + a stub `validate(file, opts)`; drop 3–4 known-bad
+2. Scaffold `packages/validator` with the report schema + a stub `validate(bytes, opts)`; drop 3–4 known-bad
    files into `samples/` (one open path, one duplicate-line, one unit-less DXF).
 3. Implement **PC-01** first, red-green against a sample. That single check, visibly working on a real bad file,
-   is your proof-of-life — and the screenshot that makes the landing page real.
+   is your proof-of-life.
 
 ---
 
-*Sources for Hostinger capabilities: [Node.js hosting options at Hostinger](https://www.hostinger.com/support/node-js-hosting-options-at-hostinger/), [Deploy a Git repository in Hostinger](https://www.hostinger.com/support/1583302-how-to-deploy-a-git-repository-in-hostinger/), [Best web hosting for developers 2026 (independent)](https://blog.webhostmost.com/best-web-hosting-for-developers-2026/).*
+_Sources for hardware specs: [Hostinger KVM 2 (VPSBenchmarks)](https://www.vpsbenchmarks.com/hosters/hostinger/plans/kvm-2), [Hostinger VPS plans](https://www.hostinger.com/vps-hosting)._

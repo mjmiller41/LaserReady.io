@@ -29,17 +29,27 @@ cut-vs-engrave confusion, node bloat. It is a **prep-and-validation layer**, not
 business hook (Phase 1, not now) is a scoped, money-back guarantee that any file we *export* is structurally
 laser-ready. Being source-agnostic — validating files we didn't create — is the core differentiator.
 
-## Phase 0 scope — build THIS now
+## Phase 0 scope
+
+Phase 0 splits into **0a (build + test the checker)** and **0b (go-to-market layer)**. Build and prove 0a
+first; the marketing landing page and email capture come **after**, in 0b — do not build them until the checker
+works and is deployed.
+
+**Phase 0a — build + test the checker (do THIS first):**
 
 1. A **client-side validator** (a standalone TypeScript package) that parses SVG/DXF and runs the Phase-0
-   checks, entirely in the browser. **No file ever leaves the browser** — this is a feature (privacy) and a
-   scaling decision (zero server compute).
-2. A **lightweight landing page + report UI**: drag-drop a file, optionally set machine + material, get a
-   plain-English, worst-first report.
-3. **Email capture** (MailerLite) for the launch list, tagged by source.
+   checks, entirely in the browser. **No file ever leaves the browser** — a privacy feature and a scaling
+   decision (zero server compute; adds no load to the box it shares with the sibling editor).
+2. A **minimal functional report UI**: drag-drop a file, optionally set material + bed size, get a plain-English,
+   worst-first report. Just enough interface to run and eyeball the validator on real files — **NOT** the
+   marketing page.
 
-That is the entire Phase 0. Everything else is Phase 1 — architect for it, **do not build it** (see "Do NOT
-build yet").
+**Phase 0b — go-to-market (only after 0a is built, tested, and deployed):**
+
+3. The **landing page** (copy from `docs/phase0-landing-copy.md`) wrapped around the working checker, plus
+   **email capture** (MailerLite) for the launch list, tagged by source.
+
+Everything beyond that is Phase 1 — architect for it, **do not build it** (see "Do NOT build yet").
 
 ## Non-negotiables
 
@@ -148,20 +158,28 @@ Advisory (M4):
 absent: an SVG with an open outline, an SVG with duplicated paths, a DXF with no `$INSUNITS`, an SVG with an
 embedded PNG, a clean known-good file. Snapshot the full report of the known-good file to lock determinism.
 
-## The front (M2–M3)
+## The checker UI (M2 — build + test first)
 
 - Drag-drop / file-picker (SVG, DXF). Parse + validate in a **Web Worker**; show progress for large files.
 - Optional inputs: material thickness (mm), and a bed-size field (machine profile picker is Phase 1).
 - Render the report **worst-first** (blockers → warnings → info), each with plain-English text and, where
   possible, location. A clear top-line verdict: "Not laser-ready — 2 blockers" vs "Looks structurally sound."
-- Implement the landing sections and the **"honest part" box** verbatim-in-spirit from `docs/phase0-landing-copy.md`.
-- Two email-capture points (guarantee tease + early access), both → MailerLite, tagged by source.
+- Include the **"honest part" framing** (we validate the file, not the cut) on the report itself.
 - Enforce a sane client-side file-size cap; degrade gracefully.
 - Accessibility + mobile-friendly; no heavy UI libs.
+- Keep this minimal — it's the validator's test harness, not the marketing site.
 
-## Deployment (Phase 0)
+## The landing page (M5 — Phase 0b, AFTER the checker is deployed and tested)
 
-- Produce a static build (`apps/web` → `dist/`). Phase 0 has ~no server needs.
+Do not build this until 0a works end-to-end. Then:
+
+- Wrap the working checker in the landing sections + the **"honest part" box**, verbatim-in-spirit from
+  `docs/phase0-landing-copy.md`.
+- Two email-capture points (guarantee tease + early access), both → MailerLite, tagged by source.
+
+## Deployment (M4 — deploy the checker, before the landing)
+
+- Produce a static build (`apps/web` → `dist/`). Phase 0 has ~no server-side compute needs.
 - Target: the shared **Hostinger KVM 2** behind the shared **Caddy** proxy, per `docs/server-cohabitation-plan.md`
   — LaserReady is a co-tenant with a sibling app; publish only through the proxy, respect the port ranges and
   resource limits in that doc. (Cloudflare Pages is an acceptable free alternative for the static front; keep it
@@ -171,14 +189,18 @@ embedded PNG, a clean known-good file. Snapshot the full report of the known-goo
 
 ## Milestones / definition of done (Phase 0)
 
+**Phase 0a — build + test:**
 - **M1:** `packages/validator` with PC-01, PC-02, SZ-01 + report schema + green Vitest suite over `samples/`.
-- **M2:** front upload → Web Worker → rendered report.
-- **M3:** landing copy + MailerLite capture wired.
-- **M4:** DXF solid + advisory checks (SZ-02/03, RS-01, GH-01, FM-01).
-- **M5:** static build + `docker-compose.yml` + `DEPLOY.md`; README with run/build/test instructions.
+- **M2:** minimal checker UI — upload → Web Worker → rendered report (the validator's test harness).
+- **M3:** DXF solid + advisory checks (SZ-02/03, RS-01, GH-01, FM-01); expanded tests.
+- **M4:** static build + `docker-compose.yml` + `DEPLOY.md`; deploy behind the shared Caddy on the KVM 2
+  (co-tenant, per `docs/server-cohabitation-plan.md`); test the live checker end-to-end.
 
-**Done means:** `pnpm test` green, `pnpm build` produces a deployable static site, a real bad file yields a
-correct report in the browser, and email capture works.
+**Phase 0b — go-to-market (after 0a):**
+- **M5:** landing page (from `docs/phase0-landing-copy.md`) + MailerLite capture, wrapped around the live checker.
+
+**0a done means:** `pnpm test` green, `pnpm build` produces a deployable static site, the checker is live on the
+box, and a real bad file yields a correct report in the browser. **Land 0a before starting M5.**
 
 ## Do NOT build yet (Phase 1 — architect for, do not implement)
 

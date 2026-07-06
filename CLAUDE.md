@@ -56,10 +56,17 @@ docs/                 # specs + build prompt (see below)
 
 ## Build order / milestones
 
-M1 validator (PC-01 open paths, PC-02 duplicates, SZ-01 units + report schema + green tests) → M2 front upload →
-Web Worker → report UI → M3 landing copy + MailerLite → M4 DXF solid + advisory checks (SZ-02/03, RS-01, GH-01,
-FM-01) → M5 static build + `docker-compose.yml` + `DEPLOY.md`. **Start with M1; prove PC-01 on a real bad file
-before going wide.** Then the demand gate before any Phase 1 work.
+Phase 0 splits into **0a (build + test the checker)** then **0b (go-to-market)**. The marketing landing page +
+email capture are deliberately **last** — after the checker is built, tested, and deployed.
+
+- **0a:** M1 validator (PC-01, PC-02, SZ-01 + report schema + green tests) → M2 minimal checker UI (upload →
+  Web Worker → worst-first report; the validator's test harness, NOT the marketing page) → M3 DXF solid +
+  advisory checks (SZ-02/03, RS-01, GH-01, FM-01) + expanded tests → M4 containerize + deploy behind the shared
+  Caddy on the KVM 2 (co-tenant) + end-to-end test on the live checker.
+- **0b:** M5 landing page (`docs/phase0-landing-copy.md`) + MailerLite capture, wrapped around the live checker.
+
+**Start with M1; prove PC-01 on a real bad file before going wide. Land 0a before starting the landing page.**
+Then the demand gate before any Phase 1 work.
 
 ## Deployment & infra
 
