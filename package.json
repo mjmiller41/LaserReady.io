@@ -1,0 +1,28 @@
+{
+  "name": "laserready",
+  "private": true,
+  "version": "0.1.0",
+  "description": "LaserReady — source-agnostic laser cut-file validation (Phase 0)",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "packageManager": "pnpm@11.9.0",
+  "scripts": {
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@types/node": "26.1.0",
+    "eslint": "10.6.0",
+    "eslint-config-prettier": "10.1.8",
+    "prettier": "3.9.4",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.62.1",
+    "vitest": "4.1.9"
+  }
+}
