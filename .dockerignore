@@ -1,0 +1,8 @@
+**/node_modules
+**/dist
+**/coverage
+.git
+docs
+*.md
+!packages/validator/README.md
+deploy/.env
