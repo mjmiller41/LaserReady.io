@@ -1,0 +1,22 @@
+{
+  "name": "@laserready/web",
+  "private": true,
+  "version": "0.1.0",
+  "description": "LaserReady checker front end — Preact + Vite + Tailwind, static build, validator runs in a Web Worker.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@laserready/validator": "workspace:*",
+    "preact": "10.29.4"
+  },
+  "devDependencies": {
+    "@preact/preset-vite": "2.10.5",
+    "@tailwindcss/vite": "4.3.2",
+    "tailwindcss": "4.3.2",
+    "vite": "8.1.3"
+  }
+}
