@@ -1,0 +1,30 @@
+# deps / build
+node_modules/
+dist/
+build/
+.vite/
+*.tsbuildinfo
+
+# env / secrets
+.env
+.env.*
+!.env.example
+
+# php
+/vendor/
+
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# os / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.log
+
+# docker / data
+/backups/
