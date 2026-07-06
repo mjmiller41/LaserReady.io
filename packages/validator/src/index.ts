@@ -22,6 +22,11 @@ import { fv01FromDoc, fv01Failure } from './checks/fv01.js';
 import { runPC01 } from './checks/pc01.js';
 import { runPC02 } from './checks/pc02.js';
 import { runSZ01 } from './checks/sz01.js';
+import { runSZ02 } from './checks/sz02.js';
+import { runSZ03 } from './checks/sz03.js';
+import { runRS01 } from './checks/rs01.js';
+import { runGH01 } from './checks/gh01.js';
+import { runFM01 } from './checks/fm01.js';
 
 export type {
   Report,
@@ -161,12 +166,17 @@ export function validate(fileBytes: Uint8Array, options: ValidateOptions = {}): 
   }
 
   const ctx = buildContext(doc, opts);
+  const sz03 = runSZ03(ctx); // omitted entirely when no bed size was given — an unevaluated "pass" would lie
   const checks: CheckResult[] = [
     fv01FromDoc(doc),
     runPC01(ctx),
     runPC02(ctx),
     runSZ01(ctx),
-    // M3/M4 appends: SZ-02, SZ-03, RS-01, GH-01, FM-01.
+    runSZ02(ctx),
+    ...(sz03 ? [sz03] : []),
+    runRS01(ctx),
+    runGH01(ctx),
+    runFM01(ctx),
   ];
 
   return assembleReport(opts, format, checks, doc);
