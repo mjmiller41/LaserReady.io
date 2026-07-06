@@ -1,0 +1,16 @@
+# ---- LaserReady — merge into the SHARED Caddy proxy config (coordinate before touching) ----
+# The proxy owns :80/:443 and TLS for every app on the box. This snippet only adds
+# hostname routing; the laserready-web container never faces the internet directly.
+
+laserready.io, www.laserready.io {
+	encode gzip
+
+	# Both containers sit on the external "proxy" Docker network.
+	reverse_proxy laserready-web:80
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+	}
+}

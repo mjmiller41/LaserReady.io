@@ -1,0 +1,33 @@
+# LaserReady stack — co-tenant on the shared Hostinger KVM 2.
+# House rules (docs/server-cohabitation-plan.md): explicit cpus/mem_limit on every
+# service, publish nothing to the host, reach the world only via the shared Caddy proxy,
+# stay inside LaserReady's internal port range (8100-8199) if a host port is ever needed.
+#
+# Run from this directory:  docker compose up -d --build
+
+services:
+  laserready-web:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+      args:
+        # MailerLite (M5). Set in deploy/.env on the box; empty disables the forms.
+        VITE_ML_ACCOUNT: ${VITE_ML_ACCOUNT:-}
+        VITE_ML_FORM_GUARANTEE: ${VITE_ML_FORM_GUARANTEE:-}
+        VITE_ML_FORM_EARLY: ${VITE_ML_FORM_EARLY:-}
+    container_name: laserready-web
+    restart: unless-stopped
+    # Phase 0 serves static files only — a small slice of the box is plenty.
+    cpus: "0.50"
+    mem_limit: 128m
+    networks:
+      - proxy
+    # No `ports:` on purpose — the shared Caddy reaches us as laserready-web:80.
+    # If the proxy ever runs outside Docker, publish inside our assigned range instead:
+    # ports:
+    #   - "127.0.0.1:8100:80"
+
+networks:
+  # The shared proxy network; created once on the box: docker network create proxy
+  proxy:
+    external: true
