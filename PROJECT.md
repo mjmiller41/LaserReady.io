@@ -6,7 +6,8 @@ For build guardrails see `CLAUDE.md`; for the build task see `docs/laserready-bu
 ## Status (2026-07-06)
 
 **Phase 0 complete (0a + 0b) and live-verified — `laserready.io` is up over HTTPS.** Milestones M1–M5 are all
-built, merged to `main`, green, and deployed (tag `v0.1.0`):
+built, merged to `main`, green, and deployed — live at `https://laserready.io` (tag `v0.1.1`; `v0.1.0` marked
+code-complete):
 
 - **M1 — Validator core** (`packages/validator`): all Phase-0 checks implemented (not stubbed) — PC-01 (open
   paths), PC-02 (duplicates), SZ-01/02/03 (units + scale), RS-01 (hidden raster), GH-01 (node bloat), FM-01 (min
