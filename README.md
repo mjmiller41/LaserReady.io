@@ -16,7 +16,7 @@ pnpm build       # validator dist + static site (apps/web/dist)
 pnpm --filter @laserready/web dev   # local dev server
 ```
 
-Deploy: see [`deploy/DEPLOY.md`](deploy/DEPLOY.md) — one static container behind the shared Caddy on the KVM 2.
+Deployment: see [`DEPLOY.md`](DEPLOY.md).
 MailerLite capture ids are baked at build time via `deploy/.env` (see `deploy/.env.example`); without them the
 forms render disabled.
 
@@ -27,7 +27,7 @@ forms render disabled.
 | [`packages/validator/`](packages/validator/) | `validate(bytes, opts) → Report`. Checks, tolerances, determinism contract — see its README. |
 | [`apps/web/`](apps/web/) | Preact + Vite + Tailwind. Landing (Phase 0b) wrapping the checker; validation runs in a Web Worker. |
 | [`samples/`](samples/) | Test fixtures — one failing file per check, plus known-good snapshots. |
-| [`deploy/`](deploy/) | Dockerfile, compose (co-tenant limits), Caddy snippet, DEPLOY.md. |
+| [`deploy/`](deploy/) | Deploy stack files (see [`DEPLOY.md`](DEPLOY.md)). |
 
 ## Build prompt
 
@@ -39,11 +39,10 @@ The repo was built from **[`docs/laserready-build-prompt.md`](docs/laserready-bu
 | Doc | What it's for |
 |---|---|
 | [`docs/laserready-build-prompt.md`](docs/laserready-build-prompt.md) | The build task for Claude Code (Phase 0 scope, forward-compatible with Phase 1). |
-| [`docs/build-plan.md`](docs/build-plan.md) | Tech stack, architecture, milestones, deployment. |
+| [`docs/build-plan.md`](docs/build-plan.md) | Tech stack, architecture, milestones. |
 | [`docs/validator-checklist-spec.md`](docs/validator-checklist-spec.md) | The validator's checks, tolerances, and report schema (authoritative). |
 | [`docs/product-spec.md`](docs/product-spec.md) | Positioning, the guarantee mechanism, full feature set (mostly Phase 1 context). |
 | [`docs/phase0-landing-copy.md`](docs/phase0-landing-copy.md) | Landing-page copy to implement. |
-| [`docs/server-cohabitation-plan.md`](docs/server-cohabitation-plan.md) | Shared-VPS contract (this app co-tenants with a sibling app). |
 | [`docs/competitor-teardown.md`](docs/competitor-teardown.md) | Competitive landscape and the feature holes LaserReady fills. |
 
 ## Phase 0 in one line
