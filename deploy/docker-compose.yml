@@ -1,7 +1,7 @@
-# LaserReady stack — co-tenant on the shared Hostinger KVM 2.
-# House rules (docs/server-cohabitation-plan.md): explicit cpus/mem_limit on every
-# service, publish nothing to the host, reach the world only via the shared Caddy proxy,
-# stay inside LaserReady's internal port range (8100-8199) if a host port is ever needed.
+# LaserReady stack. See /DEPLOY.md at the repo root for deploy instructions and the
+# shared-proxy coordination rules: explicit cpus/mem_limit on every service, publish
+# nothing to the host, reach the world only via the shared reverse proxy, stay inside
+# LaserReady's internal port range (8100-8199) if a host port is ever needed.
 #
 # Run from this directory:  docker compose up -d --build
 

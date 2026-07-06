@@ -1,5 +1,8 @@
 # CLAUDE.md — LaserReady.io
 
+## First Read
+@../CLAUDE.md
+
 Project context and guardrails for any coding agent working in this repo. Read `docs/` for depth; the
 authoritative sources are `docs/laserready-build-prompt.md` (the task) and `docs/validator-checklist-spec.md`
 (the checks). If anything here conflicts with those two, they win.
@@ -61,21 +64,17 @@ email capture are deliberately **last** — after the checker is built, tested, 
 
 - **0a:** M1 validator (PC-01, PC-02, SZ-01 + report schema + green tests) → M2 minimal checker UI (upload →
   Web Worker → worst-first report; the validator's test harness, NOT the marketing page) → M3 DXF solid +
-  advisory checks (SZ-02/03, RS-01, GH-01, FM-01) + expanded tests → M4 containerize + deploy behind the shared
-  Caddy on the KVM 2 (co-tenant) + end-to-end test on the live checker.
+  advisory checks (SZ-02/03, RS-01, GH-01, FM-01) + expanded tests → M4 build the static image + end-to-end
+  test on the live checker (deployment: see `DEPLOY.md`).
 - **0b:** M5 landing page (`docs/phase0-landing-copy.md`) + MailerLite capture, wrapped around the live checker.
 
 **Start with M1; prove PC-01 on a real bad file before going wide. Land 0a before starting the landing page.**
 Then the demand gate before any Phase 1 work.
 
-## Deployment & infra
+## Deployment
 
-Ships to a shared **Hostinger KVM 2** (2 vCPU / 8 GB / 100 GB NVMe) that this app **co-tenants** with a sibling
-browser-based LightBurn-style editor, under the same business. Deploy behind the **shared Caddy** proxy; set
-explicit `cpus`/`mem_limit`; keep to the port ranges; run any heavy work as **queued, concurrency-capped, CPU-niced**
-jobs so the interactive editor keeps priority. Full contract: `docs/server-cohabitation-plan.md`. Phase 0's server
-footprint is ~nothing (validation is client-side). Phase 1 machine-profile export targets: **LightBurn, Glowforge,
-generic colored-layer SVG**.
+See `DEPLOY.md` at the repo root — the single source of truth for deploying LaserReady (via Hostinger MCP or
+SSH), including the shared-proxy coordination rules. Do not duplicate deploy steps elsewhere.
 
 ## Do NOT build yet (Phase 1 — leave clean seams, don't implement)
 
@@ -88,7 +87,7 @@ check; geometry sits behind a small interface a Python service can later take ov
 
 `docs/laserready-build-prompt.md` (task, authoritative) · `docs/validator-checklist-spec.md` (checks + schema,
 authoritative) · `docs/build-plan.md` · `docs/product-spec.md` · `docs/phase0-landing-copy.md` ·
-`docs/server-cohabitation-plan.md` · `docs/competitor-teardown.md`.
+`docs/competitor-teardown.md`.
 
 ## Owner
 

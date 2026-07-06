@@ -16,13 +16,12 @@ For build guardrails see `CLAUDE.md`; for the build task see `docs/laserready-bu
 - **M2 — Checker UI** (`apps/web`, Preact+Vite+TS+Tailwind): drag-drop → Web Worker → worst-first report with a
   plain-English explain layer. TypeScript typechecks clean; production build succeeds (~36 KB JS gzip 13 KB).
 - **M3 — Breadth + tests**: DXF solid, advisory checks + expanded suite (merged).
-- **M4 — Deploy artifacts**: `deploy/` has Dockerfile, docker-compose, Caddyfile snippet, DEPLOY.md, nginx.conf.
-  **Not yet verified live** on the KVM 2 behind the shared Caddy — the end-to-end test on the hosted checker is
-  the open item.
+- **M4 — Deploy**: static build produced; live verification + end-to-end test on the hosted checker is the open
+  item. Deploy: see `DEPLOY.md`.
 - **M5 — Landing + capture**: landing page + MailerLite email capture wired around the checker (merged).
 
-Remote set to `git@github.com:mjmiller41/LaserReady.io.git`. **Next action:** verify the live M4 deploy +
-end-to-end test on the hosted checker, then hit the demand gate before any Phase 1 spend.
+Remote set to `git@github.com:mjmiller41/LaserReady.io.git`. **Next action:** verify the live deploy +
+end-to-end test on the hosted checker (Deploy: see `DEPLOY.md`), then hit the demand gate before any Phase 1 spend.
 
 ## What it is
 
@@ -56,9 +55,6 @@ create is the core differentiator; the keepable guarantee is the hook.
   Stripe. pnpm workspaces, Vitest.
 - **Architecture:** Phase 0 validation runs **client-side** (fast, private, zero box load). Validator is one
   package used by both client and the Phase 1 guarantee audit → determinism.
-- **Hosting:** existing **Hostinger KVM 2** (2 vCPU / 8 GB), **co-tenant** with a sibling browser LightBurn-clone
-  under the same business. Single-box Docker Compose behind a shared Caddy; heavy Phase-1 geometry runs as
-  queued, concurrency-capped, CPU-niced jobs. Contract in `docs/server-cohabitation-plan.md`.
 - **Machine profiles (Phase 1 export):** LightBurn, Glowforge, generic colored-layer SVG.
 - **Kerf + box generator (boxes.py, GPLv3):** deferred to a later phase together.
 - **Sequencing:** Phase 0 splits into **0a build+test the checker** then **0b the landing page + email capture** —
@@ -68,19 +64,18 @@ create is the core differentiator; the keepable guarantee is the hook.
 
 ```
 laserready.io/
-  README.md · CLAUDE.md · PROJECT.md
+  README.md · CLAUDE.md · PROJECT.md · DEPLOY.md
   packages/validator/   # TS spine — all Phase-0 checks, 51/51 tests green
   apps/web/             # Preact+Vite checker UI + landing + MailerLite capture
-  deploy/               # Dockerfile · docker-compose.yml · Caddyfile.snippet · DEPLOY.md · nginx.conf
   samples/              # 19 SVG/DXF fixtures (open path, dupes, no-units, raster, clean…)
   docs/  laserready-build-prompt.md · build-plan.md · validator-checklist-spec.md ·
-         product-spec.md · phase0-landing-copy.md · server-cohabitation-plan.md · competitor-teardown.md
+         product-spec.md · phase0-landing-copy.md · competitor-teardown.md
 ```
 
 ## Next actions
 
-1. **Verify M4 live:** deploy the compose stack behind the shared Caddy on the KVM 2 and run the end-to-end test
-   on the hosted checker (upload a known-bad file, confirm the report). This is the one open Phase-0 item.
+1. **Verify M4 live:** deploy (see `DEPLOY.md`) and run the end-to-end test on the hosted checker (upload a
+   known-bad file, confirm the report). This is the one open Phase-0 item.
 2. **Demand gate before any Phase 1 spend:** Michael posts the solution-free community question
    (`MicroSAASResearch/laser-ready-files/community-post.md`) and runs competitor files through his own laser.
 3. Only after the demand gate reads green: begin Phase 1 (Python geometry service, repair/export, guarantee

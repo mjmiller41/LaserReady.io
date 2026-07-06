@@ -12,11 +12,10 @@ the spec.
 
 ## Reference docs (read first, in `docs/`)
 
-- `docs/build-plan.md` — stack, architecture, milestones, deployment.
+- `docs/build-plan.md` — stack, architecture, milestones.
 - `docs/validator-checklist-spec.md` — the validator's checks, tolerances, report schema (authoritative).
 - `docs/product-spec.md` — product positioning, the guarantee, full feature set (context; most is Phase 1).
 - `docs/phase0-landing-copy.md` — the exact landing-page copy to implement.
-- `docs/server-cohabitation-plan.md` — the app shares a VPS with a sibling app; deploy as a good co-tenant.
 
 If a detail conflicts, this prompt and `validator-checklist-spec.md` win.
 
@@ -39,7 +38,7 @@ works and is deployed.
 
 1. A **client-side validator** (a standalone TypeScript package) that parses SVG/DXF and runs the Phase-0
    checks, entirely in the browser. **No file ever leaves the browser** — a privacy feature and a scaling
-   decision (zero server compute; adds no load to the box it shares with the sibling editor).
+   decision (zero server compute).
 2. A **minimal functional report UI**: drag-drop a file, optionally set material + bed size, get a plain-English,
    worst-first report. Just enough interface to run and eyeball the validator on real files — **NOT** the
    marketing page.
@@ -180,12 +179,7 @@ Do not build this until 0a works end-to-end. Then:
 ## Deployment (M4 — deploy the checker, before the landing)
 
 - Produce a static build (`apps/web` → `dist/`). Phase 0 has ~no server-side compute needs.
-- Target: the shared **Hostinger KVM 2** behind the shared **Caddy** proxy, per `docs/server-cohabitation-plan.md`
-  — LaserReady is a co-tenant with a sibling app; publish only through the proxy, respect the port ranges and
-  resource limits in that doc. (Cloudflare Pages is an acceptable free alternative for the static front; keep it
-  deploy-target-agnostic.)
-- Provide a `docker-compose.yml` for LaserReady's stack (web static served by its own tiny Caddy/nginx or handed
-  to the shared proxy) with explicit `cpus`/`mem_limit`, and a short `DEPLOY.md`.
+- Deployment is out of scope for this prompt — see `DEPLOY.md` at the repo root for how and where to deploy.
 
 ## Milestones / definition of done (Phase 0)
 
@@ -193,14 +187,13 @@ Do not build this until 0a works end-to-end. Then:
 - **M1:** `packages/validator` with PC-01, PC-02, SZ-01 + report schema + green Vitest suite over `samples/`.
 - **M2:** minimal checker UI — upload → Web Worker → rendered report (the validator's test harness).
 - **M3:** DXF solid + advisory checks (SZ-02/03, RS-01, GH-01, FM-01); expanded tests.
-- **M4:** static build + `docker-compose.yml` + `DEPLOY.md`; deploy behind the shared Caddy on the KVM 2
-  (co-tenant, per `docs/server-cohabitation-plan.md`); test the live checker end-to-end.
+- **M4:** static build; test the live checker end-to-end (deployment: see `DEPLOY.md`).
 
 **Phase 0b — go-to-market (after 0a):**
 - **M5:** landing page (from `docs/phase0-landing-copy.md`) + MailerLite capture, wrapped around the live checker.
 
-**0a done means:** `pnpm test` green, `pnpm build` produces a deployable static site, the checker is live on the
-box, and a real bad file yields a correct report in the browser. **Land 0a before starting M5.**
+**0a done means:** `pnpm test` green, `pnpm build` produces a deployable static site, the checker is live, and
+a real bad file yields a correct report in the browser. **Land 0a before starting M5.**
 
 ## Do NOT build yet (Phase 1 — architect for, do not implement)
 
@@ -216,7 +209,7 @@ over mutation without touching the front.
 
 ## Forward-compat notes (so today's choices don't box us in)
 
-Phase 1 will add: a Python FastAPI geometry service (Shapely 2 / ezdxf / nester) on the same VPS as **queued,
+Phase 1 will add: a Python FastAPI geometry service (Shapely 2 / ezdxf / nester) run as **queued,
 concurrency-capped** jobs; export with machine profiles (LightBurn, Glowforge, generic colored-layer SVG);
 canonical-copy storage (Cloudflare R2) of every exported file + its report for the money-back guarantee; and
 Stripe. Keep the validator the single source of truth for "is it laser-ready" across client and server.
