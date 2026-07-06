@@ -5,8 +5,8 @@ For build guardrails see `CLAUDE.md`; for the build task see `docs/laserready-bu
 
 ## Status (2026-07-06)
 
-**Phase 0 code-complete (0a + 0b), pending live-deploy verification.** Milestones M1–M5 are all built, merged to
-`main`, and green:
+**Phase 0 complete (0a + 0b) and live-verified — `laserready.io` is up over HTTPS.** Milestones M1–M5 are all
+built, merged to `main`, green, and deployed (tag `v0.1.0`):
 
 - **M1 — Validator core** (`packages/validator`): all Phase-0 checks implemented (not stubbed) — PC-01 (open
   paths), PC-02 (duplicates), SZ-01/02/03 (units + scale), RS-01 (hidden raster), GH-01 (node bloat), FM-01 (min
@@ -16,12 +16,14 @@ For build guardrails see `CLAUDE.md`; for the build task see `docs/laserready-bu
 - **M2 — Checker UI** (`apps/web`, Preact+Vite+TS+Tailwind): drag-drop → Web Worker → worst-first report with a
   plain-English explain layer. TypeScript typechecks clean; production build succeeds (~36 KB JS gzip 13 KB).
 - **M3 — Breadth + tests**: DXF solid, advisory checks + expanded suite (merged).
-- **M4 — Deploy**: static build produced; live verification + end-to-end test on the hosted checker is the open
-  item. Deploy: see `DEPLOY.md`.
+- **M4 — Deploy**: **live** at `https://laserready.io` (valid Let's Encrypt cert) behind the shared Caddy on the
+  KVM 2. Verified: correct HTML served, the production validator worker is byte-identical to the tested build, and
+  the end-to-end drag-drop of `samples/open-path.svg` renders the expected *"Not laser-ready — 1 blocker / gap
+  0.8 mm"* report. Deploy: see `DEPLOY.md`.
 - **M5 — Landing + capture**: landing page + MailerLite email capture wired around the checker (merged).
 
-Remote set to `git@github.com:mjmiller41/LaserReady.io.git`. **Next action:** verify the live deploy +
-end-to-end test on the hosted checker (Deploy: see `DEPLOY.md`), then hit the demand gate before any Phase 1 spend.
+Remote set to `git@github.com:mjmiller41/LaserReady.io.git`. **Next action:** hit the demand gate before any
+Phase 1 spend (post the solution-free community question + run competitor files through the laser).
 
 ## What it is
 
@@ -74,8 +76,8 @@ laserready.io/
 
 ## Next actions
 
-1. **Verify M4 live:** deploy (see `DEPLOY.md`) and run the end-to-end test on the hosted checker (upload a
-   known-bad file, confirm the report). This is the one open Phase-0 item.
+1. ~~Verify M4 live~~ — **done** (2026-07-06): `laserready.io` is live over HTTPS and the end-to-end drag-drop
+   test passes. Phase 0 has no open build items.
 2. **Demand gate before any Phase 1 spend:** Michael posts the solution-free community question
    (`MicroSAASResearch/laser-ready-files/community-post.md`) and runs competitor files through his own laser.
 3. Only after the demand gate reads green: begin Phase 1 (Python geometry service, repair/export, guarantee
