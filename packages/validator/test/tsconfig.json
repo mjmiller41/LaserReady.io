@@ -1,0 +1,12 @@
+{
+  "extends": "../../../tsconfig.base.json",
+  "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "esModuleInterop": true,
+    // Tests run under Node (Vitest) and read fixtures from ../../samples — Node types allowed HERE only.
+    "lib": ["ES2022"],
+    "types": ["node"]
+  },
+  "include": ["."]
+}

@@ -1,0 +1,145 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`report schema, determinism, malformed input > locks the full report of the known-good DXF 1`] = `
+{
+  "canonical_export_ref": null,
+  "checks": [
+    {
+      "autofixable": false,
+      "count": 0,
+      "guaranteed": false,
+      "id": "FV-01",
+      "locations": [],
+      "name": "Valid, readable file",
+      "severity": "blocker",
+      "status": "pass",
+    },
+    {
+      "autofixable": true,
+      "count": 0,
+      "guaranteed": true,
+      "id": "PC-01",
+      "locations": [],
+      "name": "Open paths (cut)",
+      "severity": "blocker",
+      "status": "pass",
+    },
+    {
+      "autofixable": true,
+      "count": 0,
+      "guaranteed": true,
+      "id": "PC-02",
+      "locations": [],
+      "name": "Duplicate / coincident lines",
+      "severity": "blocker",
+      "status": "pass",
+    },
+    {
+      "autofixable": true,
+      "count": 0,
+      "guaranteed": true,
+      "id": "SZ-01",
+      "locations": [],
+      "name": "Units present & sane",
+      "severity": "blocker",
+      "status": "pass",
+    },
+  ],
+  "created": "2026-01-01T00:00:00.000Z",
+  "input": {
+    "filename": "clean.dxf",
+    "format": "dxf",
+    "machine_profile": null,
+    "material_mm": 3,
+  },
+  "report_id": "00000000-0000-4000-8000-000000000000",
+  "summary": {
+    "bbox_mm": [
+      130,
+      40,
+    ],
+    "blockers": 0,
+    "guaranteed_pass": true,
+    "info": 0,
+    "layers": [
+      {
+        "name": "CUT",
+        "op": "cut",
+      },
+    ],
+    "warnings": 0,
+  },
+}
+`;
+
+exports[`report schema, determinism, malformed input > locks the full report of the known-good SVG (snapshot = determinism contract) 1`] = `
+{
+  "canonical_export_ref": null,
+  "checks": [
+    {
+      "autofixable": false,
+      "count": 0,
+      "guaranteed": false,
+      "id": "FV-01",
+      "locations": [],
+      "name": "Valid, readable file",
+      "severity": "blocker",
+      "status": "pass",
+    },
+    {
+      "autofixable": true,
+      "count": 0,
+      "guaranteed": true,
+      "id": "PC-01",
+      "locations": [],
+      "name": "Open paths (cut)",
+      "severity": "blocker",
+      "status": "pass",
+    },
+    {
+      "autofixable": true,
+      "count": 0,
+      "guaranteed": true,
+      "id": "PC-02",
+      "locations": [],
+      "name": "Duplicate / coincident lines",
+      "severity": "blocker",
+      "status": "pass",
+    },
+    {
+      "autofixable": true,
+      "count": 0,
+      "guaranteed": true,
+      "id": "SZ-01",
+      "locations": [],
+      "name": "Units present & sane",
+      "severity": "blocker",
+      "status": "pass",
+    },
+  ],
+  "created": "2026-01-01T00:00:00.000Z",
+  "input": {
+    "filename": "clean.svg",
+    "format": "svg",
+    "machine_profile": null,
+    "material_mm": 3,
+  },
+  "report_id": "00000000-0000-4000-8000-000000000000",
+  "summary": {
+    "bbox_mm": [
+      80,
+      40,
+    ],
+    "blockers": 0,
+    "guaranteed_pass": true,
+    "info": 0,
+    "layers": [
+      {
+        "name": "cut",
+        "op": "cut",
+      },
+    ],
+    "warnings": 0,
+  },
+}
+`;

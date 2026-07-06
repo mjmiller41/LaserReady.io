@@ -5,6 +5,9 @@ build/
 .vite/
 *.tsbuildinfo
 
+# test
+coverage/
+
 # env / secrets
 .env
 .env.*

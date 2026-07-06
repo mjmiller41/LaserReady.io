@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    // NodeNext + explicit .js import specifiers so the built package runs in plain Node
+    // (Phase 1 guarantee re-check) without a bundler.
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "esModuleInterop": true,
+    // ES lib only — no "DOM", no "types". The validator must not touch DOM or Node APIs;
+    // the few cross-environment globals it needs (TextDecoder) are declared in src/globals.d.ts.
+    "lib": ["ES2022"],
+    "types": []
+  },
+  "include": ["src"]
+}
