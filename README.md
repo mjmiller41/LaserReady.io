@@ -4,10 +4,35 @@ Source-agnostic laser cut-file **validation** (Phase 0) and, later, repair + exp
 guarantee (Phase 1). Drop in any SVG/DXF — bought, AI-made, or self-drawn — and find out what will go wrong on
 the laser before you waste material.
 
-## Start here
+**Phase 0 is built:** `packages/validator` (the spine — framework-free TS, browser + Node) and `apps/web`
+(landing page + in-browser checker; no file ever leaves the browser).
 
-To build: open Claude Code at this repo root and paste **[`docs/laserready-build-prompt.md`](docs/laserready-build-prompt.md)**
-as the first task. It's self-contained and references the companion docs below.
+## Quickstart
+
+```bash
+pnpm install
+pnpm test        # validator suite (fixtures in samples/)
+pnpm build       # validator dist + static site (apps/web/dist)
+pnpm --filter @laserready/web dev   # local dev server
+```
+
+Deploy: see [`deploy/DEPLOY.md`](deploy/DEPLOY.md) — one static container behind the shared Caddy on the KVM 2.
+MailerLite capture ids are baked at build time via `deploy/.env` (see `deploy/.env.example`); without them the
+forms render disabled.
+
+## Layout
+
+| Path | What |
+|---|---|
+| [`packages/validator/`](packages/validator/) | `validate(bytes, opts) → Report`. Checks, tolerances, determinism contract — see its README. |
+| [`apps/web/`](apps/web/) | Preact + Vite + Tailwind. Landing (Phase 0b) wrapping the checker; validation runs in a Web Worker. |
+| [`samples/`](samples/) | Test fixtures — one failing file per check, plus known-good snapshots. |
+| [`deploy/`](deploy/) | Dockerfile, compose (co-tenant limits), Caddy snippet, DEPLOY.md. |
+
+## Build prompt
+
+The repo was built from **[`docs/laserready-build-prompt.md`](docs/laserready-build-prompt.md)**; it and
+`docs/validator-checklist-spec.md` remain the authoritative spec for what the validator promises.
 
 ## Docs
 
