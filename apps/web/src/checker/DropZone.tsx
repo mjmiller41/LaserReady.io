@@ -37,8 +37,8 @@ export function DropZone({ onFile, busy }: Props) {
       }}
       class={`cursor-pointer rounded-xl border-2 border-dashed p-8 text-center transition-colors sm:p-12 ${
         dragOver
-          ? 'border-amber-500 bg-amber-50'
-          : 'border-slate-300 bg-white hover:border-amber-400'
+          ? 'border-amber-500 bg-amber-50 dark:bg-amber-950'
+          : 'border-slate-300 bg-white hover:border-amber-400 dark:border-slate-600 dark:bg-slate-900 dark:hover:border-amber-500'
       }`}
     >
       <input
@@ -52,13 +52,13 @@ export function DropZone({ onFile, busy }: Props) {
           e.currentTarget.value = ''; // same file can be re-picked after edits
         }}
       />
-      <p class="text-lg font-semibold text-slate-800">
+      <p class="text-lg font-semibold text-slate-800 dark:text-slate-200">
         {busy ? 'Checking…' : 'Drop your SVG or DXF here'}
       </p>
-      <p class="mt-1 text-sm text-slate-500">
+      <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
         {busy ? 'Running the structural checks in your browser.' : 'or click to choose a file — up to 15 MB'}
       </p>
-      <p class="mt-3 text-xs text-slate-400">
+      <p class="mt-3 text-xs text-slate-400 dark:text-slate-500">
         Your file never leaves this browser. All checks run locally.
       </p>
     </div>

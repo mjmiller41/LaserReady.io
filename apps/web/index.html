@@ -9,6 +9,17 @@
     />
     <title>LaserReady — will that file actually cut?</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="color-scheme" content="light dark" />
+    <!-- Apply the theme before first paint to avoid a light/dark flash. -->
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem('lr-theme');
+          var dark = stored ? stored === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+          if (dark) document.documentElement.classList.add('dark');
+        } catch (e) {}
+      })();
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </head>
   <body>

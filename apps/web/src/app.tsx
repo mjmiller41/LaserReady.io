@@ -5,7 +5,13 @@
  */
 
 import { Landing } from './landing/Landing';
+import { ThemeToggle } from './ThemeToggle';
 
 export function App() {
-  return <Landing />;
+  return (
+    <>
+      <ThemeToggle />
+      <Landing />
+    </>
+  );
 }

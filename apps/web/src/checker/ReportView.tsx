@@ -19,12 +19,12 @@ function Verdict({ report }: { report: Report }) {
   const noGeometry = bbox_mm[0] === 0 && bbox_mm[1] === 0 && report.summary.layers.length === 0;
   const [cls, text] =
     blockers > 0
-      ? ['bg-red-50 border-red-300 text-red-900', `Not laser-ready — ${blockers} blocker${blockers === 1 ? '' : 's'}`]
+      ? ['bg-red-50 border-red-300 text-red-900 dark:bg-red-950 dark:border-red-800 dark:text-red-200', `Not laser-ready — ${blockers} blocker${blockers === 1 ? '' : 's'}`]
       : noGeometry
-        ? ['bg-amber-50 border-amber-300 text-amber-900', 'No cuttable geometry found — nothing to validate']
+        ? ['bg-amber-50 border-amber-300 text-amber-900 dark:bg-amber-950 dark:border-amber-800 dark:text-amber-200', 'No cuttable geometry found — nothing to validate']
         : warnings > 0
-          ? ['bg-amber-50 border-amber-300 text-amber-900', `Structurally sound — ${warnings} warning${warnings === 1 ? '' : 's'} to review`]
-          : ['bg-green-50 border-green-300 text-green-900', 'Looks structurally sound'];
+          ? ['bg-amber-50 border-amber-300 text-amber-900 dark:bg-amber-950 dark:border-amber-800 dark:text-amber-200', `Structurally sound — ${warnings} warning${warnings === 1 ? '' : 's'} to review`]
+          : ['bg-green-50 border-green-300 text-green-900 dark:bg-green-950 dark:border-green-800 dark:text-green-200', 'Looks structurally sound'];
 
   return (
     <div class={`rounded-lg border px-4 py-3 ${cls}`} role="status">
@@ -77,28 +77,28 @@ function CheckCard({ check }: { check: CheckResult }) {
         : 'border-l-green-600';
 
   return (
-    <li class={`rounded-md border border-l-4 border-slate-200 bg-white p-4 ${border}`}>
+    <li class={`rounded-md border border-l-4 border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-900 ${border}`}>
       <div class="flex items-start gap-3">
         <StatusIcon status={check.status} />
         <div class="min-w-0 flex-1">
-          <h4 class="font-semibold text-slate-900">
+          <h4 class="font-semibold text-slate-900 dark:text-slate-100">
             {check.name}
-            <span class="ml-2 align-middle font-mono text-xs text-slate-400">{check.id}</span>
+            <span class="ml-2 align-middle font-mono text-xs text-slate-400 dark:text-slate-500">{check.id}</span>
             {check.count > 0 && (
-              <span class="ml-2 rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600">
+              <span class="ml-2 rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-300">
                 {check.count} found
               </span>
             )}
           </h4>
           {check.status !== 'pass' && explain && (
-            <p class="mt-1 text-sm text-slate-600">{explain}</p>
+            <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">{explain}</p>
           )}
           {check.locations.length > 0 && (
             <ul class="mt-2 space-y-1">
               {shown.map((loc, i) => (
-                <li key={i} class="text-sm text-slate-700">
+                <li key={i} class="text-sm text-slate-700 dark:text-slate-300">
                   {loc.x_mm !== undefined && loc.y_mm !== undefined && (
-                    <span class="font-mono text-xs text-slate-500">
+                    <span class="font-mono text-xs text-slate-500 dark:text-slate-400">
                       ({loc.x_mm}, {loc.y_mm}) mm{' — '}
                     </span>
                   )}
@@ -109,7 +109,7 @@ function CheckCard({ check }: { check: CheckResult }) {
                 <li>
                   <button
                     type="button"
-                    class="text-sm font-medium text-amber-700 underline hover:text-amber-900"
+                    class="text-sm font-medium text-amber-700 underline hover:text-amber-900 dark:text-amber-400 dark:hover:text-amber-300"
                     onClick={() => setExpanded(true)}
                   >
                     Show {hiddenCount} more
@@ -145,7 +145,7 @@ export function ReportView({ report, busy, onResolveSize }: Props) {
 
       {sz01Failed && (
         <form
-          class="rounded-lg border border-slate-300 bg-slate-50 p-4"
+          class="rounded-lg border border-slate-300 bg-slate-50 p-4 dark:border-slate-600 dark:bg-slate-800"
           onSubmit={(e) => {
             e.preventDefault();
             const wn = Number(w);
@@ -153,11 +153,11 @@ export function ReportView({ report, busy, onResolveSize }: Props) {
             if (wn > 0 && hn > 0) onResolveSize(wn, hn);
           }}
         >
-          <p class="text-sm font-medium text-slate-800">
+          <p class="text-sm font-medium text-slate-800 dark:text-slate-200">
             Know the real size? Enter it and we'll re-check everything at true scale.
           </p>
           <div class="mt-2 flex flex-wrap items-end gap-3">
-            <label class="text-sm text-slate-700">
+            <label class="text-sm text-slate-700 dark:text-slate-300">
               Width (mm)
               <input
                 type="number"
@@ -166,10 +166,10 @@ export function ReportView({ report, busy, onResolveSize }: Props) {
                 required
                 value={w}
                 onInput={(e) => setW(e.currentTarget.value)}
-                class="mt-1 block w-28 rounded-md border border-slate-300 px-2 py-1.5 text-sm"
+                class="mt-1 block w-28 rounded-md border border-slate-300 px-2 py-1.5 text-sm dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
               />
             </label>
-            <label class="text-sm text-slate-700">
+            <label class="text-sm text-slate-700 dark:text-slate-300">
               Height (mm)
               <input
                 type="number"
@@ -178,13 +178,13 @@ export function ReportView({ report, busy, onResolveSize }: Props) {
                 required
                 value={h}
                 onInput={(e) => setH(e.currentTarget.value)}
-                class="mt-1 block w-28 rounded-md border border-slate-300 px-2 py-1.5 text-sm"
+                class="mt-1 block w-28 rounded-md border border-slate-300 px-2 py-1.5 text-sm dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
               />
             </label>
             <button
               type="submit"
               disabled={busy}
-              class="rounded-md bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700 disabled:opacity-50"
+              class="rounded-md bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700 disabled:opacity-50 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-300"
             >
               Set size &amp; re-check
             </button>
@@ -194,7 +194,7 @@ export function ReportView({ report, busy, onResolveSize }: Props) {
 
       {problems.length > 0 && (
         <div>
-          <h3 class="mb-2 text-sm font-semibold uppercase tracking-wide text-slate-500">
+          <h3 class="mb-2 text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
             Found in this file — worst first
           </h3>
           <ul class="space-y-2">
@@ -206,8 +206,8 @@ export function ReportView({ report, busy, onResolveSize }: Props) {
       )}
 
       {passed.length > 0 && (
-        <details class="rounded-md border border-slate-200 bg-white p-4" open={problems.length === 0}>
-          <summary class="cursor-pointer text-sm font-semibold text-slate-600">
+        <details class="rounded-md border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-900" open={problems.length === 0}>
+          <summary class="cursor-pointer text-sm font-semibold text-slate-600 dark:text-slate-400">
             Passed checks ({passed.length})
           </summary>
           <ul class="mt-3 space-y-2">
@@ -219,9 +219,9 @@ export function ReportView({ report, busy, onResolveSize }: Props) {
       )}
 
       {/* The honest part — a feature, not fine print. */}
-      <aside class="rounded-lg border-2 border-slate-900 bg-white p-4" aria-label="What we won't pretend">
-        <h3 class="font-bold text-slate-900">What we won't pretend</h3>
-        <p class="mt-1 text-sm leading-relaxed text-slate-700">
+      <aside class="rounded-lg border-2 border-slate-900 bg-white p-4 dark:border-slate-100 dark:bg-slate-900" aria-label="What we won't pretend">
+        <h3 class="font-bold text-slate-900 dark:text-slate-100">What we won't pretend</h3>
+        <p class="mt-1 text-sm leading-relaxed text-slate-700 dark:text-slate-300">
           We can't see your laser. Power, speed, focus, lens, air assist, and the exact board you
           loaded all affect the final burn — those are yours to dial in. This report says whether
           the <em>file</em> is structurally sound: closed, clean, correctly scaled and layered.

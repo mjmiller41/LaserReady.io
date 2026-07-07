@@ -50,7 +50,7 @@ export function EmailCapture({ formId, cta, idPrefix }: Props) {
 
   if (status === 'done') {
     return (
-      <p class="rounded-md bg-green-50 px-4 py-3 text-sm font-medium text-green-900" role="status">
+      <p class="rounded-md bg-green-50 px-4 py-3 text-sm font-medium text-green-900 dark:bg-green-950 dark:text-green-200" role="status">
         You're on the list — watch your inbox for a confirmation email.
       </p>
     );
@@ -70,7 +70,7 @@ export function EmailCapture({ formId, cta, idPrefix }: Props) {
           value={email}
           onInput={(e) => setEmail(e.currentTarget.value)}
           placeholder={configured ? 'you@example.com' : 'signup opens shortly'}
-          class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm disabled:bg-slate-100 disabled:text-slate-400 sm:max-w-xs"
+          class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm disabled:bg-slate-100 disabled:text-slate-400 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:disabled:bg-slate-800 dark:disabled:text-slate-500 sm:max-w-xs"
         />
         <button
           type="submit"
@@ -80,7 +80,7 @@ export function EmailCapture({ formId, cta, idPrefix }: Props) {
           {status === 'sending' ? 'Sending…' : cta}
         </button>
       </div>
-      <p class="text-xs text-slate-500" aria-live="polite">
+      <p class="text-xs text-slate-500 dark:text-slate-400" aria-live="polite">
         {status === 'error'
           ? "Couldn't subscribe right now — please try again in a minute."
           : configured

@@ -71,11 +71,11 @@ export function Checker() {
 
   return (
     <div class="space-y-4">
-      <fieldset class="flex flex-wrap items-end gap-4 rounded-lg border border-slate-200 bg-white p-4">
-        <legend class="px-1 text-sm font-semibold text-slate-600">
+      <fieldset class="flex flex-wrap items-end gap-4 rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-900">
+        <legend class="px-1 text-sm font-semibold text-slate-600 dark:text-slate-400">
           Optional — sharpens the checks
         </legend>
-        <label class="text-sm text-slate-700">
+        <label class="text-sm text-slate-700 dark:text-slate-300">
           Material thickness (mm)
           <input
             type="number"
@@ -83,10 +83,10 @@ export function Checker() {
             step="any"
             value={materialMm}
             onInput={(e) => setMaterialMm(e.currentTarget.value)}
-            class="mt-1 block w-32 rounded-md border border-slate-300 px-2 py-1.5 text-sm"
+            class="mt-1 block w-32 rounded-md border border-slate-300 px-2 py-1.5 text-sm dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
           />
         </label>
-        <label class="text-sm text-slate-700">
+        <label class="text-sm text-slate-700 dark:text-slate-300">
           Bed width (mm)
           <input
             type="number"
@@ -95,10 +95,10 @@ export function Checker() {
             placeholder="e.g. 300"
             value={bedW}
             onInput={(e) => setBedW(e.currentTarget.value)}
-            class="mt-1 block w-32 rounded-md border border-slate-300 px-2 py-1.5 text-sm"
+            class="mt-1 block w-32 rounded-md border border-slate-300 px-2 py-1.5 text-sm dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
           />
         </label>
-        <label class="text-sm text-slate-700">
+        <label class="text-sm text-slate-700 dark:text-slate-300">
           Bed height (mm)
           <input
             type="number"
@@ -107,14 +107,14 @@ export function Checker() {
             placeholder="e.g. 200"
             value={bedH}
             onInput={(e) => setBedH(e.currentTarget.value)}
-            class="mt-1 block w-32 rounded-md border border-slate-300 px-2 py-1.5 text-sm"
+            class="mt-1 block w-32 rounded-md border border-slate-300 px-2 py-1.5 text-sm dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
           />
         </label>
         {report && !busy && (
           <button
             type="button"
             onClick={() => void run()}
-            class="rounded-md border border-slate-900 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-900 hover:text-white"
+            class="rounded-md border border-slate-900 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-900 hover:text-white dark:border-slate-100 dark:text-slate-100 dark:hover:bg-slate-100 dark:hover:text-slate-900"
           >
             Re-check with these settings
           </button>
@@ -125,7 +125,7 @@ export function Checker() {
 
       <div aria-live="polite">
         {status === 'error' && (
-          <div class="rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-900" role="alert">
+          <div class="rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-900 dark:border-red-800 dark:bg-red-950 dark:text-red-200" role="alert">
             <strong class="font-semibold">Couldn't check that file:</strong> {error}
           </div>
         )}
