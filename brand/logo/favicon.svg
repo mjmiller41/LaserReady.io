@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="LaserReady">
+  <!-- Simplified mark for 16-32px. Crop marks drop out; check + defect node carry it. -->
+  <rect width="32" height="32" rx="6" fill="#0f172a"/>
+  <path d="M9 16.5 L14 21.5 L24 9.5" fill="none" stroke="#f97316" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="9" cy="16.5" r="2" fill="#dc2626"/>
+</svg>

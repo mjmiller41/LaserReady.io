@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 40" role="img" aria-label="LaserReady">
+  <!-- Horizontal lockup for light surfaces. Text is set live in the product via CSS
+       (Laser = ink-900, Ready = ember-700); this file is for external/marketing use. -->
+  <rect width="40" height="40" rx="9" fill="#0f172a"/>
+  <g stroke="#334155" stroke-width="1.5" stroke-linecap="round" fill="none">
+    <path d="M6 10 V6 H10"/>
+    <path d="M30 6 H34 V10"/>
+    <path d="M34 30 V34 H30"/>
+    <path d="M10 34 H6 V30"/>
+  </g>
+  <path d="M11 20.5 L17 26.5 L30 12" fill="none" stroke="#f97316" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="11" cy="20.5" r="2.3" fill="#dc2626"/>
+  <text x="52" y="27.5" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif" font-size="22" font-weight="800" letter-spacing="-0.5">
+    <tspan fill="#0f172a">Laser</tspan><tspan fill="#c2410c">Ready</tspan>
+  </text>
+</svg>
