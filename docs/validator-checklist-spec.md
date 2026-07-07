@@ -117,17 +117,32 @@ Everything else (thin features, node bloat, self-intersections, fall-through) is
 surface it, we can fix most of it, but we don't stake the money-back promise on properties that depend on the
 user's material truth or aesthetic intent. This is the line that keeps the guarantee honest and cheap to honor.
 
-## Report schema (JSON)
+## Report schema (JSON) — schema_version 2
+
+A report is a **self-contained audit artifact**: `(bytes + report)` must reproduce the verdict with no
+out-of-band inputs. That is why it carries version stamps, the full resolved options, and the
+unit-resolution provenance. The Phase-1 guarantee audit refuses to compare reports across mismatched
+`validator_version`/`schema_version`.
 
 ```json
 {
   "report_id": "uuid",
   "created": "ISO-8601",
-  "input": { "filename": "str", "format": "svg|dxf", "machine_profile": "str|null", "material_mm": 3.0 },
+  "validator_version": "0.1.0",
+  "schema_version": 2,
+  "input": {
+    "filename": "str", "format": "svg|dxf", "machine_profile": "str|null",
+    "options": {
+      "material_mm": 3.0, "intended_size_mm": "[w, h]|null", "bed_mm": "[w, h]|null",
+      "tolerances": { "close_tol": 0.05, "join_tol": 0.5, "dupe_tol": 0.05, "min_feature": 1.0, "burn_through": 0.5, "simplify_tol": 0.05 },
+      "nodes_per_mm_max": 5, "node_bloat_min_nodes": 100, "flatten_tol_mm": 0.05, "max_locations": 100
+    }
+  },
   "summary": {
     "guaranteed_pass": false,
     "blockers": 2, "warnings": 3, "info": 1,
-    "bbox_mm": [w, h], "layers": [{ "name": "str", "op": "cut|engrave|score|unassigned" }]
+    "bbox_mm": [w, h], "layers": [{ "name": "str", "op": "cut|engrave|score|unassigned" }],
+    "units": { "valid": true, "source": "svg-physical|svg-px-guess|dxf-insunits|dxf-unitless|intended-size", "scale_to_mm": 1.0, "resolved_by_intended_size": false }
   },
   "checks": [
     {
@@ -141,6 +156,11 @@ user's material truth or aesthetic intent. This is the line that keeps the guara
   "canonical_export_ref": "s3://.../report_id.dxf|null"
 }
 ```
+
+`guaranteed_pass` additionally requires that the file contained actual vector geometry and that nothing
+was skipped unvalidated — a file we only partially read (or read as empty) never claims the guarantee.
+The per-check identity (name, severity, guaranteed, autofixable, plain-English explanation) lives in ONE
+table in code (`packages/validator/src/checks/meta.ts`) mirroring this spec.
 
 ## Determinism & the audit trail (non-negotiable for the guarantee)
 

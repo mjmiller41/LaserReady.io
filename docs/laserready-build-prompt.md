@@ -203,9 +203,11 @@ a real bad file yields a correct report in the browser. **Land 0a before startin
 - No server-side file upload for checking (Phase 0 validation is client-only, on purpose).
 - No machine-profile export conventions beyond a placeholder in the report shape.
 
-Leave clean seams: the validator already runs in Node; the report already has a `machine_profile` slot and a
-`guaranteed` flag per check; the geometry lives behind a small interface so a Phase-1 Python service can take
-over mutation without touching the front.
+Leave clean seams: the validator already runs in Node (the Phase-1 guarantee audit re-runs this same TS
+validator server-side — Python does not replace the checking); the report already has a `machine_profile` slot
+and a `guaranteed` flag per check. The Python seam is the `NormalizedDoc` model, which a Phase-1 geometry
+service consumes for mutation/export without touching the front. Do not pre-build a geometry abstraction —
+the model boundary is the interface.
 
 ## Forward-compat notes (so today's choices don't box us in)
 

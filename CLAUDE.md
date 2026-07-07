@@ -80,8 +80,10 @@ SSH), including the shared-proxy coordination rules. Do not duplicate deploy ste
 
 Python geometry service · auto-repair/mutation · offset/kerf · nesting · file **export** (SVG/DXF/G-code) ·
 Stripe/billing · the guarantee remedy flow · accounts/auth · any server-side file upload for checking.
-Seams to leave: validator already runs in Node; report has a `machine_profile` slot and a `guaranteed` flag per
-check; geometry sits behind a small interface a Python service can later take over.
+Seams to leave: validator already runs in Node (the guarantee audit re-runs the same TS validator server-side);
+report has a `machine_profile` slot and a `guaranteed` flag per check. The Phase-1 Python seam is the
+`NormalizedDoc` model — Python consumes it for **mutation/export**, it does not replace Phase-0 read-only
+geometry. Don't pre-build a geometry abstraction for it.
 
 ## Docs
 
@@ -94,3 +96,8 @@ authoritative) · `docs/build-plan.md` · `docs/product-spec.md` · `docs/phase0
 Michael J. Miller (Timber Trace Crafts) — solo full-stack (Node, PHP/Laravel, TypeScript, React), Avon Park FL.
 Prefers concise, direct communication. Tech stack is never a constraint — build whatever is right. The sibling
 LightBurn-clone app is handled by a separate team/agents; keep LaserReady architecturally independent from it.
+
+## gstack
+
+- Use the `/browse` skill from gstack for all web browsing. Never use `mcp__claude-in-chrome__*` tools.
+- Available gstack skills: `/office-hours`, `/plan-ceo-review`, `/plan-eng-review`, `/plan-design-review`, `/design-consultation`, `/design-shotgun`, `/design-html`, `/review`, `/ship`, `/land-and-deploy`, `/canary`, `/benchmark`, `/browse`, `/connect-chrome`, `/qa`, `/qa-only`, `/design-review`, `/setup-browser-cookies`, `/setup-deploy`, `/setup-gbrain`, `/retro`, `/investigate`, `/document-release`, `/document-generate`, `/codex`, `/cso`, `/autoplan`, `/plan-devex-review`, `/devex-review`, `/careful`, `/freeze`, `/guard`, `/unfreeze`, `/gstack-upgrade`, `/learn`.
