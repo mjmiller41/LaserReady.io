@@ -5,7 +5,7 @@
   "description": "LaserReady — source-agnostic laser cut-file validation (Phase 0)",
   "type": "module",
   "engines": {
-    "node": ">=20"
+    "node": ">=22.13"
   },
   "packageManager": "pnpm@11.9.0",
   "scripts": {
