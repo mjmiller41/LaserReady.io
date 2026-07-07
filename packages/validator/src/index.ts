@@ -7,7 +7,15 @@
  * APIs, no network, no throwing on malformed input (FV-01 instead).
  */
 
-import type { Report, ReportLayer, CheckResult, FileFormat, LayerOp } from './report.js';
+import type {
+  Report,
+  ReportLayer,
+  ReportOptions,
+  ReportUnits,
+  CheckResult,
+  FileFormat,
+  LayerOp,
+} from './report.js';
 import type { ValidateOptions } from './options.js';
 import { resolveOptions } from './options.js';
 import { bboxHeight, bboxWidth } from './geometry/bbox.js';
@@ -17,22 +25,19 @@ import { sniffFormat } from './parse/sniff.js';
 import { parseSvg } from './parse/svg.js';
 import { parseDxf } from './parse/dxf.js';
 import { buildContext } from './checks/context.js';
+import { CHECK_REGISTRY } from './checks/registry.js';
 import { roundMm } from './checks/util.js';
 import { fv01FromDoc, fv01Failure } from './checks/fv01.js';
-import { runPC01 } from './checks/pc01.js';
-import { runPC02 } from './checks/pc02.js';
-import { runSZ01 } from './checks/sz01.js';
-import { runSZ02 } from './checks/sz02.js';
-import { runSZ03 } from './checks/sz03.js';
-import { runRS01 } from './checks/rs01.js';
-import { runGH01 } from './checks/gh01.js';
-import { runFM01 } from './checks/fm01.js';
+import { REPORT_SCHEMA_VERSION, VALIDATOR_VERSION } from './version.js';
 
 export type {
   Report,
   ReportInput,
   ReportSummary,
   ReportLayer,
+  ReportOptions,
+  ReportUnits,
+  UnitSource,
   CheckResult,
   CheckLocation,
   CheckStatus,
@@ -42,6 +47,9 @@ export type {
 } from './report.js';
 export type { ValidateOptions, Tolerances } from './options.js';
 export { DEFAULT_TOLERANCES } from './options.js';
+export type { CheckId, CheckMeta } from './checks/meta.js';
+export { CHECK_META } from './checks/meta.js';
+export { REPORT_SCHEMA_VERSION, VALIDATOR_VERSION } from './version.js';
 
 function uuid(): string {
   const c = (globalThis as { crypto?: { randomUUID?: () => string } }).crypto;
@@ -89,6 +97,20 @@ function summarizeLayers(doc: NormalizedDoc): ReportLayer[] {
   return layers;
 }
 
+/** The resolved-options echo — the report must reproduce its verdict without out-of-band inputs. */
+function echoOptions(opts: ReturnType<typeof resolveOptions>): ReportOptions {
+  return {
+    material_mm: opts.materialMm,
+    intended_size_mm: opts.intendedSizeMm ?? null,
+    bed_mm: opts.bedMm ?? null,
+    tolerances: { ...opts.tol },
+    nodes_per_mm_max: opts.nodesPerMmMax,
+    node_bloat_min_nodes: opts.nodeBloatMinNodes,
+    flatten_tol_mm: opts.flattenTolMm,
+    max_locations: opts.maxLocations,
+  };
+}
+
 function assembleReport(
   opts: ReturnType<typeof resolveOptions>,
   format: FileFormat | 'unknown',
@@ -100,27 +122,40 @@ function assembleReport(
   // No info-severity checks are implemented in Phase 0 (PC-04 is Phase 1).
   const info = 0;
 
-  // guaranteed_pass: every Guaranteed check passes AND nothing was skipped unvalidated.
-  // (A file we only partially read must never claim the guarantee — honesty of scope.)
+  // guaranteed_pass: every Guaranteed check passes AND nothing was skipped unvalidated AND
+  // there is actual geometry the verdict is about. (A file we only partially read — or read
+  // as empty — must never claim the guarantee: honesty of scope.)
   const skippedAny = doc !== null && doc.unsupported.length > 0;
   const guaranteed_pass =
-    doc !== null && !skippedAny && !checks.some((c) => c.guaranteed && c.status === 'fail');
+    doc !== null &&
+    doc.entities.length > 0 &&
+    !skippedAny &&
+    !checks.some((c) => c.guaranteed && c.status === 'fail');
 
   let bbox_mm: [number, number] = [0, 0];
+  let units: ReportUnits | null = null;
   if (doc) {
     // Vector geometry only — rasters are reported by RS-01, not sized here.
     const b = docBbox(doc);
     bbox_mm = [roundMm(bboxWidth(b)), roundMm(bboxHeight(b))];
+    units = {
+      valid: doc.unitInfo.valid,
+      source: doc.unitInfo.source,
+      scale_to_mm: doc.unitInfo.scaleToMm,
+      resolved_by_intended_size: doc.unitInfo.resolvedByIntendedSize,
+    };
   }
 
   return {
     report_id: opts.reportId ?? uuid(),
     created: opts.created ?? new Date().toISOString(),
+    validator_version: VALIDATOR_VERSION,
+    schema_version: REPORT_SCHEMA_VERSION,
     input: {
       filename: opts.filename,
       format,
       machine_profile: opts.machineProfile,
-      material_mm: opts.materialMm,
+      options: echoOptions(opts),
     },
     summary: {
       guaranteed_pass,
@@ -129,6 +164,7 @@ function assembleReport(
       info,
       bbox_mm,
       layers: doc ? summarizeLayers(doc) : [],
+      units,
     },
     checks,
     canonical_export_ref: null,
@@ -165,19 +201,25 @@ export function validate(fileBytes: Uint8Array, options: ValidateOptions = {}): 
     return assembleReport(opts, format, [fv01Failure(msg.slice(0, 500))], null);
   }
 
-  const ctx = buildContext(doc, opts);
-  const sz03 = runSZ03(ctx); // omitted entirely when no bed size was given — an unevaluated "pass" would lie
-  const checks: CheckResult[] = [
-    fv01FromDoc(doc),
-    runPC01(ctx),
-    runPC02(ctx),
-    runSZ01(ctx),
-    runSZ02(ctx),
-    ...(sz03 ? [sz03] : []),
-    runRS01(ctx),
-    runGH01(ctx),
-    runFM01(ctx),
-  ];
-
-  return assembleReport(opts, format, checks, doc);
+  // The never-throws contract covers the check phase too: an internal error on adversarial
+  // geometry must come back as an FV-01 blocker, not an exception through the worker.
+  try {
+    const ctx = buildContext(doc, opts);
+    // FV-01 first, then the registry in its stable order. A registry entry returning null is
+    // omitted from the report (e.g. SZ-03 without a bed — an unevaluated "pass" would lie).
+    const checks: CheckResult[] = [fv01FromDoc(doc)];
+    for (const { run } of CHECK_REGISTRY) {
+      const result = run(ctx);
+      if (result) checks.push(result);
+    }
+    return assembleReport(opts, format, checks, doc);
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    return assembleReport(
+      opts,
+      format,
+      [fv01Failure(`internal error while validating: ${msg.slice(0, 400)}`)],
+      null,
+    );
+  }
 }

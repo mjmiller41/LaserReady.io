@@ -9,6 +9,7 @@
 import type { CheckResult, CheckLocation } from '../report.js';
 import type { PathEntity } from '../parse/doc.js';
 import type { CheckContext } from './context.js';
+import { makeResult } from './meta.js';
 import { capLocations, fmtMm, roundMm } from './util.js';
 
 function entityLengthMm(e: PathEntity): number {
@@ -42,14 +43,10 @@ export function runGH01(ctx: CheckContext): CheckResult {
     });
   }
 
-  return {
-    id: 'GH-01',
-    name: 'Node bloat',
-    severity: 'warning',
-    status: locations.length > 0 ? 'warn' : 'pass',
-    guaranteed: false,
-    autofixable: true,
-    count: locations.length,
-    locations: capLocations(locations, ctx.opts.maxLocations),
-  };
+  return makeResult(
+    'GH-01',
+    locations.length > 0 ? 'warn' : 'pass',
+    locations.length,
+    capLocations(locations, ctx.opts.maxLocations),
+  );
 }

@@ -59,11 +59,23 @@ describe('report schema, determinism, malformed input', () => {
     });
     expect(report.report_id).toBe(FIXED.reportId);
     expect(report.created).toBe(FIXED.created);
-    expect(report.input).toEqual({
-      filename: 'clean.svg',
-      format: 'svg',
-      machine_profile: null,
-      material_mm: 5,
+    expect(report.validator_version).toBeTruthy();
+    expect(report.schema_version).toBeGreaterThanOrEqual(2);
+    expect(report.input.filename).toBe('clean.svg');
+    expect(report.input.format).toBe('svg');
+    expect(report.input.machine_profile).toBeNull();
+    // The full resolved options are echoed — the report must reproduce its verdict from
+    // (bytes + report) alone, no out-of-band inputs.
+    expect(report.input.options.material_mm).toBe(5);
+    expect(report.input.options.intended_size_mm).toBeNull();
+    expect(report.input.options.bed_mm).toBeNull();
+    expect(report.input.options.tolerances.close_tol).toBeGreaterThan(0);
+    // Structured unit provenance rides in the summary.
+    expect(report.summary.units).toEqual({
+      valid: true,
+      source: 'svg-physical',
+      scale_to_mm: 1,
+      resolved_by_intended_size: false,
     });
     expect(report.canonical_export_ref).toBeNull();
     for (const c of report.checks) {

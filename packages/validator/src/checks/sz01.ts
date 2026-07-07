@@ -8,22 +8,19 @@
 
 import type { CheckResult } from '../report.js';
 import type { CheckContext } from './context.js';
+import { makeResult } from './meta.js';
 
 export function runSZ01(ctx: CheckContext): CheckResult {
   const u = ctx.doc.unitInfo;
   const pass = u.valid;
-  return {
-    id: 'SZ-01',
-    name: 'Units present & sane',
-    severity: 'blocker',
-    status: pass ? 'pass' : 'fail',
-    guaranteed: true,
-    autofixable: true,
-    count: pass ? 0 : 1,
-    locations: pass
+  return makeResult(
+    'SZ-01',
+    pass ? 'pass' : 'fail',
+    pass ? 0 : 1,
+    pass
       ? u.resolvedByIntendedSize
         ? [{ detail: u.detail }] // informational note: what the sizes now rest on
         : []
       : [{ detail: `${u.detail} — enter the intended real-world size to resolve this` }],
-  };
+  );
 }

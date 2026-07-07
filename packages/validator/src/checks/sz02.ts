@@ -7,6 +7,7 @@
 import type { CheckResult } from '../report.js';
 import { bboxHeight, bboxWidth, isEmptyBbox } from '../geometry/bbox.js';
 import type { CheckContext } from './context.js';
+import { makeResult } from './meta.js';
 import { fmtMm } from './util.js';
 
 const MIN_MM = 1;
@@ -28,14 +29,5 @@ export function runSZ02(ctx: CheckContext): CheckResult {
       });
     }
   }
-  return {
-    id: 'SZ-02',
-    name: 'Scale sanity',
-    severity: 'warning',
-    status: locations.length > 0 ? 'warn' : 'pass',
-    guaranteed: false,
-    autofixable: false,
-    count: locations.length,
-    locations,
-  };
+  return makeResult('SZ-02', locations.length > 0 ? 'warn' : 'pass', locations.length, locations);
 }
