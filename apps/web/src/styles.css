@@ -1,5 +1,21 @@
 @import 'tailwindcss';
 
+/*
+ * Dark mode is class-based (a `.dark` on <html>), not media-only, so the toggle
+ * can override the system default. See src/theme.ts + the no-FOUC script in
+ * index.html. Palette maps to the brand kit (brand/brand-kit-artifact.html):
+ * ink-950 #080e1b ≈ slate-950 surface, ink-900 #0f172a ≈ slate-900 raised.
+ */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Let form controls, scrollbars, etc. pick the right native palette. */
+:root {
+  color-scheme: light;
+}
+:root.dark {
+  color-scheme: dark;
+}
+
 /* Focus visibility — keyboard users must always see where they are. */
 :focus-visible {
   outline: 2px solid #f59e0b;
