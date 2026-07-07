@@ -31,3 +31,6 @@ Thumbs.db
 
 # docker / data
 /backups/
+
+# gstack per-project runtime logs (browse audit, network, session state)
+.gstack/
