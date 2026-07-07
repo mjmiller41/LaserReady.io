@@ -69,3 +69,19 @@
   outline: 2px solid var(--color-ember-500);
   outline-offset: 2px;
 }
+
+/* =============================================================================
+ * Dark mode — "the blueprint, inverted." Class-based (toggle `.dark` on <html>).
+ * -----------------------------------------------------------------------------
+ * Dark mode adds ZERO new chrome colors: it remaps the SAME ink/paper/ember
+ * ramps above via `dark:` utilities (see brand/BRAND-KIT.md §9 for the full
+ * class-mapping table). This custom-variant enables `dark:bg-ink-900` etc.
+ * Drive the initial class from the OS preference, then let the user toggle:
+ *   <script>document.documentElement.classList.toggle('dark',
+ *     matchMedia('(prefers-color-scheme: dark)').matches)</script>
+ * ============================================================================= */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Native form controls / scrollbars follow the theme. */
+:root { color-scheme: light; }
+.dark { color-scheme: dark; }

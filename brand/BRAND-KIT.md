@@ -157,3 +157,48 @@ true to the "lightweight/fast" constraint. Canva is the channel for **downstream
 (social preview / OG cards, launch-email headers, marketplace thumbnails) built *from* this palette and
 wordmark — not the source of the in-product visual system. When we build those, pull these exact hexes
 and the `wordmark.svg` lockup.
+
+## 9. Dark mode — "the blueprint, inverted"
+
+Founder-approved add-on (LAS-8). Demonstrated in `brand/brand-kit-artifact-dark.{html,png}`. The governing
+idea: dark mode adds **zero new chrome colors**. It remaps the *same* ink/paper/ember ramps, so the two
+themes are one palette and can never drift. Class-based (`.dark` on `<html>`); `tokens.css` enables the
+`dark:` variant. Drive the initial class off `prefers-color-scheme`, then let the user toggle.
+
+**Chrome mapping** (apply as `light dark:` utility pairs — no new tokens):
+
+| Role | Light | Dark |
+|---|---|---|
+| Page background | `bg-paper-100` | `dark:bg-ink-950` |
+| Card / surface | `bg-paper-0` | `dark:bg-ink-900` |
+| Elevated surface | `bg-paper-0` | `dark:bg-ink-800` |
+| Body text | `text-ink-900` | `dark:text-ink-100` |
+| Muted / meta | `text-ink-500` | `dark:text-ink-400` |
+| Hairline divider | `border-ink-200` | `dark:border-ink-800` |
+| Stronger border | `border-ink-300` | `dark:border-ink-700` |
+| Links / inline accent | `text-ember-700` | `dark:text-ember-400` |
+| Wordmark "Ready" | `text-ember-700` | `dark:text-ember-500` |
+
+**The one deliberate adaptation — the CTA.** Light mode is white text on `ember-700` (AA on white). On a dark
+field `ember-700` goes muddy, so dark mode flips to **dark `ink-950` text on bright `ember-500`**
+(`dark:bg-ember-500 dark:text-ink-950`, contrast ~6.8:1 — AA). The laser reads as a *glow*, not a fill. This
+is the only role whose relationship changes between themes; everything else is a straight remap.
+
+**Check-result states** keep their reserved semantics; only the presentation inverts. Verdict cards go from
+tint-50 bg / -300 border / dark text → **translucent tint on dark** using the existing ramp + opacity:
+
+| State | Light card | Dark card |
+|---|---|---|
+| Fail | `bg-blocker-50 border-blocker-300 text-[#7f1d1d]` | `dark:bg-blocker-600/10 dark:border-blocker-600/40 dark:text-blocker-300` |
+| Warn | `bg-advisory-50 border-advisory-300 text-[#78350f]` | `dark:bg-advisory-500/10 dark:border-advisory-500/40 dark:text-advisory-300` |
+| Pass | `bg-pass-50 border-pass-300 text-[#14532d]` | `dark:bg-pass-600/12 dark:border-pass-600/40 dark:text-pass-300` |
+
+Status **badges keep their solid saturated fills** (`bg-blocker-600` / `-advisory-500` / `-pass-600`, white
+glyph) in both themes — they read as signal against any surface.
+
+**The mark on dark:** the asset is unchanged. On fields darker than the `ink-900` tile, add a 1px `ink-700`
+hairline to the tile and lift the crop marks to `ink-600` so both stay legible; nudge the defect node to
+`blocker-400`. The `mark-mono.svg` (`currentColor`) covers single-ink dark use directly.
+
+**The honest box on dark:** the heavy ink border inverts to a heavy `ink-200` border on `ink-900` — still a
+deliberate stamp, never a muted footnote. Copy is verbatim in both themes; voice has no theme.
