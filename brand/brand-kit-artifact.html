@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LaserReady — Brand Kit v1</title>
+<style>
+  :root{
+    --ink-950:#080e1b;--ink-900:#0f172a;--ink-800:#1e293b;--ink-700:#334155;--ink-500:#64748b;
+    --ink-400:#94a3b8;--ink-300:#cbd5e1;--ink-200:#e2e8f0;--ink-100:#f1f5f9;
+    --paper-0:#fff;--paper-50:#faf9f7;--paper-100:#f5f4f1;--paper-200:#eae7e1;
+    --ember-50:#fff7ed;--ember-400:#fb923c;--ember-500:#f97316;--ember-600:#ea580c;--ember-700:#c2410c;
+    --blocker-600:#dc2626;--blocker-300:#fca5a5;--blocker-50:#fef2f2;
+    --advisory-500:#f59e0b;--advisory-300:#fcd34d;--advisory-50:#fffbeb;
+    --pass-600:#16a34a;--pass-300:#86efac;--pass-50:#f0fdf4;
+    --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --mono:ui-monospace,"SF Mono","SFMono-Regular",Menlo,Consolas,"Liberation Mono",monospace;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;font-family:var(--sans);background:var(--paper-100);color:var(--ink-900);
+    line-height:1.55;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+  section{padding:52px 0;border-top:1px solid var(--ink-200)}
+  section:first-of-type{border-top:none}
+  .eyebrow{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;
+    color:var(--ink-500);margin:0 0 14px}
+  h2.sec{font-size:26px;font-weight:800;letter-spacing:-.02em;margin:0 0 6px}
+  .sec-sub{color:var(--ink-500);max-width:64ch;margin:0 0 26px}
+  .grid{display:grid;gap:16px}
+  .g2{grid-template-columns:repeat(2,1fr)}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  .g4{grid-template-columns:repeat(4,1fr)}
+  .card{background:var(--paper-0);border:1px solid var(--ink-200);border-radius:8px;padding:20px}
+  .center{display:flex;align-items:center;justify-content:center}
+  .muted{color:var(--ink-500)}
+  code{font-family:var(--mono)}
+
+  /* ---- Hero ---- */
+  .hero{background:var(--ink-900);color:#fff;padding:64px 0 72px;position:relative;overflow:hidden}
+  .hero::before{content:"";position:absolute;inset:0;
+    background:radial-gradient(680px 320px at 82% -8%,rgba(249,115,22,.16),transparent 60%);
+    pointer-events:none}
+  .hero .wrap{position:relative}
+  .lockup{display:flex;align-items:center;gap:16px;margin-bottom:26px}
+  .wordmark{font-size:34px;font-weight:800;letter-spacing:-.02em}
+  .hero h1{font-size:46px;line-height:1.05;font-weight:800;letter-spacing:-.025em;margin:0 0 16px;max-width:16ch}
+  .hero p.lede{font-size:18px;color:#cbd5e1;max-width:56ch;margin:0 0 8px}
+  .kicker{display:inline-block;font-family:var(--mono);font-size:12px;color:var(--ember-400);
+    border:1px solid rgba(249,115,22,.35);border-radius:999px;padding:5px 12px;margin-bottom:24px}
+  .hero .story{margin-top:26px;font-size:15px;color:var(--ink-400);border-left:2px solid var(--ember-500);
+    padding-left:14px;max-width:60ch}
+
+  /* ---- Mark decoded ---- */
+  .decode{display:grid;grid-template-columns:220px 1fr;gap:32px;align-items:center}
+  .decode .stage{background:var(--paper-50);border:1px solid var(--ink-200);border-radius:12px;
+    padding:26px;display:flex;justify-content:center}
+  .anno{list-style:none;margin:0;padding:0;display:grid;gap:14px}
+  .anno li{display:flex;gap:14px;align-items:flex-start}
+  .dot{flex:0 0 auto;width:14px;height:14px;border-radius:4px;margin-top:4px}
+  .anno b{display:block;font-size:15px}
+  .anno span{font-size:14px;color:var(--ink-500)}
+
+  /* ---- Logo lockups ---- */
+  .dark-cell{background:var(--ink-900)}
+  .logo-cell{min-height:120px;flex-direction:column;gap:12px}
+  .logo-cell .cap{font-size:12px;color:var(--ink-500)}
+  .dark-cell .cap{color:var(--ink-400)}
+
+  /* ---- Swatches ---- */
+  .sw{border-radius:8px;overflow:hidden;border:1px solid var(--ink-200);background:#fff}
+  .sw .chip{height:60px}
+  .sw .meta{padding:8px 10px;font-size:12px}
+  .sw .meta b{display:block;font-weight:600}
+  .sw .meta code{color:var(--ink-500);font-size:11px}
+  .rule{display:flex;gap:14px;align-items:flex-start;background:var(--ember-50);
+    border:1px solid var(--ember-400);border-radius:8px;padding:14px 16px;margin-bottom:22px;font-size:14px}
+  .rule .swatchpair{display:flex;gap:6px;flex:0 0 auto}
+  .rule .swatchpair span{width:26px;height:26px;border-radius:6px;display:block}
+
+  /* ---- Type scale ---- */
+  .ts>div{padding:12px 0;border-bottom:1px dashed var(--ink-200);display:flex;
+    justify-content:space-between;align-items:baseline;gap:20px}
+  .ts>div:last-child{border-bottom:none}
+  .ts .tag{font-family:var(--mono);font-size:11px;color:var(--ink-500);flex:0 0 auto;white-space:nowrap}
+
+  /* ---- Badges / icons ---- */
+  .badge{width:24px;height:24px;border-radius:999px;color:#fff;font-weight:700;font-size:13px;
+    display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto}
+  .iconrow{display:flex;gap:26px;flex-wrap:wrap;align-items:center}
+  .icd{display:flex;flex-direction:column;align-items:center;gap:8px;font-size:12px;color:var(--ink-500)}
+
+  /* ---- Voice ---- */
+  .voice{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .voice .col{border-radius:8px;padding:18px}
+  .voice .yes{background:var(--pass-50);border:1px solid var(--pass-300)}
+  .voice .no{background:var(--blocker-50);border:1px solid var(--blocker-300)}
+  .voice h4{margin:0 0 12px;font-size:14px;text-transform:uppercase;letter-spacing:.05em}
+  .voice .yes h4{color:#14532d}
+  .voice .no h4{color:#7f1d1d}
+  .voice ul{margin:0;padding-left:20px;display:grid;gap:10px}
+  .voice li{font-size:14px}
+
+  /* ---- Honest box ---- */
+  .honest{border:2px solid var(--ink-900);border-radius:8px;background:#fff;padding:22px 24px;max-width:640px}
+  .honest .hd{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+  .honest .stamp{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--ink-500);border:1px solid var(--ink-300);border-radius:4px;padding:2px 7px}
+  .honest h3{margin:0;font-size:19px;font-weight:800}
+  .honest p{margin:0;font-size:15px;color:var(--ink-700)}
+  .honest em{font-style:normal;font-weight:700;color:var(--ink-900)}
+
+  /* ---- Product demo ---- */
+  .demo-note{font-size:13px;color:var(--ink-500);margin:-14px 0 22px}
+  .app{background:var(--paper-100);border:1px solid var(--ink-200);border-radius:12px;overflow:hidden}
+  .appbar{background:#fff;border-bottom:1px solid var(--ink-200);padding:14px 20px;
+    display:flex;align-items:center;gap:12px}
+  .appbar .wm{font-size:20px;font-weight:800;letter-spacing:-.02em}
+  .appbody{display:grid;grid-template-columns:300px 1fr;gap:20px;padding:22px}
+  .dropzone{background:#fff;border:2px dashed var(--ink-300);border-radius:12px;padding:26px 20px;
+    display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px;justify-content:center}
+  .dropzone.armed{border-color:var(--ember-500);background:var(--ember-50)}
+  .dropzone .hint{font-size:13px;color:var(--ink-500)}
+  .btn{background:var(--ember-700);color:#fff;font-weight:700;border:none;border-radius:6px;
+    padding:11px 20px;font-size:15px;cursor:pointer}
+  .btn:hover{background:var(--ember-600)}
+  .link{color:var(--ember-700);font-weight:600;text-decoration:underline;font-size:14px}
+  .verdict{border-radius:8px;padding:14px 16px;margin-bottom:16px}
+  .verdict.warn{border:1px solid var(--advisory-300);background:var(--advisory-50);color:#78350f}
+  .verdict b{font-size:18px;display:block}
+  .verdict .sub{font-size:12px;font-family:var(--mono);margin-top:4px;opacity:.85}
+  .checkrow{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--ink-200)}
+  .checkrow:last-child{border-bottom:none}
+  .checkrow .ttl{font-weight:600;font-size:15px}
+  .checkrow .id{font-family:var(--mono);font-size:11px;color:var(--ink-500);margin-left:8px}
+  .checkrow .desc{font-size:14px;color:var(--ink-500);margin-top:2px}
+  .panel{background:#fff;border:1px solid var(--ink-200);border-radius:12px;padding:18px 20px}
+
+  footer{background:var(--ink-950);color:var(--ink-400);padding:32px 0;font-size:13px}
+  footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+  footer code{color:var(--ink-300)}
+
+  @media(max-width:820px){
+    .g4,.g3,.g2,.voice,.decode,.appbody{grid-template-columns:1fr}
+    .hero h1{font-size:34px}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================ HERO ============================ -->
+<header class="hero">
+  <div class="wrap">
+    <div class="lockup">
+      <svg width="52" height="52" viewBox="0 0 40 40" role="img" aria-label="LaserReady mark">
+        <rect width="40" height="40" rx="9" fill="#0f172a" stroke="#1e293b" stroke-width="1"/>
+        <g stroke="#334155" stroke-width="1.5" stroke-linecap="round" fill="none">
+          <path d="M6 10 V6 H10"/><path d="M30 6 H34 V10"/><path d="M34 30 V34 H30"/><path d="M10 34 H6 V30"/>
+        </g>
+        <path d="M11 20.5 L17 26.5 L30 12" fill="none" stroke="#f97316" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="11" cy="20.5" r="2.3" fill="#dc2626"/>
+      </svg>
+      <span class="wordmark"><span style="color:#fff">Laser</span><span style="color:var(--ember-500)">Ready</span></span>
+    </div>
+    <div class="kicker">BRAND KIT v1 · the honest inspector</div>
+    <h1>Someone trustworthy checked this.</h1>
+    <p class="lede">The whole brand exists to earn one feeling. LaserReady is the plain-spoken inspector
+      who reads your cut file <em>before</em> the material goes on the bed — and tells you, in a maker's
+      words, exactly what will fail.</p>
+    <p class="story">Blueprint <b style="color:#fff">ink</b> on kraft <b style="color:#e2e8f0">paper</b>,
+      cut by an <b style="color:var(--ember-400)">ember</b> laser. Credibility over hype, every choice.</p>
+  </div>
+</header>
+
+<!-- ============================ THE MARK ============================ -->
+<section id="mark">
+  <div class="wrap">
+    <p class="eyebrow">01 · The mark</p>
+    <h2 class="sec">A cut path that catches its own defect</h2>
+    <p class="sec-sub">The logo is the product told in one glyph. It is deliberately self-aware: our own
+      mark is a path with a flagged node — we find the thing you'd miss, and we're honest about it.</p>
+    <div class="decode">
+      <div class="stage">
+        <svg width="150" height="150" viewBox="0 0 40 40" role="img" aria-label="LaserReady mark, large">
+          <rect width="40" height="40" rx="9" fill="#0f172a"/>
+          <g stroke="#334155" stroke-width="1.5" stroke-linecap="round" fill="none">
+            <path d="M6 10 V6 H10"/><path d="M30 6 H34 V10"/><path d="M34 30 V34 H30"/><path d="M10 34 H6 V30"/>
+          </g>
+          <path d="M11 20.5 L17 26.5 L30 12" fill="none" stroke="#f97316" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="11" cy="20.5" r="2.3" fill="#dc2626"/>
+        </svg>
+      </div>
+      <ul class="anno">
+        <li><span class="dot" style="background:var(--ink-700)"></span>
+          <div><b>Registration crop marks</b><span>Instantly legible to any maker as <em>a cut file</em>. Blueprint-ink tile.</span></div></li>
+        <li><span class="dot" style="background:var(--ember-500)"></span>
+          <div><b>An ember cut path, resolved into a check</b><span>Traced and inspected — <em>ready</em>. Ember is the laser: our brand and our action color.</span></div></li>
+        <li><span class="dot" style="background:var(--blocker-600)"></span>
+          <div><b>A single red node on the first point</b><span>The inspector's red pen — <em>the defect we caught</em>. Red is reserved for a failure; here it's a wink.</span></div></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ LOCKUPS ============================ -->
+<section id="lockups">
+  <div class="wrap">
+    <p class="eyebrow">02 · Lockups &amp; sizing</p>
+    <h2 class="sec">One mark, four jobs</h2>
+    <p class="sec-sub">In-product the wordmark is set live in CSS (never as an image): <code>Laser</code> in
+      ink, <code>Ready</code> in ember. Crop marks drop out below 24px so the check + defect node carry it.</p>
+    <div class="grid g4">
+      <div class="card center logo-cell">
+        <svg width="64" height="64" viewBox="0 0 40 40"><rect width="40" height="40" rx="9" fill="#0f172a"/><g stroke="#334155" stroke-width="1.5" stroke-linecap="round" fill="none"><path d="M6 10 V6 H10"/><path d="M30 6 H34 V10"/><path d="M34 30 V34 H30"/><path d="M10 34 H6 V30"/></g><path d="M11 20.5 L17 26.5 L30 12" fill="none" stroke="#f97316" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="11" cy="20.5" r="2.3" fill="#dc2626"/></svg>
+        <span class="cap">Mark · ≥24px</span>
+      </div>
+      <div class="card center logo-cell">
+        <svg width="40" height="40" viewBox="0 0 32 32"><rect width="32" height="32" rx="6" fill="#0f172a"/><path d="M9 16.5 L14 21.5 L24 9.5" fill="none" stroke="#f97316" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="16.5" r="2" fill="#dc2626"/></svg>
+        <span class="cap">Favicon · 16–32px</span>
+      </div>
+      <div class="card center logo-cell">
+        <svg width="64" height="64" viewBox="0 0 40 40" style="color:var(--ink-900)"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M6 10 V6 H10"/><path d="M30 6 H34 V10"/><path d="M34 30 V34 H30"/><path d="M10 34 H6 V30"/></g><path d="M11 20.5 L17 26.5 L30 12" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="11" cy="20.5" r="2.3" fill="currentColor"/></svg>
+        <span class="cap">Mono · 1-ink / engrave</span>
+      </div>
+      <div class="card dark-cell center logo-cell">
+        <span style="font-size:22px;font-weight:800;letter-spacing:-.02em"><span style="color:#fff">Laser</span><span style="color:var(--ember-500)">Ready</span></span>
+        <span class="cap">Wordmark on ink</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ COLOR ============================ -->
+<section id="color">
+  <div class="wrap">
+    <p class="eyebrow">03 · Color system</p>
+    <h2 class="sec">Ink, paper, ember — plus reserved state colors</h2>
+    <p class="sec-sub">Named for a story a maker gets instantly. Full values live in
+      <code>brand/tokens.css</code> as additive Tailwind <code>@theme</code> tokens.</p>
+    <div class="rule">
+      <div class="swatchpair">
+        <span style="background:var(--ember-500)" title="ember"></span>
+        <span style="background:var(--advisory-500)" title="advisory"></span>
+      </div>
+      <div><b>The load-bearing rule.</b> Ember (warm orange) = brand &amp; primary action.
+        Red / amber / green are <b>reserved</b> for check-result states. The advisory/warn state is
+        yellow-amber — a different hue — so “this is the action” never reads as “this is a warning.”</div>
+    </div>
+    <div class="grid g4">
+      <div class="sw"><div class="chip" style="background:var(--ink-900)"></div><div class="meta"><b>Ink 900</b><code>#0f172a · text, dark bg</code></div></div>
+      <div class="sw"><div class="chip" style="background:var(--ink-500)"></div><div class="meta"><b>Ink 500</b><code>#64748b · meta text</code></div></div>
+      <div class="sw"><div class="chip" style="background:var(--ink-300)"></div><div class="meta"><b>Ink 300</b><code>#cbd5e1 · borders</code></div></div>
+      <div class="sw"><div class="chip" style="background:var(--paper-100);border-bottom:1px solid var(--ink-200)"></div><div class="meta"><b>Paper 100</b><code>#f5f4f1 · page bg</code></div></div>
+      <div class="sw"><div class="chip" style="background:#fff;border-bottom:1px solid var(--ink-200)"></div><div class="meta"><b>Paper 0</b><code>#ffffff · cards</code></div></div>
+      <div class="sw"><div class="chip" style="background:var(--ember-500)"></div><div class="meta"><b>Ember 500</b><code>#f97316 · accent, mark</code></div></div>
+      <div class="sw"><div class="chip" style="background:var(--ember-700)"></div><div class="meta"><b>Ember 700</b><code>#c2410c · CTA (AA)</code></div></div>
+      <div class="sw"><div class="chip" style="background:var(--ember-50);border-bottom:1px solid var(--ink-200)"></div><div class="meta"><b>Ember 50</b><code>#fff7ed · tint wash</code></div></div>
+      <div class="sw"><div class="chip" style="background:var(--blocker-600)"></div><div class="meta"><b>Blocker</b><code>#dc2626 · fail</code></div></div>
+      <div class="sw"><div class="chip" style="background:var(--advisory-500)"></div><div class="meta"><b>Advisory</b><code>#f59e0b · warn</code></div></div>
+      <div class="sw"><div class="chip" style="background:var(--pass-600)"></div><div class="meta"><b>Pass</b><code>#16a34a · pass</code></div></div>
+      <div class="sw"><div class="chip" style="background:var(--paper-200)"></div><div class="meta"><b>Paper 200</b><code>#eae7e1 · warm edge</code></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ TYPE ============================ -->
+<section id="type">
+  <div class="wrap">
+    <p class="eyebrow">04 · Typography</p>
+    <h2 class="sec">System stack — zero webfont bytes</h2>
+    <p class="sec-sub">Honest with the “lightweight &amp; fast” constraint and native to makers’ machines.
+      Monospace is the <em>instrument readout</em>: check IDs and mm coordinates feel like a caliper display.</p>
+    <div class="card ts">
+      <div><span style="font-size:40px;font-weight:800;letter-spacing:-.02em">Will that file actually cut?</span><span class="tag">hero · 800</span></div>
+      <div><span style="font-size:24px;font-weight:700">Structurally sound — 2 warnings to review</span><span class="tag">H2 · 700</span></div>
+      <div><span style="font-size:16px;font-weight:600">Open paths — where the part won’t release</span><span class="tag">card title · 600</span></div>
+      <div><span style="font-size:16px">“The file is good” and “the cut is perfect” are two different promises. We make the first one, completely.</span><span class="tag">body · 400</span></div>
+      <div><span style="font-family:var(--mono);font-size:13px;color:var(--ink-700)">PC-01 · (128.4, 96.2) mm · 4 found</span><span class="tag">instrument · mono</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ ICONS ============================ -->
+<section id="icons">
+  <div class="wrap">
+    <p class="eyebrow">05 · Iconography</p>
+    <h2 class="sec">2px stroke, rounded, geometric — the caliper feel</h2>
+    <p class="sec-sub">No fills, no duotone, 24px grid. Status badges keep the circular system, formalized.</p>
+    <div class="card">
+      <div class="iconrow" style="margin-bottom:26px">
+        <div class="icd"><span class="badge" style="background:var(--blocker-600)">✕</span>Fail</div>
+        <div class="icd"><span class="badge" style="background:var(--advisory-500)">!</span>Warn</div>
+        <div class="icd"><span class="badge" style="background:var(--pass-600)">✓</span>Pass</div>
+      </div>
+      <div class="iconrow">
+        <!-- registration bracket -->
+        <div class="icd"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--ink-700)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8 V4 H8"/><path d="M16 4 H20 V8"/><path d="M20 16 V20 H16"/><path d="M8 20 H4 V16"/></svg>Registration</div>
+        <!-- path node -->
+        <div class="icd"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--ink-700)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18 L11 6 L20 14"/><circle cx="4" cy="18" r="2" fill="var(--ink-700)"/><circle cx="11" cy="6" r="2" fill="none"/><circle cx="20" cy="14" r="2" fill="none"/></svg>Path node</div>
+        <!-- caliper -->
+        <div class="icd"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--ink-700)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5 H21"/><path d="M3 5 V9"/><path d="M21 5 V9"/><path d="M8 5 V19"/><path d="M14 5 V15"/></svg>Caliper</div>
+        <!-- inspect -->
+        <div class="icd"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--ink-700)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="6"/><path d="M14.5 14.5 L20 20"/><path d="M7.5 10 L9.5 12 L12.5 8"/></svg>Inspect</div>
+        <!-- laser dot -->
+        <div class="icd"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--ember-600)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 V7"/><path d="M12 17 V21"/><path d="M3 12 H7"/><path d="M17 12 H21"/><circle cx="12" cy="12" r="2.5" fill="var(--ember-600)"/></svg>Laser dot</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ VOICE ============================ -->
+<section id="voice">
+  <div class="wrap">
+    <p class="eyebrow">06 · Voice &amp; tone</p>
+    <h2 class="sec">Maker-to-maker. Name the mechanism.</h2>
+    <p class="sec-sub">Short declaratives. Concrete failure modes over abstractions. Numbers where possible.
+      Never imply a clean <em>cut</em> — only pass/fail on specific structural checks.</p>
+    <div class="voice">
+      <div class="col yes">
+        <h4>✓ We say</h4>
+        <ul>
+          <li>“Open paths — the #1 cause of parts that won’t release.”</li>
+          <li>“Two spans are under 0.8 mm — they may burn through 3 mm ply.”</li>
+          <li>“‘The file is good’ and ‘the cut is perfect’ are different promises. We make the first one.”</li>
+        </ul>
+      </div>
+      <div class="col no">
+        <h4>✕ We never say</h4>
+        <ul>
+          <li>“AI-powered laser optimization that guarantees perfect cuts every time.”</li>
+          <li>“Upload your design and let our magic do the rest ✨”</li>
+          <li>Vague reassurance with no mechanism, no number, no named check.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ HONEST BOX ============================ -->
+<section id="honest">
+  <div class="wrap">
+    <p class="eyebrow">07 · A first-class brand element</p>
+    <h2 class="sec">The “What we won’t pretend” box</h2>
+    <p class="sec-sub">Not fine print — the brand’s proof of honesty. It appears on every surface that
+      renders a verdict or the value prop, stamped in a heavy ink border. It sells nothing; that’s the point.</p>
+    <div class="honest">
+      <div class="hd">
+        <span class="stamp">The honest part</span>
+        <h3>What we won’t pretend.</h3>
+      </div>
+      <p>We can’t see your laser. Power, speed, focus, and the board you loaded are yours to dial in.
+        We guarantee the <em>file</em> is structurally sound — closed, clean, correctly scaled and layered.
+        That’s the promise we can keep.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ PRODUCT DEMO ============================ -->
+<section id="demo">
+  <div class="wrap">
+    <p class="eyebrow">08 · The brand, applied</p>
+    <h2 class="sec">The checker, wearing the kit</h2>
+    <p class="demo-note">A mockup of the Phase-0 checker built entirely from these tokens — the true test of a brand kit is a real surface.</p>
+    <div class="app">
+      <div class="appbar">
+        <svg width="26" height="26" viewBox="0 0 40 40"><rect width="40" height="40" rx="9" fill="#0f172a"/><g stroke="#334155" stroke-width="1.5" stroke-linecap="round" fill="none"><path d="M6 10 V6 H10"/><path d="M30 6 H34 V10"/><path d="M34 30 V34 H30"/><path d="M10 34 H6 V30"/></g><path d="M11 20.5 L17 26.5 L30 12" fill="none" stroke="#f97316" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="11" cy="20.5" r="2.3" fill="#dc2626"/></svg>
+        <span class="wm"><span style="color:var(--ink-900)">Laser</span><span style="color:var(--ember-700)">Ready</span></span>
+        <span class="muted" style="margin-left:auto;font-size:13px">Nothing leaves your browser.</span>
+      </div>
+      <div class="appbody">
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div class="dropzone armed">
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="var(--ember-600)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16 V4"/><path d="M8 8 L12 4 L16 8"/><path d="M4 16 V19 A1 1 0 0 0 5 20 H19 A1 1 0 0 0 20 19 V16"/></svg>
+            <div style="font-weight:600">Drop your SVG or DXF</div>
+            <div class="hint">or</div>
+            <button class="btn">Check my file</button>
+            <div class="hint">Etsy, AI-generated, or self-drawn — any source.</div>
+          </div>
+        </div>
+        <div>
+          <div class="verdict warn">
+            <b>Structurally sound — 2 warnings to review</b>
+            <span class="sub">tray.dxf · 300 × 200 mm · 6 checks run</span>
+          </div>
+          <div class="panel">
+            <div class="checkrow"><span class="badge" style="background:var(--advisory-500)">!</span>
+              <div><span class="ttl">Thin features</span><span class="id">FM-01 · 2 found</span>
+                <div class="desc">Two spans are under 0.8 mm — they may burn through 3 mm ply.</div></div></div>
+            <div class="checkrow"><span class="badge" style="background:var(--advisory-500)">!</span>
+              <div><span class="ttl">Node bloat</span><span class="id">GH-01 · 1 path</span>
+                <div class="desc">One curve has 1,240 nodes — the head may stutter. Simplify to smooth it.</div></div></div>
+            <div class="checkrow"><span class="badge" style="background:var(--pass-600)">✓</span>
+              <div><span class="ttl">Open paths</span><span class="id">PC-01 · 0 found</span>
+                <div class="desc">Every outline closes. Parts will release from the sheet.</div></div></div>
+            <div class="checkrow"><span class="badge" style="background:var(--pass-600)">✓</span>
+              <div><span class="ttl">Duplicate lines</span><span class="id">PC-02 · 0 found</span>
+                <div class="desc">No doubled cuts. Clean.</div></div></div>
+          </div>
+          <div class="honest" style="margin-top:16px;max-width:none">
+            <div class="hd"><span class="stamp">The honest part</span><h3 style="font-size:16px">What we won’t pretend.</h3></div>
+            <p style="font-size:14px">We validate the <em>file</em>, not the <em>cut</em>. Power, speed, and focus are yours to dial in.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>LaserReady — Brand Kit v1 · the honest inspector</span>
+    <span><code>brand/BRAND-KIT.md</code> · <code>brand/tokens.css</code> · <code>brand/logo/*.svg</code></span>
+  </div>
+</footer>
+
+</body>
+</html>
