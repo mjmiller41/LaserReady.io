@@ -75,6 +75,25 @@ interface SvgParseAcc {
   warned: Set<string>;
   /** Flattening tolerance in root user units. */
   tolRoot: number;
+  /** Cumulative flattened-point count — the parse-bomb budget. */
+  points: number;
+}
+
+/**
+ * Parse-bomb guard: curve flattening amplifies input (one pathological cubic can subdivide
+ * to ~1M points), so a small file can otherwise OOM the tab. The budget is generous for
+ * real work — a dense 15 MB vector map flattens to well under this — and deterministic:
+ * same bytes, same count, same outcome.
+ */
+const MAX_POINTS = 2_000_000;
+
+function addPoints(acc: SvgParseAcc, n: number): void {
+  acc.points += n;
+  if (acc.points > MAX_POINTS) {
+    throw new FileParseError(
+      'geometry is too complex to validate — flattening exceeded 2 million points; simplify the file and try again',
+    );
+  }
 }
 
 function warnOnce(acc: SvgParseAcc, msg: string): void {
@@ -189,6 +208,7 @@ function ellipseSubpath(
   ry: number,
   ctm: Mat,
   tolRoot: number,
+  acc: SvgParseAcc,
 ): SubPath {
   const kx = rx * KAPPA;
   const ky = ry * KAPPA;
@@ -223,6 +243,7 @@ function ellipseSubpath(
   for (const [p0, c1, c2, p3] of curves) {
     const flat: Pt[] = [];
     flattenCubic(applyMat(ctm, p0), applyMat(ctm, c1), applyMat(ctm, c2), applyMat(ctm, p3), tolRoot, flat);
+    addPoints(acc, flat.length);
     for (const p of flat) pushPt(pts, p);
   }
   // Last point coincides with the first — drop it; `closed` carries the closing edge.
@@ -269,6 +290,7 @@ function pathSubpaths(
       case SVGPathData.LINE_TO: {
         ensureStart();
         const p = { x: cmd.x, y: cmd.y };
+        addPoints(acc, 1);
         pushPt(pts, applyMat(ctm, p));
         cur = p;
         break;
@@ -286,6 +308,7 @@ function pathSubpaths(
           tolRoot,
           flat,
         );
+        addPoints(acc, flat.length);
         for (const p of flat) pushPt(pts, p);
         cur = p3;
         break;
@@ -302,6 +325,7 @@ function pathSubpaths(
           tolRoot,
           flat,
         );
+        addPoints(acc, flat.length);
         for (const p of flat) pushPt(pts, p);
         cur = p2;
         break;
@@ -349,6 +373,7 @@ export function parseSvg(text: string, opts: ResolvedOptions): NormalizedDoc {
     warnings: [],
     warned: new Set(),
     tolRoot: 0.05,
+    points: 0,
   };
 
   // ---- Unit resolution (SZ-01 basis) ----
@@ -366,26 +391,33 @@ export function parseSvg(text: string, opts: ResolvedOptions): NormalizedDoc {
 
   let scaleGuess: number;
   let unitDraft: UnitInfo;
-  if (wl && wPhysUnit !== null && wl.value > 0) {
-    if (vb && vb.w > 0 && vb.h > 0) {
-      const sx = (wl.value * wPhysUnit) / vb.w;
-      const sy = hl && hPhysUnit !== null && hl.value > 0 ? (hl.value * hPhysUnit) / vb.h : sx;
-      if (Math.abs(sx - sy) / Math.max(sx, sy) > 0.005) {
-        warnOnce(
-          acc,
-          'width/height aspect ratio differs from the viewBox — assuming uniform ("meet") scaling',
-        );
-      }
-      scaleGuess = Math.min(sx, sy);
-    } else {
-      // Physical page size without a viewBox: user units are CSS px.
-      scaleGuess = PX_TO_MM;
+  if (wl && wPhysUnit !== null && wl.value > 0 && vb && vb.w > 0 && vb.h > 0) {
+    const sx = (wl.value * wPhysUnit) / vb.w;
+    const sy = hl && hPhysUnit !== null && hl.value > 0 ? (hl.value * hPhysUnit) / vb.h : sx;
+    if (Math.abs(sx - sy) / Math.max(sx, sy) > 0.005) {
+      warnOnce(
+        acc,
+        'width/height aspect ratio differs from the viewBox — assuming uniform ("meet") scaling',
+      );
     }
+    scaleGuess = Math.min(sx, sy);
     unitDraft = {
       valid: true,
       source: 'svg-physical',
       scaleToMm: scaleGuess,
       detail: `SVG declares physical units (width="${widthRaw}"${heightRaw !== undefined ? `, height="${heightRaw}"` : ''})`,
+      resolvedByIntendedSize: false,
+    };
+  } else if (wl && wPhysUnit !== null && wl.value > 0) {
+    // Physical page size but NO viewBox: coordinates are raw px and nothing ties them to
+    // the declared width — the real-world size rests on a 96 px/inch assumption we cannot
+    // verify. Claiming "svg-physical" here would stake the guarantee on a guess.
+    scaleGuess = PX_TO_MM;
+    unitDraft = {
+      valid: false,
+      source: 'svg-px-guess',
+      scaleToMm: scaleGuess,
+      detail: `width="${widthRaw}" declares a physical size but there is no viewBox — coordinates are raw px and the real-world size is not verifiable (assumed 96 px/inch)`,
       resolvedByIntendedSize: false,
     };
   } else {
@@ -492,7 +524,7 @@ export function parseSvg(text: string, opts: ResolvedOptions): NormalizedDoc {
       case 'circle': {
         const r = parseNum(el, 'r');
         if (!(r > 0)) return;
-        const sp = ellipseSubpath(parseNum(el, 'cx'), parseNum(el, 'cy'), r, r, ctm, acc.tolRoot);
+        const sp = ellipseSubpath(parseNum(el, 'cx'), parseNum(el, 'cy'), r, r, ctm, acc.tolRoot, acc);
         pushEntity(el, state, [sp], 8);
         return;
       }
@@ -500,14 +532,31 @@ export function parseSvg(text: string, opts: ResolvedOptions): NormalizedDoc {
         const rx = parseNum(el, 'rx');
         const ry = parseNum(el, 'ry');
         if (!(rx > 0) || !(ry > 0)) return;
-        const sp = ellipseSubpath(parseNum(el, 'cx'), parseNum(el, 'cy'), rx, ry, ctm, acc.tolRoot);
+        const sp = ellipseSubpath(parseNum(el, 'cx'), parseNum(el, 'cy'), rx, ry, ctm, acc.tolRoot, acc);
         pushEntity(el, state, [sp], 8);
         return;
       }
       case 'line': {
+        // A present-but-unparseable coordinate must not silently become 0 — that would
+        // invent geometry. Missing attributes legitimately default to 0 per the SVG spec.
+        const coord = (attr: string): number | null => {
+          const raw = el.attrs[attr];
+          if (raw === undefined) return 0;
+          const v = parseSvgLength(raw);
+          return v ? v.value : null;
+        };
+        const x1 = coord('x1');
+        const y1 = coord('y1');
+        const x2 = coord('x2');
+        const y2 = coord('y2');
+        if (x1 === null || y1 === null || x2 === null || y2 === null) {
+          warnOnce(acc, '<line> has malformed coordinates — element skipped');
+          noteUnsupported(acc, '<line> with malformed coordinates');
+          return;
+        }
         const pts = [
-          { x: parseNum(el, 'x1'), y: parseNum(el, 'y1') },
-          { x: parseNum(el, 'x2'), y: parseNum(el, 'y2') },
+          { x: x1, y: y1 },
+          { x: x2, y: y2 },
         ].map((p) => applyMat(ctm, p));
         pushEntity(el, state, [{ pts, closed: false }], 2);
         return;
@@ -520,13 +569,16 @@ export function parseSvg(text: string, opts: ResolvedOptions): NormalizedDoc {
           .filter((s) => s.length > 0)
           .map(Number);
         if (nums.some((v) => !Number.isFinite(v))) {
+          // Dropped geometry must never be silent — it voids guaranteed_pass via FV-01.
           warnOnce(acc, `<${name}> points attribute has malformed numbers — element skipped`);
+          noteUnsupported(acc, `<${name}> with malformed coordinates`);
           return;
         }
         if (nums.length % 2 !== 0) {
           warnOnce(acc, `<${name}> has an odd number of coordinates — last one dropped`);
           nums.pop();
         }
+        addPoints(acc, nums.length / 2);
         const pts: Pt[] = [];
         for (let k = 0; k + 1 < nums.length; k += 2) {
           pushPt(pts, applyMat(ctm, { x: nums[k]!, y: nums[k + 1]! }));
@@ -563,7 +615,10 @@ export function parseSvg(text: string, opts: ResolvedOptions): NormalizedDoc {
     }
   };
 
-  const rootState: WalkState = { ctm: IDENTITY, fill: undefined, stroke: undefined, layer: null };
+  // A viewBox with a non-zero origin shifts every user coordinate: compose the origin
+  // translation into the root CTM so reported finding positions are correct.
+  const rootCtm = vb && (vb.x !== 0 || vb.y !== 0) ? translation(-vb.x, -vb.y) : IDENTITY;
+  const rootState: WalkState = { ctm: rootCtm, fill: undefined, stroke: undefined, layer: null };
   for (const child of root.children) walk(child, rootState);
 
   // ---- Finalize scale ----

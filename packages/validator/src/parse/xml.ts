@@ -40,7 +40,11 @@ function decodeEntities(s: string): string {
           ent[1] === 'x' || ent[1] === 'X'
             ? parseInt(ent.slice(2), 16)
             : parseInt(ent.slice(1), 10);
-        return Number.isFinite(code) ? String.fromCodePoint(code) : '';
+        // Range-guard: fromCodePoint THROWS above 0x10FFFF, which would escape the
+        // FileParseError contract. Out-of-range refs decode to nothing, like other junk.
+        return Number.isFinite(code) && code >= 0 && code <= 0x10ffff
+          ? String.fromCodePoint(code)
+          : '';
       }
     }
   });
