@@ -1,8 +1,5 @@
 # CLAUDE.md — LaserReady.io
 
-## First Read
-@../CLAUDE.md
-
 Project context and guardrails for any coding agent working in this repo. Read `docs/` for depth; the
 authoritative sources are `docs/laserready-build-prompt.md` (the task) and `docs/validator-checklist-spec.md`
 (the checks). If anything here conflicts with those two, they win.
@@ -96,8 +93,3 @@ authoritative) · `docs/build-plan.md` · `docs/product-spec.md` · `docs/phase0
 Michael J. Miller (Timber Trace Crafts) — solo full-stack (Node, PHP/Laravel, TypeScript, React), Avon Park FL.
 Prefers concise, direct communication. Tech stack is never a constraint — build whatever is right. The sibling
 LightBurn-clone app is handled by a separate team/agents; keep LaserReady architecturally independent from it.
-
-## gstack
-
-- Use the `/browse` skill from gstack for all web browsing. Never use `mcp__claude-in-chrome__*` tools.
-- Available gstack skills: `/office-hours`, `/plan-ceo-review`, `/plan-eng-review`, `/plan-design-review`, `/design-consultation`, `/design-shotgun`, `/design-html`, `/review`, `/ship`, `/land-and-deploy`, `/canary`, `/benchmark`, `/browse`, `/connect-chrome`, `/qa`, `/qa-only`, `/design-review`, `/setup-browser-cookies`, `/setup-deploy`, `/setup-gbrain`, `/retro`, `/investigate`, `/document-release`, `/document-generate`, `/codex`, `/cso`, `/autoplan`, `/plan-devex-review`, `/devex-review`, `/careful`, `/freeze`, `/guard`, `/unfreeze`, `/gstack-upgrade`, `/learn`.
