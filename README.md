@@ -11,10 +11,13 @@ the laser before you waste material.
 
 ```bash
 pnpm install
+pnpm typecheck   # strict tsc across validator + web
 pnpm test        # validator suite (fixtures in samples/)
 pnpm build       # validator dist + static site (apps/web/dist)
 pnpm --filter @laserready/web dev   # local dev server
 ```
+
+CI (`.github/workflows/ci.yml`) runs typecheck + lint + test + build on every push and PR.
 
 Deployment: see [`DEPLOY.md`](DEPLOY.md).
 MailerLite capture ids are baked at build time via `deploy/.env` (see `deploy/.env.example`); without them the
