@@ -1,0 +1,216 @@
+---
+title: "How to Make an SVG Laser-Ready: The Complete File-Prep Checklist"
+slug: how-to-make-svg-laser-ready
+description: "A step-by-step checklist to make any SVG laser-ready: close open paths, remove double lines, set correct units and scale, map cut vs engrave colors, convert text to paths, and strip hidden rasters — before you waste material."
+keywords:
+  - how to make an svg laser-ready
+  - laser-ready svg
+  - laser cut file requirements
+  - prepare svg for laser cutting
+  - laser ready file checklist
+canonical: https://laserready.io/blog/how-to-make-svg-laser-ready
+author:
+  name: Michael Miller
+  title: Maker & founder, LaserReady.io (Timber Trace Crafts)
+publishedAt: 2026-07-07
+updatedAt: 2026-07-07
+category: File prep
+hub: true
+ogImage: /blog/og/how-to-make-svg-laser-ready.png
+---
+
+# How to Make an SVG Laser-Ready: The Complete File-Prep Checklist
+
+**To make an SVG laser-ready, work through seven checks before you send it to the machine:
+(1) close every cut path, (2) remove duplicate and overlapping lines, (3) set real-world units
+and confirm the scale, (4) map colors to the right cut/engrave operations, (5) convert all text
+to paths, (6) delete hidden raster images from cut layers, and (7) simplify paths that carry
+thousands of nodes.** A file that passes all seven cuts on the first try. A file that fails even
+one usually wastes a sheet of material to teach you which one.
+
+Below is each check, why it matters on the bed, and exactly how to fix it in the vector editor
+you already use.
+
+> **Key takeaways**
+> - "Looks right in the preview" and "cuts right on the laser" are two different things — a
+>   preview renders pixels; a laser follows geometry.
+> - The failure that burns the most material is the **open path**: a cut outline with a gap never
+>   fully separates, so the part won't release.
+> - Most fixes take seconds once you can *see* the problem — the hard part is that these defects
+>   are invisible on screen.
+> - You can check any SVG or DXF for all seven problems in your browser with the free
+>   [LaserReady checker](https://laserready.io) before you cut. Nothing uploads; it runs locally.
+
+## What "laser-ready" actually means
+
+A laser doesn't see your artwork. It sees **paths** (lines to follow) and **operations** (cut,
+score, or engrave) mapped to those paths. "Laser-ready" means the file describes exactly the
+geometry and operations you intend, in units the machine understands, with nothing extra that
+will confuse the toolpath.
+
+That is a stricter standard than "opens in Illustrator without errors." A file can look perfect
+in every design tool and still fail on the bed, because design tools are built to render an image,
+not to simulate a cut. The seven checks below are the gap between those two worlds.
+
+## The 7-point laser-ready checklist
+
+### 1. Close every cut path
+
+**Why it matters:** A cut path has to be a closed loop for the part to fully separate from the
+sheet. If an outline has even a tiny gap — two endpoints that look joined but aren't — the laser
+traces right past the opening and the part stays attached by that sliver. Worse, an "open" path
+that overlaps itself can double-burn one edge.
+
+Open paths are the single most common reason a bought or AI-generated file won't cut cleanly, and
+they are nearly impossible to spot by eye because the gap is often sub-millimeter.
+
+**How to fix it:** Select the path and use your editor's *join* command (in Inkscape, select the
+two end nodes and press `Shift+J` / **Join selected nodes**; in Illustrator, `Object > Path > Join`
+or `Ctrl/Cmd+J`). For a whole file, closing paths one by one is tedious — this is exactly the kind
+of defect a checker is worth running first, so you only hunt down the paths that are actually open.
+
+### 2. Remove duplicate and overlapping lines
+
+**Why it matters:** Two identical lines stacked on top of each other look like one line on screen,
+but the laser cuts both — doubling the burn on that edge (charring, wider kerf) and doubling the
+job time. Bundled marketplace files and files pasted together from multiple sources are the usual
+source of duplicates.
+
+**How to fix it:** In Inkscape/Illustrator, look for a *"remove duplicate"* or *"merge"* function,
+or run a boolean **Union** on shapes that should be one outline. Watch for lines that are offset by
+a hair rather than perfectly stacked — those need to be deleted manually.
+
+### 3. Set real-world units and confirm the scale
+
+**Why it matters:** SVG is a screen format; it does not guarantee a physical size. A file authored
+in pixels can import as the wrong size, or as an ambiguous size the laser software has to guess at.
+DXF has the same trap in reverse — the drawing units (mm vs inch vs unitless) may not match what
+your laser software assumes. The result is a design that comes in at 10x or 1/25th the size you
+expected, or simply doesn't fit the bed.
+
+**How to fix it:** Set your document units explicitly (mm is safest for laser work) and set the
+artboard/viewBox so 1 unit = 1 mm. After import, always confirm a known dimension — measure a part
+you know should be, say, 50 mm and verify the software agrees before you cut.
+
+### 4. Map colors to the right operations (cut vs engrave)
+
+**Why it matters:** Most laser workflows decide *what to do* with a shape based on its color or
+layer, not its shape. A filled shape that you meant to cut can come in as an engrave; a stroke in
+the wrong color can be ignored entirely. This is the "RGB vs cut/engrave" mapping problem, and it's
+why a design that renders as a nice black-and-white graphic can do the wrong operation everywhere.
+
+**How to fix it:** Decide your convention up front and apply it consistently: e.g., pure red
+(`#FF0000`) strokes = cut, black fills = engrave, blue = score. Make cut lines **strokes** (lines),
+not fills, and reserve **fills** for engraves. Then confirm the mapping in your laser software's
+layer/color panel before running.
+
+### 5. Convert all text to paths
+
+**Why it matters:** Text in an SVG references a **font**. If the machine or laser software doesn't
+have that exact font installed, the text reflows to a substitute — or disappears. What cut on your
+screen becomes garbled or missing on someone else's setup.
+
+**How to fix it:** Select all text and convert it to outlines/paths (Inkscape: **Path > Object to
+Path**; Illustrator: **Type > Create Outlines**, `Shift+Ctrl/Cmd+O`). Do this on a copy — once text
+is a path you can no longer edit the words. After converting, re-check for open paths (step 1), as
+outlined text occasionally introduces them.
+
+### 6. Delete hidden rasters from cut layers
+
+**Why it matters:** A laser can't *cut* a bitmap — it can only engrave one. A "cut file" that has a
+PNG or JPG smuggled inside it (a common artifact of files traced or exported from image tools) will
+either be ignored or engraved when you expected a cut, and it bloats the file. Because the raster
+often sits under the vectors, you won't see it on screen.
+
+**How to fix it:** Open the objects/layers panel and look for embedded image objects. Delete any
+raster that isn't intentionally meant to be engraved. If you *do* want an engrave from an image,
+put it on its own clearly labeled engrave layer.
+
+### 7. Simplify paths with thousands of nodes
+
+**Why it matters:** A smooth curve should be a handful of Bezier nodes. Auto-traced or
+over-detailed files can carry a "curve" made of thousands of tiny segments. The laser head
+stutters trying to follow every node, cut quality drops, and some software chokes on import.
+
+**How to fix it:** Use your editor's **Simplify** command (Inkscape: **Path > Simplify**,
+`Ctrl/Cmd+L`) in small doses, checking that the shape still looks right. For auto-traced art,
+re-tracing at a lower detail setting often beats simplifying after the fact.
+
+## A note on stroke width and "hairline" cuts
+
+A frequent point of confusion: does the **stroke width** of a line control the cut? On most laser
+software the machine follows the *centerline* of the path regardless of how thick the stroke looks
+on screen — so a 5 px stroke and a 0.01 mm stroke cut the same line. What matters is that the cut
+geometry is a **line (stroke)** and not a **filled shape**, and that it's mapped to the cut
+operation (step 4). Some workflows do use a specific thin "hairline" stroke as the signal for
+*"this is a cut, not an engrave,"* so match whatever convention your laser software expects — but
+don't assume a thicker stroke cuts a wider slot. It doesn't.
+
+## The fastest way to check all seven at once
+
+Working through this list by hand means opening the node editor and hunting for defects you can't
+see. That's slow, and it's easy to miss the sub-millimeter gap that ruins the cut.
+
+That's the reason we built [LaserReady](https://laserready.io): drop in any SVG or DXF — one you
+bought, one an AI made, or one you drew — and it reads the file the way your laser will and reports
+exactly which of these problems are present, where, and how serious, in plain English. It runs in
+your browser, so the file never leaves your computer, and the check is free.
+
+Today LaserReady **finds** the problems so you can fix them before wasting material. One-click
+repair and clean, machine-ready export are on the way — but the checker is real and free right now.
+
+## Frequently asked questions
+
+**Is an SVG automatically laser-ready if it opens in my design software?**
+No. Design software renders artwork; it doesn't verify cut geometry. A file can open and preview
+perfectly and still have open paths, wrong units, or hidden rasters that only surface on the laser.
+
+**Does stroke width control how wide the laser cuts?**
+Generally no. Most laser software follows the path centerline, so stroke width is a visual property,
+not a cut width. What matters is that cut lines are strokes (not fills) and mapped to the cut
+operation. Some setups use a thin "hairline" stroke only as a *signal* that a line is a cut.
+
+**Do I have to convert text to paths for laser cutting?**
+Yes, in almost every case. Text references a font that the target machine may not have installed,
+which causes the text to reflow or vanish. Converting text to outlines locks the shapes so they cut
+as designed.
+
+**What's the difference between preparing an SVG and a DXF for laser?**
+The seven checks apply to both, but the common failure points differ: SVGs most often have unit/scale
+ambiguity and hidden rasters, while DXFs most often have open polylines and unit mismatches (mm vs
+inch). LaserReady checks both formats.
+
+**Why won't my file cut even though it looks fine?**
+Almost always one of the seven problems above — most often an open path or a color/layer mapped to
+the wrong operation. See our companion guide,
+[Why Won't My File Cut? 7 Reasons a Laser File Fails](https://laserready.io/blog/why-wont-my-file-cut).
+
+---
+
+*Related: [Why Won't My File Cut? 7 Reasons a Laser File Fails (and How to Fix Each)](https://laserready.io/blog/why-wont-my-file-cut) - Check any file free at [laserready.io](https://laserready.io).*
+
+{/* JSON-LD: BlogPosting + FAQPage. Inject into <head> at render time. */}
+export const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BlogPosting",
+      "headline": "How to Make an SVG Laser-Ready: The Complete File-Prep Checklist",
+      "description": "A step-by-step checklist to make any SVG laser-ready: close open paths, remove double lines, set units and scale, map cut vs engrave colors, convert text to paths, and strip hidden rasters.",
+      "author": { "@type": "Person", "name": "Michael Miller" },
+      "publisher": { "@type": "Organization", "name": "LaserReady.io" },
+      "datePublished": "2026-07-07",
+      "dateModified": "2026-07-07",
+      "mainEntityOfPage": "https://laserready.io/blog/how-to-make-svg-laser-ready"
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        { "@type": "Question", "name": "Is an SVG automatically laser-ready if it opens in my design software?", "acceptedAnswer": { "@type": "Answer", "text": "No. Design software renders artwork; it does not verify cut geometry. A file can preview perfectly and still have open paths, wrong units, or hidden rasters that only surface on the laser." } },
+        { "@type": "Question", "name": "Does stroke width control how wide the laser cuts?", "acceptedAnswer": { "@type": "Answer", "text": "Generally no. Most laser software follows the path centerline, so stroke width is visual, not a cut width. What matters is that cut lines are strokes, not fills, and mapped to the cut operation." } },
+        { "@type": "Question", "name": "Do I have to convert text to paths for laser cutting?", "acceptedAnswer": { "@type": "Answer", "text": "Yes, in almost every case. Text references a font the target machine may not have, which causes reflow or missing text. Converting text to outlines locks the shapes so they cut as designed." } },
+        { "@type": "Question", "name": "Why won't my file cut even though it looks fine?", "acceptedAnswer": { "@type": "Answer", "text": "Almost always an open path or a color/layer mapped to the wrong operation. Both are invisible in a normal preview and only surface on the machine." } }
+      ]
+    }
+  ]
+};

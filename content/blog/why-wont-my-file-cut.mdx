@@ -1,0 +1,196 @@
+---
+title: "Why Won't My File Cut? 7 Reasons a Laser File Fails (and How to Fix Each)"
+slug: why-wont-my-file-cut
+description: "Your laser file looks fine but won't cut right? Here are the 7 reasons a file fails on the machine — open paths, double lines, wrong scale, bad color mapping, unconverted text, hidden rasters, node bloat — with the symptom, cause, and fix for each."
+keywords:
+  - why won't my file cut
+  - why won't my svg cut
+  - laser file not cutting
+  - open path laser cutting
+  - svg not cutting glowforge
+canonical: https://laserready.io/blog/why-wont-my-file-cut
+author:
+  name: Michael Miller
+  title: Maker & founder, LaserReady.io (Timber Trace Crafts)
+publishedAt: 2026-07-07
+updatedAt: 2026-07-07
+category: Troubleshooting
+hub: false
+hubRef: how-to-make-svg-laser-ready
+ogImage: /blog/og/why-wont-my-file-cut.png
+---
+
+# Why Won't My File Cut? 7 Reasons a Laser File Fails (and How to Fix Each)
+
+**If your laser file looks correct but won't cut right, the cause is almost always one of seven
+things: an open path, duplicate/overlapping lines, wrong units or scale, colors mapped to the
+wrong operation, text that was never converted to paths, a hidden raster inside a cut layer, or a
+path so dense with nodes that the machine stalls.** Every one of these is invisible in a normal
+preview — which is exactly why "but it looks fine" is the most expensive sentence in laser cutting.
+
+Use this as a diagnostic. Find your symptom, read the cause, apply the fix.
+
+> **Key takeaways**
+> - The preview shows pixels; the laser follows geometry. Most "won't cut" files render perfectly
+>   and still fail because the defect is sub-millimeter or hidden under other objects.
+> - The most common culprit by far is the **open path** — a cut outline with a gap the eye can't
+>   see, so the part never releases.
+> - You don't have to guess which of the seven it is. The free
+>   [LaserReady checker](https://laserready.io) reads the file the way your laser will and names the
+>   problem — in your browser, before you burn a sheet.
+
+## 1. The outline has an open path (the part won't release)
+
+**Symptom:** The part cuts most of the way but stays attached by a small tab, or the outline
+doesn't separate at all.
+
+**Cause:** The cut path isn't a closed loop. Two endpoints that look joined on screen are actually
+a hair apart, so the laser traces past the gap and never completes the outline.
+
+**Fix:** Select the path, find the open end nodes, and join them (Inkscape: select both nodes and
+press `Shift+J`; Illustrator: `Object > Path > Join`). Because the gap is usually invisible, the
+reliable move is to run a check that *flags which paths are open* instead of hunting node by node.
+
+## 2. Two lines are stacked on top of each other (double burn, doubled time)
+
+**Symptom:** One edge is charred, wider, or noticeably darker than the rest; the job takes longer
+than it should for the geometry.
+
+**Cause:** A duplicate line sits directly on top of another. On screen they read as one line; the
+laser cuts both. This is extremely common in bundled marketplace files and in art assembled from
+multiple sources.
+
+**Fix:** Run a *remove-duplicate* or **Union** operation to merge stacked geometry. Also look for
+lines offset by a fraction — those aren't perfectly stacked, so a dedupe won't catch them and you'll
+need to delete the extra manually.
+
+## 3. The file imports at the wrong size (or doesn't fit the bed)
+
+**Symptom:** Your 100 mm design shows up as 4 mm, or a meter wide, or the software asks you to pick
+units and gets it wrong.
+
+**Cause:** SVG is a screen format with no guaranteed physical size, and DXF units (mm vs inch vs
+unitless) may not match what your laser software assumes. Either way the software has to guess, and
+sometimes it guesses wrong.
+
+**Fix:** Set your document units explicitly — millimeters are safest for laser work — and set the
+canvas so one unit equals one millimeter. After importing, measure a known dimension and confirm
+the software agrees before you cut anything.
+
+## 4. The color is mapped to the wrong operation (cut becomes engrave)
+
+**Symptom:** A shape you meant to cut engraves instead, or a line you expected to cut is skipped
+entirely.
+
+**Cause:** Most laser software decides *what to do* with a shape from its color or layer, not its
+shape. A filled black graphic reads as an engrave; a stroke in an unrecognized color gets ignored.
+This RGB-to-operation mapping is one of the sneakiest failure modes because the artwork looks
+completely normal.
+
+**Fix:** Make cut lines **strokes** (not fills) and adopt a consistent color convention — for
+example red = cut, black = engrave, blue = score. Then open your laser software's layer/color panel
+and confirm each color is assigned to the operation you actually want.
+
+## 5. Text was never converted to paths (letters vanish or reflow)
+
+**Symptom:** Text looks wrong, shifts to a different font, or disappears when you open the file on
+the laser computer.
+
+**Cause:** Text in a vector file references a font by name. If that exact font isn't installed on
+the machine running the laser, the text falls back to a substitute or drops out — so what cut on
+your screen won't cut on theirs.
+
+**Fix:** Convert every piece of text to outlines/paths on a copy of the file (Inkscape: **Path >
+Object to Path**; Illustrator: **Type > Create Outlines**). After converting, re-check for open
+paths, since outlined text occasionally introduces them.
+
+## 6. There's a hidden raster in a cut layer (the laser can't cut a bitmap)
+
+**Symptom:** Part of the design engraves when you expected a cut, or the file is mysteriously huge,
+or an area does nothing at all.
+
+**Cause:** A PNG or JPG is embedded inside a file you're treating as a cut file — a common artifact
+of tracing or exporting from image tools. A laser can engrave a bitmap but can't cut one, and the
+image often hides underneath the vectors where you won't see it.
+
+**Fix:** Open the objects/layers panel and delete any embedded raster that isn't intentionally an
+engrave. If you *do* want to engrave from that image, move it to its own clearly labeled engrave
+layer.
+
+## 7. A path has thousands of nodes (the head stutters, software chokes)
+
+**Symptom:** The cut is rough or wavy on curves, the head visibly stutters, or the file is slow or
+fails to import.
+
+**Cause:** Auto-traced or over-detailed art can turn a smooth curve into thousands of tiny segments.
+The machine tries to honor every node, which degrades cut quality and can overwhelm the software.
+
+**Fix:** Use **Simplify** (Inkscape: **Path > Simplify**, `Ctrl/Cmd+L`) in small steps, checking the
+shape after each. For auto-traced artwork, re-tracing at a lower detail setting usually beats
+cleaning it up afterward.
+
+## Stop guessing which one it is
+
+Seven possible causes, all invisible in the preview, is a bad place to start a troubleshooting
+session — especially when the test is "cut it and find out," and the cost of being wrong is a ruined
+sheet of material.
+
+That's why [LaserReady](https://laserready.io) exists. Drop in your SVG or DXF and it reads the file
+the way your laser will, then tells you which of these seven problems are present, where they are,
+and how serious each one is — in plain English, worst problem first. It runs entirely in your
+browser (your file never uploads), and it's free.
+
+Right now LaserReady **finds** the problem so you can fix it before wasting material. One-click
+repair and clean, machine-ready export are coming next — but the checker is real and free today.
+
+For the full prep workflow, see the companion guide:
+[How to Make an SVG Laser-Ready: The Complete File-Prep Checklist](https://laserready.io/blog/how-to-make-svg-laser-ready).
+
+## Frequently asked questions
+
+**Why does my file look fine but won't cut?**
+Because a preview renders the image, not the cut geometry. The seven failures above — open paths,
+double lines, wrong scale, bad color mapping, unconverted text, hidden rasters, node bloat — are all
+invisible on screen and only surface on the machine.
+
+**What is the most common reason a laser file fails?**
+An open path: a cut outline with a tiny, unseen gap, so the part never fully separates from the
+sheet. It's also the hardest to spot by eye, which is why it wastes so much material.
+
+**Why does my shape engrave when I wanted it to cut?**
+Its color or layer is mapped to the engrave operation. Most laser software decides the operation from
+color, not shape, so a filled graphic reads as an engrave. Make it a stroke and map its color to cut.
+
+**Can I check a file before cutting instead of test-cutting?**
+Yes. A file checker inspects the geometry directly and reports problems without running the laser.
+LaserReady does this free in your browser for SVG and DXF files.
+
+---
+
+*Related: [How to Make an SVG Laser-Ready: The Complete File-Prep Checklist](https://laserready.io/blog/how-to-make-svg-laser-ready) · Check any file free at [laserready.io](https://laserready.io).*
+
+{/* JSON-LD: BlogPosting + FAQPage. Inject into <head> at render time. */}
+export const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BlogPosting",
+      "headline": "Why Won't My File Cut? 7 Reasons a Laser File Fails (and How to Fix Each)",
+      "description": "The 7 reasons a laser file fails on the machine — open paths, double lines, wrong scale, bad color mapping, unconverted text, hidden rasters, node bloat — with the symptom, cause, and fix for each.",
+      "author": { "@type": "Person", "name": "Michael Miller" },
+      "publisher": { "@type": "Organization", "name": "LaserReady.io" },
+      "datePublished": "2026-07-07",
+      "dateModified": "2026-07-07",
+      "mainEntityOfPage": "https://laserready.io/blog/why-wont-my-file-cut"
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        { "@type": "Question", "name": "Why does my file look fine but won't cut?", "acceptedAnswer": { "@type": "Answer", "text": "A preview renders the image, not the cut geometry. Open paths, double lines, wrong scale, bad color mapping, unconverted text, hidden rasters, and node bloat are all invisible on screen and only surface on the machine." } },
+        { "@type": "Question", "name": "What is the most common reason a laser file fails?", "acceptedAnswer": { "@type": "Answer", "text": "An open path: a cut outline with a tiny, unseen gap so the part never fully separates from the sheet. It is also the hardest to spot by eye, which is why it wastes so much material." } },
+        { "@type": "Question", "name": "Why does my shape engrave when I wanted it to cut?", "acceptedAnswer": { "@type": "Answer", "text": "Its color or layer is mapped to the engrave operation. Most laser software decides the operation from color, not shape, so a filled graphic reads as an engrave. Make it a stroke and map its color to cut." } },
+        { "@type": "Question", "name": "Can I check a file before cutting instead of test-cutting?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. A file checker inspects the geometry directly and reports problems without running the laser. LaserReady does this free in your browser for SVG and DXF files." } }
+      ]
+    }
+  ]
+};
