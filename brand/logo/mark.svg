@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" role="img" aria-label="LaserReady">
+  <!-- Blueprint-ink tile -->
+  <rect width="40" height="40" rx="9" fill="#0f172a"/>
+  <!-- Registration crop marks: this is a cut file -->
+  <g stroke="#334155" stroke-width="1.5" stroke-linecap="round" fill="none">
+    <path d="M6 10 V6 H10"/>
+    <path d="M30 6 H34 V10"/>
+    <path d="M34 30 V34 H30"/>
+    <path d="M10 34 H6 V30"/>
+  </g>
+  <!-- The cut path, inspected and resolved into a check: ready -->
+  <path d="M11 20.5 L17 26.5 L30 12" fill="none" stroke="#f97316" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- The caught defect: the inspector's red pen on the first node -->
+  <circle cx="11" cy="20.5" r="2.3" fill="#dc2626"/>
+</svg>

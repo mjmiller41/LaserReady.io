@@ -1,0 +1,87 @@
+/* =============================================================================
+ * LaserReady — Brand Tokens v1  (Tailwind v4 @theme)
+ * -----------------------------------------------------------------------------
+ * Drop this @theme block into apps/web/src/styles.css, directly after
+ * `@import 'tailwindcss';`. It is ADDITIVE — it generates new utilities
+ * (bg-ink-900, text-ember-700, border-paper-200, …) and does not remove any
+ * default Tailwind utilities, so nothing currently in the app breaks. Migrate
+ * component classes to the named tokens per brand/BRAND-KIT.md §"Migration map".
+ *
+ * Story: blueprint INK on kraft PAPER, cut by an EMBER laser. Semantic red/
+ * amber/green are RESERVED for check-result states — never for brand/UI chrome.
+ * ============================================================================= */
+
+@theme {
+  /* --- Ink (blueprint graphite — cool). Text, dark sections, chrome. -------- */
+  --color-ink-950: #080e1b;
+  --color-ink-900: #0f172a; /* dark sections, primary text on paper */
+  --color-ink-800: #1e293b;
+  --color-ink-700: #334155; /* dark-surface hover, crop marks */
+  --color-ink-600: #475569;
+  --color-ink-500: #64748b; /* muted / meta text */
+  --color-ink-400: #94a3b8; /* disabled, faint captions */
+  --color-ink-300: #cbd5e1; /* input & card borders */
+  --color-ink-200: #e2e8f0; /* hairline dividers */
+  --color-ink-100: #f1f5f9; /* cool alt surface */
+
+  /* --- Paper (warm kraft neutral). Page & card surfaces. -------------------- */
+  --color-paper-0:   #ffffff; /* cards, dropzone */
+  --color-paper-50:  #faf9f7;
+  --color-paper-100: #f5f4f1; /* page background (replaces cold slate-100) */
+  --color-paper-200: #eae7e1; /* warm edge / subtle border on paper */
+
+  /* --- Ember (the laser — warm accent). Identity + primary action ONLY. ----- */
+  --color-ember-50:  #fff7ed; /* tint fills, hover wash */
+  --color-ember-400: #fb923c;
+  --color-ember-500: #f97316; /* "Ready", mark stroke, focus ring (on dark) */
+  --color-ember-600: #ea580c; /* CTA hover */
+  --color-ember-700: #c2410c; /* CTA bg on paper, links on paper (AA on white) */
+
+  /* --- Semantic: check-result states. RESERVED — do not use for brand. ------ */
+  --color-blocker-600: #dc2626; /* fail badge / left border */
+  --color-blocker-300: #fca5a5; /* verdict border */
+  --color-blocker-50:  #fef2f2; /* verdict background */
+
+  --color-advisory-500: #f59e0b; /* warn badge — yellow-amber, distinct from ember */
+  --color-advisory-300: #fcd34d;
+  --color-advisory-50:  #fffbeb;
+
+  --color-pass-600: #16a34a; /* pass badge / left border */
+  --color-pass-300: #86efac;
+  --color-pass-50:  #f0fdf4;
+
+  /* --- Type -------------------------------------------------------------------
+   * Ships system stack: zero webfont bytes, fast first paint, native to makers'
+   * OSes. Mono is the "instrument readout" for check IDs + mm coordinates. */
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "SFMono-Regular", Menlo, Consolas,
+    "Liberation Mono", monospace;
+
+  /* --- Radii (workshop-precise, not pill-soft) ------------------------------ */
+  --radius-md: 0.375rem; /* cards, buttons */
+  --radius-lg: 0.5rem;   /* verdict, honest-part box */
+  --radius-xl: 0.75rem;  /* dropzone */
+}
+
+/* Focus visibility — ember ring, keyboard users always see where they are. */
+:focus-visible {
+  outline: 2px solid var(--color-ember-500);
+  outline-offset: 2px;
+}
+
+/* =============================================================================
+ * Dark mode — "the blueprint, inverted." Class-based (toggle `.dark` on <html>).
+ * -----------------------------------------------------------------------------
+ * Dark mode adds ZERO new chrome colors: it remaps the SAME ink/paper/ember
+ * ramps above via `dark:` utilities (see brand/BRAND-KIT.md §9 for the full
+ * class-mapping table). This custom-variant enables `dark:bg-ink-900` etc.
+ * Drive the initial class from the OS preference, then let the user toggle:
+ *   <script>document.documentElement.classList.toggle('dark',
+ *     matchMedia('(prefers-color-scheme: dark)').matches)</script>
+ * ============================================================================= */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Native form controls / scrollbars follow the theme. */
+:root { color-scheme: light; }
+.dark { color-scheme: dark; }

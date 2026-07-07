@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LaserReady — Brand Kit v1 board</title>
+<style>
+  :root{
+    --ink-950:#080e1b;--ink-900:#0f172a;--ink-700:#334155;--ink-500:#64748b;
+    --ink-300:#cbd5e1;--ink-200:#e2e8f0;
+    --paper-0:#fff;--paper-100:#f5f4f1;--paper-200:#eae7e1;
+    --ember-50:#fff7ed;--ember-500:#f97316;--ember-600:#ea580c;--ember-700:#c2410c;
+    --blocker-600:#dc2626;--blocker-300:#fca5a5;--blocker-50:#fef2f2;
+    --advisory-500:#f59e0b;--advisory-300:#fcd34d;--advisory-50:#fffbeb;
+    --pass-600:#16a34a;--pass-300:#86efac;--pass-50:#f0fdf4;
+    --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:var(--sans);background:var(--paper-100);color:var(--ink-900);
+    line-height:1.55;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1040px;margin:0 auto;padding:40px 24px 72px}
+  h1{font-size:34px;font-weight:800;letter-spacing:-.02em;margin:0 0 4px}
+  .lede{color:var(--ink-500);max-width:60ch;margin:0 0 8px}
+  h2{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;
+    color:var(--ink-500);margin:44px 0 14px;border-bottom:1px solid var(--ink-200);padding-bottom:8px}
+  .card{background:var(--paper-0);border:1px solid var(--ink-200);border-radius:8px;padding:20px}
+  .grid{display:grid;gap:16px}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  .g4{grid-template-columns:repeat(4,1fr)}
+  .wm{font-size:30px;font-weight:800;letter-spacing:-.02em}
+  .row{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  /* swatches */
+  .sw{border-radius:8px;overflow:hidden;border:1px solid var(--ink-200)}
+  .sw .chip{height:64px}
+  .sw .meta{padding:8px 10px;font-size:12px}
+  .sw .meta b{display:block;font-weight:600}
+  .sw .meta code{font-family:var(--mono);color:var(--ink-500)}
+  /* type scale */
+  .ts>div{padding:6px 0;border-bottom:1px dashed var(--ink-200)}
+  .ts small{font-family:var(--mono);font-size:11px;color:var(--ink-500);margin-left:10px}
+  /* badges */
+  .badge{width:22px;height:22px;border-radius:999px;color:#fff;font-weight:700;font-size:12px;
+    display:inline-flex;align-items:center;justify-content:center}
+  /* button */
+  .btn{background:var(--ember-700);color:#fff;font-weight:700;border:none;border-radius:6px;
+    padding:12px 22px;font-size:16px;cursor:pointer}
+  .btn:hover{background:var(--ember-600)}
+  .link{color:var(--ember-700);font-weight:600;text-decoration:underline}
+  /* verdict + honest box */
+  .verdict{border-radius:8px;border:1px solid var(--pass-300);background:var(--pass-50);
+    color:#14532d;padding:12px 16px}
+  .verdict.warn{border-color:var(--advisory-300);background:var(--advisory-50);color:#78350f}
+  .verdict.fail{border-color:var(--blocker-300);background:var(--blocker-50);color:#7f1d1d}
+  .verdict b{font-size:18px}
+  .verdict .sub{font-size:13px;opacity:.8;font-family:var(--mono);margin-top:2px}
+  .honest{border:2px solid var(--ink-900);border-radius:8px;background:#fff;padding:18px}
+  .honest h3{margin:0 0 6px;font-size:17px}
+  .honest p{margin:0;font-size:14px;color:var(--ink-700)}
+  .checkrow{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--ink-200)}
+  .checkrow .id{font-family:var(--mono);font-size:11px;color:var(--ink-500)}
+  .dark{background:var(--ink-900);color:#fff;border-radius:8px;padding:24px}
+  .muted{color:var(--ink-500)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="row" style="gap:14px;margin-bottom:2px">
+    <img src="logo/mark.svg" width="46" height="46" alt="LaserReady mark" />
+    <div>
+      <h1><span style="color:var(--ink-900)">Laser</span><span style="color:var(--ember-700)">Ready</span> — Brand Kit v1</h1>
+      <p class="lede">Blueprint ink on kraft paper, cut by an ember laser. Credible, honest, maker-to-maker.</p>
+    </div>
+  </div>
+
+  <h2>Logo — a cut path that catches its own defect</h2>
+  <div class="grid g4">
+    <div class="card row" style="justify-content:center"><img src="logo/mark.svg" width="72" height="72" alt="mark"/></div>
+    <div class="card row" style="justify-content:center"><img src="logo/favicon.svg" width="48" height="48" alt="favicon"/><span class="muted" style="font-size:12px">favicon 32→16</span></div>
+    <div class="card dark row" style="justify-content:center"><span class="wm"><span style="color:#fff">Laser</span><span style="color:var(--ember-500)">Ready</span></span></div>
+    <div class="card row" style="justify-content:center"><span class="wm"><span style="color:var(--ink-900)">Laser</span><span style="color:var(--ember-700)">Ready</span></span></div>
+  </div>
+
+  <h2>Color — ember = brand/action · red·amber·green = check states (reserved)</h2>
+  <div class="grid g4">
+    <div class="sw"><div class="chip" style="background:var(--ink-900)"></div><div class="meta"><b>Ink 900</b><code>#0f172a</code></div></div>
+    <div class="sw"><div class="chip" style="background:var(--ink-500)"></div><div class="meta"><b>Ink 500</b><code>#64748b</code></div></div>
+    <div class="sw"><div class="chip" style="background:var(--paper-100);border-bottom:1px solid var(--ink-200)"></div><div class="meta"><b>Paper 100</b><code>#f5f4f1</code></div></div>
+    <div class="sw"><div class="chip" style="background:var(--paper-200)"></div><div class="meta"><b>Paper 200</b><code>#eae7e1</code></div></div>
+    <div class="sw"><div class="chip" style="background:var(--ember-500)"></div><div class="meta"><b>Ember 500</b><code>#f97316</code></div></div>
+    <div class="sw"><div class="chip" style="background:var(--ember-700)"></div><div class="meta"><b>Ember 700 · CTA</b><code>#c2410c</code></div></div>
+    <div class="sw"><div class="chip" style="background:var(--blocker-600)"></div><div class="meta"><b>Blocker</b><code>#dc2626</code></div></div>
+    <div class="sw"><div class="chip" style="background:var(--advisory-500)"></div><div class="meta"><b>Advisory</b><code>#f59e0b</code></div></div>
+    <div class="sw"><div class="chip" style="background:var(--pass-600)"></div><div class="meta"><b>Pass</b><code>#16a34a</code></div></div>
+    <div class="sw"><div class="chip" style="background:var(--ember-50);border-bottom:1px solid var(--ink-200)"></div><div class="meta"><b>Ember 50</b><code>#fff7ed</code></div></div>
+    <div class="sw"><div class="chip" style="background:var(--ink-300)"></div><div class="meta"><b>Ink 300 · border</b><code>#cbd5e1</code></div></div>
+    <div class="sw"><div class="chip" style="background:#fff;border-bottom:1px solid var(--ink-200)"></div><div class="meta"><b>Paper 0 · card</b><code>#ffffff</code></div></div>
+  </div>
+
+  <h2>Type — system stack (0 webfont bytes) · mono = instrument readout</h2>
+  <div class="card ts">
+    <div style="font-size:44px;font-weight:800;letter-spacing:-.02em">Will that file actually cut?<small>hero · 800</small></div>
+    <div style="font-size:24px;font-weight:700">Structurally sound — 2 warnings to review<small>H2 · 700</small></div>
+    <div style="font-size:16px;font-weight:600">Open paths — where the part won't release<small>card title · 600</small></div>
+    <div style="font-size:16px">The file is good and the cut is perfect are two different promises. We make the first one, completely.<small>body · 400</small></div>
+    <div style="font-family:var(--mono);font-size:13px;color:var(--ink-700)">PC-01 · (128.4, 96.2) mm · 4 found<small>instrument · mono</small></div>
+  </div>
+
+  <h2>Components — badges, action, verdict, and the honest box</h2>
+  <div class="grid g3">
+    <div class="card">
+      <div class="row" style="margin-bottom:14px">
+        <span class="badge" style="background:var(--blocker-600)">✕</span> Fail
+        <span class="badge" style="background:var(--advisory-500)">!</span> Warn
+        <span class="badge" style="background:var(--pass-600)">✓</span> Pass
+      </div>
+      <div class="row"><button class="btn">Check my file</button><a class="link" href="#">How it works ↓</a></div>
+    </div>
+    <div class="card" style="display:grid;gap:8px">
+      <div class="verdict fail"><b>Not laser-ready — 1 blocker</b><div class="sub">seahorse.svg · 214 × 150 mm</div></div>
+      <div class="verdict warn"><b>Structurally sound — 2 warnings</b><div class="sub">tray.dxf · 300 × 200 mm</div></div>
+      <div class="verdict"><b>Looks structurally sound</b><div class="sub">badge.svg · 60 × 60 mm</div></div>
+    </div>
+    <div class="honest">
+      <h3>What we won't pretend.</h3>
+      <p>We can't see your laser. Power, speed, focus, and the board you loaded are yours to dial in.
+      We guarantee the <em>file</em> is structurally sound — closed, clean, correctly scaled and layered.
+      That's the promise we can keep.</p>
+    </div>
+  </div>
+
+  <h2>Report row — worst-first, plain English</h2>
+  <div class="card">
+    <div class="checkrow"><span class="badge" style="background:var(--blocker-600)">✕</span>
+      <div><b>Open paths</b> <span class="id">PC-01 · 4 found</span><br>
+      <span class="muted" style="font-size:14px">Four outlines don't close — the part won't release from the sheet.</span></div></div>
+    <div class="checkrow"><span class="badge" style="background:var(--advisory-500)">!</span>
+      <div><b>Thin features</b> <span class="id">FM-01 · 2 found</span><br>
+      <span class="muted" style="font-size:14px">Two spans are under 0.8 mm — they may burn through 3 mm ply.</span></div></div>
+    <div class="checkrow" style="border-bottom:none"><span class="badge" style="background:var(--pass-600)">✓</span>
+      <div><b>Duplicate lines</b> <span class="id">PC-02 · 0 found</span><br>
+      <span class="muted" style="font-size:14px">No doubled cuts. Clean.</span></div></div>
+  </div>
+</div>
+</body>
+</html>
