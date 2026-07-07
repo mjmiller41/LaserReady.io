@@ -1,6 +1,6 @@
 /** The normalized geometry model every check runs against: polylines, mm-resolved. */
 
-import type { LayerOp } from '../report.js';
+import type { LayerOp, UnitSource } from '../report.js';
 import type { Pt } from '../geometry/vec.js';
 import { dist2 } from '../geometry/vec.js';
 import type { Bbox } from '../geometry/bbox.js';
@@ -39,7 +39,7 @@ export interface UnsupportedNote {
 
 export interface UnitInfo {
   valid: boolean;
-  source: 'svg-physical' | 'svg-px-guess' | 'dxf-insunits' | 'dxf-unitless' | 'intended-size';
+  source: UnitSource;
   /** Factor applied to raw file coordinates to get mm. */
   scaleToMm: number;
   /** Plain-English basis for SZ-01. */

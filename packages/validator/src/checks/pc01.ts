@@ -9,6 +9,7 @@
 import type { CheckResult, CheckLocation } from '../report.js';
 import { midpoint } from '../geometry/vec.js';
 import type { CheckContext } from './context.js';
+import { makeResult } from './meta.js';
 import { capLocations, fmtMm, roundMm } from './util.js';
 
 export function runPC01(ctx: CheckContext): CheckResult {
@@ -28,14 +29,10 @@ export function runPC01(ctx: CheckContext): CheckResult {
     });
   }
 
-  return {
-    id: 'PC-01',
-    name: 'Open paths (cut)',
-    severity: 'blocker',
-    status: locations.length > 0 ? 'fail' : 'pass',
-    guaranteed: true,
-    autofixable: true,
-    count: locations.length,
-    locations: capLocations(locations, ctx.opts.maxLocations),
-  };
+  return makeResult(
+    'PC-01',
+    locations.length > 0 ? 'fail' : 'pass',
+    locations.length,
+    capLocations(locations, ctx.opts.maxLocations),
+  );
 }

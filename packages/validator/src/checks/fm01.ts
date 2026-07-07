@@ -14,6 +14,7 @@ import { effectiveMinFeature } from '../options.js';
 import type { SegRef } from '../geometry/segments.js';
 import { entityLabel } from '../parse/doc.js';
 import type { CheckContext } from './context.js';
+import { makeResult } from './meta.js';
 import { capLocations, fmtMm, roundMm } from './util.js';
 
 interface StripHit {
@@ -120,14 +121,10 @@ export function runFM01(ctx: CheckContext): CheckResult {
     };
   });
 
-  return {
-    id: 'FM-01',
-    name: 'Minimum feature width',
-    severity: 'warning',
-    status: locations.length > 0 ? 'warn' : 'pass',
-    guaranteed: false,
-    autofixable: false,
-    count: locations.length,
-    locations: capLocations(locations, ctx.opts.maxLocations),
-  };
+  return makeResult(
+    'FM-01',
+    locations.length > 0 ? 'warn' : 'pass',
+    locations.length,
+    capLocations(locations, ctx.opts.maxLocations),
+  );
 }

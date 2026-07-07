@@ -1,8 +1,5 @@
 # CLAUDE.md — LaserReady.io
 
-## First Read
-@../CLAUDE.md
-
 Project context and guardrails for any coding agent working in this repo. Read `docs/` for depth; the
 authoritative sources are `docs/laserready-build-prompt.md` (the task) and `docs/validator-checklist-spec.md`
 (the checks). If anything here conflicts with those two, they win.
@@ -80,8 +77,10 @@ SSH), including the shared-proxy coordination rules. Do not duplicate deploy ste
 
 Python geometry service · auto-repair/mutation · offset/kerf · nesting · file **export** (SVG/DXF/G-code) ·
 Stripe/billing · the guarantee remedy flow · accounts/auth · any server-side file upload for checking.
-Seams to leave: validator already runs in Node; report has a `machine_profile` slot and a `guaranteed` flag per
-check; geometry sits behind a small interface a Python service can later take over.
+Seams to leave: validator already runs in Node (the guarantee audit re-runs the same TS validator server-side);
+report has a `machine_profile` slot and a `guaranteed` flag per check. The Phase-1 Python seam is the
+`NormalizedDoc` model — Python consumes it for **mutation/export**, it does not replace Phase-0 read-only
+geometry. Don't pre-build a geometry abstraction for it.
 
 ## Docs
 

@@ -9,18 +9,22 @@ function statusRank(c: CheckResult): number {
 }
 
 function Verdict({ report }: { report: Report }) {
-  const { blockers, warnings } = report.summary;
+  const { blockers, warnings, bbox_mm } = report.summary;
   const ref = useRef<HTMLHeadingElement>(null);
   useEffect(() => {
     ref.current?.focus(); // move screen-reader/keyboard context to the outcome
   }, [report]);
 
+  // A file with no vector geometry must not read as "sound" — there is nothing to cut.
+  const noGeometry = bbox_mm[0] === 0 && bbox_mm[1] === 0 && report.summary.layers.length === 0;
   const [cls, text] =
     blockers > 0
       ? ['bg-red-50 border-red-300 text-red-900', `Not laser-ready — ${blockers} blocker${blockers === 1 ? '' : 's'}`]
-      : warnings > 0
-        ? ['bg-amber-50 border-amber-300 text-amber-900', `Structurally sound — ${warnings} warning${warnings === 1 ? '' : 's'} to review`]
-        : ['bg-green-50 border-green-300 text-green-900', 'Looks structurally sound'];
+      : noGeometry
+        ? ['bg-amber-50 border-amber-300 text-amber-900', 'No cuttable geometry found — nothing to validate']
+        : warnings > 0
+          ? ['bg-amber-50 border-amber-300 text-amber-900', `Structurally sound — ${warnings} warning${warnings === 1 ? '' : 's'} to review`]
+          : ['bg-green-50 border-green-300 text-green-900', 'Looks structurally sound'];
 
   return (
     <div class={`rounded-lg border px-4 py-3 ${cls}`} role="status">

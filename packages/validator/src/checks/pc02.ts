@@ -10,6 +10,7 @@ import type { CheckResult, CheckLocation } from '../report.js';
 import { collinearOverlap } from '../geometry/segments.js';
 import { entityLabel } from '../parse/doc.js';
 import type { CheckContext } from './context.js';
+import { makeResult } from './meta.js';
 import { capLocations, fmtMm, roundMm } from './util.js';
 
 interface Group {
@@ -67,14 +68,10 @@ export function runPC02(ctx: CheckContext): CheckResult {
         : `≈${fmtMm(g.overlapLen)} mm overlapping — ${entityLabel(ctx.doc, g.entA)} and ${entityLabel(ctx.doc, g.entB)}`,
   }));
 
-  return {
-    id: 'PC-02',
-    name: 'Duplicate / coincident lines',
-    severity: 'blocker',
-    status: locations.length > 0 ? 'fail' : 'pass',
-    guaranteed: true,
-    autofixable: true,
-    count: locations.length,
-    locations: capLocations(locations, ctx.opts.maxLocations),
-  };
+  return makeResult(
+    'PC-02',
+    locations.length > 0 ? 'fail' : 'pass',
+    locations.length,
+    capLocations(locations, ctx.opts.maxLocations),
+  );
 }

@@ -8,6 +8,7 @@
 import type { CheckResult, CheckLocation } from '../report.js';
 import { isEmptyBbox } from '../geometry/bbox.js';
 import type { CheckContext } from './context.js';
+import { makeResult } from './meta.js';
 import { capLocations, fmtMm, roundMm } from './util.js';
 
 export function runRS01(ctx: CheckContext): CheckResult {
@@ -24,14 +25,10 @@ export function runRS01(ctx: CheckContext): CheckResult {
     return { detail: `${r.label}: embedded bitmap — a laser can't cut pixels` };
   });
 
-  return {
-    id: 'RS-01',
-    name: 'Embedded raster in cut file',
-    severity: 'blocker',
-    status: locations.length > 0 ? 'fail' : 'pass',
-    guaranteed: true,
-    autofixable: true,
-    count: locations.length,
-    locations: capLocations(locations, ctx.opts.maxLocations),
-  };
+  return makeResult(
+    'RS-01',
+    locations.length > 0 ? 'fail' : 'pass',
+    locations.length,
+    capLocations(locations, ctx.opts.maxLocations),
+  );
 }

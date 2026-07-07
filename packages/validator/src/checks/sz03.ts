@@ -10,6 +10,7 @@
 import type { CheckResult } from '../report.js';
 import { bboxHeight, bboxWidth, isEmptyBbox } from '../geometry/bbox.js';
 import type { CheckContext } from './context.js';
+import { makeResult } from './meta.js';
 import { fmtMm } from './util.js';
 
 export function runSZ03(ctx: CheckContext): CheckResult | null {
@@ -32,14 +33,5 @@ export function runSZ03(ctx: CheckContext): CheckResult | null {
       });
     }
   }
-  return {
-    id: 'SZ-03',
-    name: 'Bed fit',
-    severity: 'warning',
-    status: locations.length > 0 ? 'warn' : 'pass',
-    guaranteed: false, // Phase 1: true once a real machine profile picks the bed
-    autofixable: false,
-    count: locations.length,
-    locations,
-  };
+  return makeResult('SZ-03', locations.length > 0 ? 'warn' : 'pass', locations.length, locations);
 }

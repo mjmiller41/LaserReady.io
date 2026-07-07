@@ -12,9 +12,23 @@ export class SegGrid {
   constructor(segs: readonly SegRef[]) {
     this.segs = segs;
     let total = 0;
-    for (const s of segs) total += Math.hypot(s.bx - s.ax, s.by - s.ay);
+    let minX = Infinity;
+    let maxX = -Infinity;
+    let minY = Infinity;
+    let maxY = -Infinity;
+    for (const s of segs) {
+      total += Math.hypot(s.bx - s.ax, s.by - s.ay);
+      minX = Math.min(minX, s.ax, s.bx);
+      maxX = Math.max(maxX, s.ax, s.bx);
+      minY = Math.min(minY, s.ay, s.by);
+      maxY = Math.max(maxY, s.ay, s.by);
+    }
     const avg = segs.length > 0 ? total / segs.length : 1;
-    this.cellSize = Math.min(64, Math.max(1, avg * 2));
+    // The extent term bounds total cell count on geometrically absurd inputs (a segment
+    // spanning 1e12 mm would otherwise insert billions of cells and exhaust the Map).
+    // For any sane laser file (extent < ~131 m) it is a no-op on the original sizing.
+    const extent = segs.length > 0 ? Math.max(maxX - minX, maxY - minY) : 0;
+    this.cellSize = Math.max(Math.min(64, Math.max(1, avg * 2)), extent / 2048);
     for (let i = 0; i < segs.length; i++) this.insert(i);
   }
 

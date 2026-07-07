@@ -9,7 +9,7 @@ export function sniffFormat(text: string, filename?: string): FileFormat | 'unkn
   // ASCII DXF: group-code pairs — a 0/SECTION pair near the start, or an ENTITIES marker.
   if (
     /(^|\r?\n)\s*0\s*\r?\n\s*SECTION\b/.test(head) ||
-    /(^|\r?\n)\s*2\s*\r?\nENTITIES\b/.test(head) ||
+    /(^|\r?\n)\s*2\s*\r?\n\s*ENTITIES\b/.test(head) ||
     head.startsWith('AutoCAD Binary DXF')
   ) {
     return 'dxf';
