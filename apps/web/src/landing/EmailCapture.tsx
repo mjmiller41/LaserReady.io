@@ -1,4 +1,5 @@
 import { useState } from 'preact/hooks';
+import { track } from '../analytics';
 
 /**
  * MailerLite embedded-form capture. Two instances on the page (guarantee tease +
@@ -43,6 +44,8 @@ export function EmailCapture({ formId, cta, idPrefix }: Props) {
       const success =
         res.ok && !(typeof data === 'object' && data !== null && (data as { success?: boolean }).success === false);
       setStatus(success ? 'done' : 'error');
+      // Funnel event — which form converted (guarantee vs early), no email sent.
+      if (success) track('signup', { source: idPrefix });
     } catch {
       setStatus('error');
     }
