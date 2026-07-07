@@ -1,6 +1,7 @@
 import { useRef, useState } from 'preact/hooks';
 import type { Report, ValidateOptions } from '@laserready/validator';
 import { validateInWorker } from '../worker/client';
+import { track } from '../analytics';
 import { DropZone } from './DropZone';
 import { ReportView } from './ReportView';
 
@@ -44,6 +45,12 @@ export function Checker() {
       const result = await validateInWorker(f.buffer.slice(0), buildOpts(intended));
       setReport(result);
       setStatus('done');
+      // Funnel event — aggregate only, no filename or file contents.
+      track('checker-run', {
+        format: result.input.format,
+        blockers: result.summary.blockers,
+        warnings: result.summary.warnings,
+      });
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
       setStatus('error');
