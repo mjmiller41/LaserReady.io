@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Laser-Ready — Findings &amp; Product Outline</title>
+<style>
+  :root{
+    /* Ink (blueprint graphite — cool) */
+    --color-ink-950:#080e1b; --color-ink-900:#0f172a; --color-ink-800:#1e293b;
+    --color-ink-700:#334155; --color-ink-600:#475569; --color-ink-500:#64748b;
+    --color-ink-400:#94a3b8; --color-ink-300:#cbd5e1; --color-ink-200:#e2e8f0;
+    --color-ink-100:#f1f5f9;
+    /* Paper (warm kraft neutral) */
+    --color-paper-0:#ffffff; --color-paper-50:#faf9f7; --color-paper-100:#f5f4f1;
+    --color-paper-200:#eae7e1;
+    /* Ember (the laser — warm accent) */
+    --color-ember-50:#fff7ed; --color-ember-400:#fb923c; --color-ember-500:#f97316;
+    --color-ember-600:#ea580c; --color-ember-700:#c2410c;
+    /* Semantic check-result states — RESERVED */
+    --color-blocker-600:#dc2626; --color-blocker-300:#fca5a5; --color-blocker-50:#fef2f2;
+    --color-advisory-500:#f59e0b; --color-advisory-300:#fcd34d; --color-advisory-50:#fffbeb;
+    --color-pass-600:#16a34a; --color-pass-300:#86efac; --color-pass-50:#f0fdf4;
+    /* Type */
+    --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+      "Helvetica Neue", Arial, sans-serif;
+    --font-mono: ui-monospace, "SF Mono", "SFMono-Regular", Menlo, Consolas,
+      "Liberation Mono", monospace;
+    /* Radii (workshop-precise, not pill-soft) */
+    --radius-md:0.375rem; --radius-lg:0.5rem; --radius-xl:0.75rem;
+
+    /* Page-level semantic aliases (light) — mapped per BRAND-KIT §9 */
+    --bg-page: var(--color-paper-100);
+    --bg-card: var(--color-paper-0);
+    --bg-dark-section: var(--color-ink-900);
+    --text-body: var(--color-ink-900);
+    --text-muted: var(--color-ink-500);
+    --border-hair: var(--color-ink-200);
+    --border-strong: var(--color-ink-300);
+    --link: var(--color-ember-700);
+    --ready: var(--color-ember-700);
+    --cta-bg: var(--color-ember-700);
+    --cta-bg-hover: var(--color-ember-600);
+    --cta-text: #ffffff;
+    color-scheme: light;
+  }
+
+  *{box-sizing:border-box}
+  html{scrollbar-width:thin;scrollbar-color:var(--line) var(--ink)}
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-track{background:var(--ink)}
+  ::-webkit-scrollbar-thumb{background:var(--line);border-radius:6px;border:2px solid var(--ink)}
+  html,body{margin:0;background:var(--ink);color:var(--text);
+    font-family:var(--sans);line-height:1.62;-webkit-font-smoothing:antialiased}
+  body{background:radial-gradient(760px 300px at 50% -140px,rgba(227,165,82,.07),transparent 70%),var(--ink);
+    padding:26px 18px 80px;font-size:14.5px}
+  .wrap{max-width:800px;margin:0 auto}
+  .doc-mast{display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+    border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:22px}
+  .doc-mast .eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--faint)}
+  .doc-mast .eyebrow b{color:var(--brass)}
+  .doc-mast .src{font-family:var(--mono);font-size:10.5px;color:var(--faint)}
+  main h1,main h2,main h3,main h4{font-weight:800;letter-spacing:-.01em;line-height:1.25;color:var(--text)}
+  main h1{font-size:26px;margin:.2em 0 .5em}
+  main h2{font-size:20px;margin:1.7em 0 .5em;border-top:1px solid var(--line);padding-top:.8em}
+  main h3{font-size:16px;margin:1.4em 0 .4em}
+  main h4{font-size:13px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  main p{margin:.7em 0;color:var(--text)}
+  main a{color:var(--brass);text-decoration:none}
+  main a:hover{text-decoration:underline}
+  main strong{color:#fff}
+  main ul,main ol{margin:.6em 0;padding-left:1.4em}
+  main li{margin:.28em 0}
+  main li::marker{color:var(--faint)}
+  main code{font-family:var(--mono);font-size:.86em;color:#C9CEDF;background:var(--ink2);
+    padding:1px 5px;border-radius:4px}
+  main pre{background:var(--ink2);border:1px solid var(--line);border-radius:var(--r-md);
+    padding:13px 15px;overflow:auto;line-height:1.5}
+  main pre code{background:none;padding:0;color:#C9CEDF;font-size:12px}
+  main blockquote{margin:1em 0;border-left:3px solid var(--brass-dim);background:var(--ink2);
+    border-radius:0 var(--r-md) var(--r-md) 0;padding:2px 16px;color:var(--muted)}
+  main table{border-collapse:collapse;width:100%;margin:1em 0;font-size:13px;display:block;overflow-x:auto}
+  main th,main td{text-align:left;padding:8px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+  main th{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+  main tr:hover td{background:var(--ink2)}
+  main hr{border:none;border-top:1px solid var(--line);margin:1.8em 0}
+  main img{max-width:100%;border-radius:var(--r-md)}
+  main input[type=checkbox]{accent-color:var(--brass);margin-right:6px}
+  .doc-foot{margin-top:44px;border-top:1px solid var(--line);padding-top:14px;
+    font-family:var(--mono);font-size:10px;color:var(--faint)}
+
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="doc-mast">
+      <span class="eyebrow"><b>▸</b> Laser-Ready — Findings &amp; Product Outline</span>
+      <span class="src">product-spec.md</span>
+    </div>
+    <main>
+<h1 id="laser-ready-findings-product-outline">Laser-Ready — Findings &amp; Product Outline</h1>
+<h2 id="1-where-the-research-landed">1. Where the research landed</h2>
+<p>Three passes got us here. The pain is real and recurring: getting a vector to cut/engrave right the<br>
+first time frustrates operators constantly — open paths, doubled lines, node bloat, stroke-vs-fill,<br>
+wrong scale, kerf. People already pay to make it go away ($5–$20 Fiverr, ~$7 AI subs, design bundles).</p>
+<p>But the naive product — "AI that spits out a laser-ready vector" — is <strong>already crowded</strong> (nine tools<br>
+teardowned). The decisive finding from the teardown: <strong>every one of them makes a vector, none guarantees<br>
+a first-pass cut file</strong>, and the two most serious (VectoSolve, StencilCut) explicitly refuse to promise it.<br>
+VectoSolve said it plainly: "anyone who promises that is lying to you."</p>
+<p>That refusal is the opening — <em>if</em> we make a promise that's actually keepable. The way to do that is to<br>
+stop competing on generation (commoditized) and instead own the <strong>prep-and-guarantee layer</strong>: take a file<br>
+from <strong>any source</strong> — an Etsy purchase, an AI tool's output, the user's own design — and make it, and<br>
+<em>prove</em> it, structurally laser-ready. This reconnects to the original hypothesis (people buy files that<br>
+aren't laser-ready) instead of fighting Recraft/VectorWitch on art quality.</p>
+<p><strong>One-line positioning:</strong> <em>Drop in any cut file. We validate it, repair it, and guarantee it's structurally<br>
+laser-ready — or your next month is free.</em></p>
+<h2 id="2-strategic-positioning">2. Strategic positioning</h2>
+<ul>
+<li><strong>Source-agnostic, not a generator.</strong> Accept SVG / DXF / AI / PDF (and raster with a trace step) from<br>
+  anywhere. Every competitor's checker is bolted to <em>their own</em> conversion; none will validate the file you<br>
+  bought on Etsy. We will. That single decision is the differentiator and the moat.</li>
+<li><strong>The full chain in one place.</strong> Today the pieces are scattered: LightBurn has kerf offset + layers,<br>
+  VectoSolve has a checker + nesting + G-code, StencilCut has a preflight + mm DXF, everyone's node cleanup<br>
+  is partial. Nobody bundles validate → repair → layer → size → nest → export → <strong>guarantee</strong>.</li>
+<li><strong>Moat is execution + proof, not the idea.</strong> The teardown was blunt about this. The guarantee's audit<br>
+  trail is the trust asset competitors can't cheaply copy.</li>
+</ul>
+<h2 id="3-the-hook-a-scoped-keepable-guarantee">3. The hook: a scoped, <em>keepable</em> guarantee</h2>
+<p>The reason VectoSolve won't promise a clean cut is that "cuts perfectly on your machine" depends on<br>
+variables we don't control (power, speed, focus, lens, material batch). They're right — that promise is<br>
+unprovable. So we <strong>don't</strong> make it. We guarantee only the objective, checkable properties, and we say so.</p>
+<p><strong>What we guarantee (all machine-checkable):</strong><br>
+- Every cut path is <strong>closed</strong> (within a stated tolerance) — no open subpaths.<br>
+- <strong>No duplicate / coincident</strong> cut lines (no double-burns).<br>
+- <strong>Valid units and real-world scale</strong> — exports carry correct mm sizing; bounding box is reported.<br>
+- <strong>Valid, importable DXF/G-code/SVG</strong> conforming to the target's spec (e.g. R12 closed POLYLINE, mm).<br>
+- <strong>Cut vs engrave vs score layers</strong> map exactly to the machine profile you selected.<br>
+- <strong>Minimum-feature check</strong> vs the material/thickness you entered (thin lines / fall-through holes flagged).</p>
+<p><strong>What we explicitly do NOT guarantee (and say so on the page):</strong><br>
+- That it cuts perfectly on <em>your</em> machine at <em>your</em> settings — we can't see your laser.<br>
+- Aesthetic quality of AI-generated or traced art.<br>
+- Press-fit tightness unless you've run our kerf calibration (see §7).</p>
+<p><strong>The mechanism (your idea, formalized):</strong><br>
+1. On export, we store the <strong>exact bytes we generated</strong> as a canonical copy, plus the validation report<br>
+   (which checks passed, tolerances, target profile) — an immutable audit record per export.<br>
+2. If a customer reports a failure, we re-run the validator against <strong>our stored copy</strong>, not the file they<br>
+   hand back. This defeats the obvious fraud (edit the file, then claim it failed) and scopes the guarantee<br>
+   to what we actually shipped.<br>
+3. If our stored copy genuinely fails any guaranteed check, the remedy is automatic: <strong>a free month at their<br>
+   current tier</strong> (cheap for us, satisfying for them, no cash-refund friction). We also fix the file.<br>
+4. Because the checks are deterministic and we control the exporter, a true failure should be a <em>bug we want<br>
+   to see</em> — every payout is a test case that hardens the validator. The guarantee doubles as our QA loop.</p>
+<p>This is the honest version of what StencilCut only <em>claims</em> ("cuts right the first time") and VectoSolve<br>
+<em>disclaims</em> — narrow enough to keep, strong enough to sell.</p>
+<h2 id="4-feature-set">4. Feature set</h2>
+<p>Legend for "gap": which competitors miss it today (from <code>competitor-teardown.md</code>).</p>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Type</th>
+<th>Competitor gap</th>
+<th>Our approach</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Universal file checker</strong> (any source, even files we didn't make)</td>
+<td>Differentiator</td>
+<td>All 9 tie checker to own conversion</td>
+<td>Upload SVG/DXF/AI/PDF; free read-only report; paid repair</td>
+</tr>
+<tr>
+<td><strong>Closed-path guarantee + auto-repair</strong></td>
+<td>Hook core</td>
+<td>Absent except StencilCut (claim)</td>
+<td>Deterministic close within tolerance; guaranteed + audited</td>
+</tr>
+<tr>
+<td>Duplicate/overlap dedupe</td>
+<td>Table stakes</td>
+<td>Claimed, unverified everywhere</td>
+<td>Merge coincident segments; remove double lines</td>
+</tr>
+<tr>
+<td>Node cleanup / simplify (feature-preserving)</td>
+<td>Table stakes</td>
+<td>Partial everywhere</td>
+<td>Simplify to a node budget; preserve small features by <em>real-world size</em>, not raw point count</td>
+</tr>
+<tr>
+<td><strong>Cut / engrave / score layer assignment — user-selectable before export</strong></td>
+<td>Differentiator</td>
+<td>Others auto-guess or fully manual</td>
+<td>Preview UI; user overrides intent per shape; color-map to machine</td>
+</tr>
+<tr>
+<td><strong>True mm sizing</strong></td>
+<td>Table stakes</td>
+<td>Only StencilCut solid</td>
+<td>Enforce units; verify bbox vs bed size</td>
+</tr>
+<tr>
+<td>DXF export (R12, closed POLYLINE, mm)</td>
+<td>Table stakes</td>
+<td>Present in 3/9</td>
+<td>Match StencilCut/VectoSolve baseline</td>
+</tr>
+<tr>
+<td><strong>G-code export</strong> (GRBL / diode, scoped)</td>
+<td>Differentiator</td>
+<td>Near-absent (only VectoSolve)</td>
+<td>Per-layer power/speed; explicit machine scope, not a blind promise</td>
+</tr>
+<tr>
+<td><strong>Nesting / sheet layout</strong></td>
+<td>Differentiator</td>
+<td>Only VectoSolve</td>
+<td>No-fit-polygon packing (SVGnest/Deepnest lineage)</td>
+</tr>
+<tr>
+<td><strong>Kerf calibration + apply where it makes sense</strong></td>
+<td>Differentiator (scoped)</td>
+<td>Absent everywhere</td>
+<td>Test-cut generator → user measures once → saved material profile → auto-offset on joinery only (see §7)</td>
+</tr>
+<tr>
+<td><strong>Machine profiles</strong> (LightBurn, Glowforge, xTool, Ruida/OMTech)</td>
+<td>Differentiator</td>
+<td>Only FLUX, for its own hardware</td>
+<td>Output conventions per machine (layer colors, operation mapping, units)</td>
+</tr>
+<tr>
+<td><strong>The guarantee + audit trail</strong></td>
+<td>Moat</td>
+<td>Nobody</td>
+<td>Canonical copy + validation record + auto-remedy</td>
+</tr>
+<tr>
+<td>Box / joinery generator (boxes.py)</td>
+<td>Phase 3</td>
+<td>LaserBurn/VectoSolve have basic parametric only</td>
+<td>Integrate/port boxes.py; kerf-aware</td>
+</tr>
+<tr>
+<td>Batch + API</td>
+<td>Phase 3</td>
+<td>Only SVGMaker/VectoSolve</td>
+<td>Later; API makes us a laser-prep backend others can call</td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-the-validator-is-the-spine">5. The validator is the spine</h2>
+<p>Everything hangs off one deterministic engine. It takes a file + a target machine profile + a material<br>
+spec and returns a structured pass/fail report with auto-fix actions. Core checks:</p>
+<ul>
+<li>Open vs closed subpaths (with join-within-tolerance repair).</li>
+<li>Coincident / duplicate / overlapping path detection.</li>
+<li>Self-intersections and zero-length segments.</li>
+<li>Node-count budget; adaptive simplify preserving real-world-size features.</li>
+<li>Units present and sane; scale vs a known reference; bbox vs bed.</li>
+<li>Minimum feature width and minimum closed-area vs material thickness (thin-line / fall-through flags).</li>
+<li>Embedded raster inside a "cut" file (a laser can't cut a bitmap) — flag/strip.</li>
+<li>Layer/operation mapping validity for the chosen machine.</li>
+</ul>
+<p>The report is the product's honesty surface and its guarantee contract at the same time: the checks it runs<br>
+<em>are</em> the properties we guarantee. Build this first; the rest are producers/consumers around it.</p>
+<h2 id="6-architecture-build-outline">6. Architecture / build outline</h2>
+<p>You can build any of this — so pick for the geometry ecosystem, not the language you know best.</p>
+<ul>
+<li><strong>Front end:</strong> React. Client-side SVG preview + the layer-intent editor (assign cut/engrave/score, see<br>
+  warnings live). Heavy geometry can preview client-side (paper.js / a Clipper2 WASM build) for snappiness.</li>
+<li><strong>Geometry core:</strong> the hard part. Strongest tooling is Python — <strong>Shapely</strong> (GEOS-backed: validity,<br>
+  closing, union/dedupe, offset for kerf), <strong>ezdxf</strong> (clean R12/mm DXF), plus an <strong>SVGnest/Deepnest</strong>-lineage<br>
+  nester and a small SVG-path→G-code emitter. Run it as a stateless service behind your API. (If you'd rather<br>
+  keep it all TS: Clipper2-wasm + a custom bezier/flattening layer + dxf-writer — workable, more hand-rolled.)</li>
+<li><strong>API + app:</strong> Node/TS or Laravel — your call; it's CRUD + orchestration + billing. It must persist the<br>
+<strong>canonical export bytes + validation report</strong> (object storage) for the guarantee audit trail.</li>
+<li><strong>Billing:</strong> Stripe. The auto-remedy ("free month at current tier") is a Stripe coupon/credit applied<br>
+  programmatically when the validator confirms a stored-copy failure.</li>
+<li><strong>Determinism matters:</strong> same input + same profile must always yield the same validation verdict, or the<br>
+  guarantee isn't defensible. Pin the geometry lib versions; snapshot-test the validator.</li>
+</ul>
+<h2 id="7-kerf-done-right-per-our-last-exchange">7. Kerf, done right (per our last exchange)</h2>
+<p>Kerf only matters for <strong>joinery / inlay / press-fit</strong> work, and a wrong auto-guess is worse than none — which<br>
+is exactly why it's absent everywhere. So we scope it:</p>
+<ul>
+<li>We do <strong>not</strong> blindly offset arbitrary art.</li>
+<li>We ship a <strong>kerf test-cut generator</strong> (a comb/fit-gauge for the user's material + machine).</li>
+<li>User cuts it once, measures with calipers, enters the number → we save a <strong>material+machine profile</strong>.</li>
+<li>From then on, kerf offset auto-applies <strong>only to shapes the user tags as joinery/fit</strong> (or detected<br>
+  tab/slot geometry), not to decorative outlines.</li>
+<li>The automated, un-owned part isn't the offset math (LightBurn already does that) — it's the<br>
+<strong>calibration→profile→auto-apply loop</strong>. That's the tedious bit nobody automates.</li>
+</ul>
+<p>Open validation item: confirm from your own shop how often kerf actually costs time/scrap, and whether the<br>
+annoyance is the <em>measuring</em> or the <em>applying</em>. If it's rarely painful, kerf drops to a Phase-2 nice-to-have.</p>
+<h2 id="8-box-joinery-generator-boxespy-phase-3">8. Box / joinery generator (boxes.py) — Phase 3</h2>
+<p>boxes.py is a mature, open-source (GPL) parametric generator for finger-joint boxes, trays, hinges, etc.<br>
+Integrating or porting it gives instant joinery breadth and pairs naturally with the kerf profile above. It's<br>
+a "widen the wedge" feature, not a launch feature — and licensing (GPL) needs a compatibility check before<br>
+bundling. Defer until the core prep-and-guarantee loop is proven.</p>
+<h2 id="9-phasing-smallest-demand-probe-first">9. Phasing — smallest demand probe first</h2>
+<p>Per the decision-brief, do <strong>not</strong> build the whole thing before proving demand.</p>
+<ul>
+<li><strong>Phase 0 — probe (days, not weeks).</strong> Landing page stating the scoped guarantee + a <strong>free, read-only<br>
+  validator</strong>: upload any cut file, get the honest report (no repair yet). This (a) tests whether the<br>
+  guarantee framing pulls, (b) collects real-world files that seed the validator's edge cases, (c) builds an<br>
+  email list, (d) costs almost nothing. Show it to 10–15 target-community members and measure reaction + WTP<br>
+  against the known $5–$20 anchor. <strong>This is the go/no-go gate.</strong></li>
+<li><strong>Phase 1 — MVP (if Phase 0 clears).</strong> Validator + auto-repair (close, dedupe, node cleanup) + user-selectable<br>
+  cut/engrave layers + SVG/DXF export with mm + machine profiles for the top two (LightBurn, Glowforge) +<br>
+  the guarantee with canonical-copy backstop + Stripe.</li>
+<li><strong>Phase 2.</strong> G-code (GRBL/diode), nesting, kerf calibration workflow, more machine profiles (xTool, Ruida).</li>
+<li><strong>Phase 3.</strong> boxes.py joinery generator, batch, public API (become the laser-prep backend others integrate).</li>
+</ul>
+<h2 id="10-pricing-sketch-your-call">10. Pricing sketch (your call)</h2>
+<p>Market anchors: $5–$20 Fiverr per file; AI subs ~$4–$40/mo. Suggested shape:<br>
+- <strong>Free:</strong> read-only validator (unlimited reports) — the top-of-funnel and the trust demo.<br>
+- <strong>Pro (~$12–$19/mo):</strong> repair + export (SVG/DXF/G-code) + machine profiles + the guarantee.<br>
+- <strong>Studio (later):</strong> nesting, kerf profiles, boxes.py, batch/API.</p>
+<p>The guarantee justifies pricing at or slightly above the commodity AI tools rather than under them — you're<br>
+selling reliability, not conversions.</p>
+<h2 id="11-risks-honest-caveats">11. Risks &amp; honest caveats</h2>
+<ul>
+<li><strong>Competitors iterate fast.</strong> VectoSolve ships "feedback → code same day"; StencilCut already has the<br>
+  checker + mm DXF. If either bolts on a real guarantee + universal (any-source) checking, our edge narrows.<br>
+  Move on the guarantee + source-agnostic angle <em>fast</em>, since that's the part they've structurally avoided.</li>
+<li><strong>The demand question is still open.</strong> Free LightBurn already flags open paths. The bet is that one-click<br>
+<em>repair</em> + not-needing-to-know-how + provenance-for-resellers is worth paying for. Phase 0 must prove it;<br>
+  don't skip it.</li>
+<li><strong>Geometry edge cases are the real engineering.</strong> Closing paths, dedupe, feature-preserving simplify, and<br>
+  reliable nesting have long tails. Budget for it; lean on Shapely/GEOS rather than hand-rolling.</li>
+<li><strong>Segment overlap.</strong> The art crowd (portraits/signs) barely needs this; the buyers are the functional /<br>
+  joinery / reseller crowd and people burned by bad purchased files. Aim marketing there, not at "make AI art."</li>
+<li><strong>Guarantee ops.</strong> Must be genuinely cheap to honor and hard to game — the canonical-copy design handles the<br>
+  gaming; keeping checks narrow keeps payouts rare. Don't let scope creep turn the promise unkeepable.</li>
+</ul>
+<h2 id="12-open-decisions-for-you">12. Open decisions for you</h2>
+<ol>
+<li><strong>Name / domain.</strong> (CutReady, FirstPass, Kerf, LaserProof, …?)</li>
+<li><strong>Guarantee remedy:</strong> free month (as you suggested) vs credit vs cash-back — free month is cheapest/stickiest; confirm.</li>
+<li><strong>Launch machine profiles:</strong> LightBurn + Glowforge first? (Your own machine should be profile #1 for testing.)</li>
+<li><strong>Kerf priority:</strong> Phase 1 or Phase 2 — depends on your shop gut-check (§7).</li>
+<li><strong>Do we gate Phase 0</strong> behind email, or fully open the free validator for reach?</li>
+</ol>
+<hr>
+<p><em>Next concrete step (recommended): I can draft the Phase 0 landing-page copy + the read-only validator's<br>
+check-list spec, and the reframed, solution-free community post to gauge reaction — all low-cost, all before<br>
+any real build.</em></p>
+    </main>
+    <div class="doc-foot">house-style · converted from product-spec.md · self-contained · bin/md2html.py</div>
+  </div>
+</body>
+</html>

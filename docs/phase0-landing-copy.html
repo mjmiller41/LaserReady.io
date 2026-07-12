@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LaserReady — Phase 0 Landing Copy</title>
+<style>
+  :root{
+    /* Ink (blueprint graphite — cool) */
+    --color-ink-950:#080e1b; --color-ink-900:#0f172a; --color-ink-800:#1e293b;
+    --color-ink-700:#334155; --color-ink-600:#475569; --color-ink-500:#64748b;
+    --color-ink-400:#94a3b8; --color-ink-300:#cbd5e1; --color-ink-200:#e2e8f0;
+    --color-ink-100:#f1f5f9;
+    /* Paper (warm kraft neutral) */
+    --color-paper-0:#ffffff; --color-paper-50:#faf9f7; --color-paper-100:#f5f4f1;
+    --color-paper-200:#eae7e1;
+    /* Ember (the laser — warm accent) */
+    --color-ember-50:#fff7ed; --color-ember-400:#fb923c; --color-ember-500:#f97316;
+    --color-ember-600:#ea580c; --color-ember-700:#c2410c;
+    /* Semantic check-result states — RESERVED */
+    --color-blocker-600:#dc2626; --color-blocker-300:#fca5a5; --color-blocker-50:#fef2f2;
+    --color-advisory-500:#f59e0b; --color-advisory-300:#fcd34d; --color-advisory-50:#fffbeb;
+    --color-pass-600:#16a34a; --color-pass-300:#86efac; --color-pass-50:#f0fdf4;
+    /* Type */
+    --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+      "Helvetica Neue", Arial, sans-serif;
+    --font-mono: ui-monospace, "SF Mono", "SFMono-Regular", Menlo, Consolas,
+      "Liberation Mono", monospace;
+    /* Radii (workshop-precise, not pill-soft) */
+    --radius-md:0.375rem; --radius-lg:0.5rem; --radius-xl:0.75rem;
+
+    /* Page-level semantic aliases (light) — mapped per BRAND-KIT §9 */
+    --bg-page: var(--color-paper-100);
+    --bg-card: var(--color-paper-0);
+    --bg-dark-section: var(--color-ink-900);
+    --text-body: var(--color-ink-900);
+    --text-muted: var(--color-ink-500);
+    --border-hair: var(--color-ink-200);
+    --border-strong: var(--color-ink-300);
+    --link: var(--color-ember-700);
+    --ready: var(--color-ember-700);
+    --cta-bg: var(--color-ember-700);
+    --cta-bg-hover: var(--color-ember-600);
+    --cta-text: #ffffff;
+    color-scheme: light;
+  }
+
+  *{box-sizing:border-box}
+  html{scrollbar-width:thin;scrollbar-color:var(--line) var(--ink)}
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-track{background:var(--ink)}
+  ::-webkit-scrollbar-thumb{background:var(--line);border-radius:6px;border:2px solid var(--ink)}
+  html,body{margin:0;background:var(--ink);color:var(--text);
+    font-family:var(--sans);line-height:1.62;-webkit-font-smoothing:antialiased}
+  body{background:radial-gradient(760px 300px at 50% -140px,rgba(227,165,82,.07),transparent 70%),var(--ink);
+    padding:26px 18px 80px;font-size:14.5px}
+  .wrap{max-width:800px;margin:0 auto}
+  .doc-mast{display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+    border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:22px}
+  .doc-mast .eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--faint)}
+  .doc-mast .eyebrow b{color:var(--brass)}
+  .doc-mast .src{font-family:var(--mono);font-size:10.5px;color:var(--faint)}
+  main h1,main h2,main h3,main h4{font-weight:800;letter-spacing:-.01em;line-height:1.25;color:var(--text)}
+  main h1{font-size:26px;margin:.2em 0 .5em}
+  main h2{font-size:20px;margin:1.7em 0 .5em;border-top:1px solid var(--line);padding-top:.8em}
+  main h3{font-size:16px;margin:1.4em 0 .4em}
+  main h4{font-size:13px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  main p{margin:.7em 0;color:var(--text)}
+  main a{color:var(--brass);text-decoration:none}
+  main a:hover{text-decoration:underline}
+  main strong{color:#fff}
+  main ul,main ol{margin:.6em 0;padding-left:1.4em}
+  main li{margin:.28em 0}
+  main li::marker{color:var(--faint)}
+  main code{font-family:var(--mono);font-size:.86em;color:#C9CEDF;background:var(--ink2);
+    padding:1px 5px;border-radius:4px}
+  main pre{background:var(--ink2);border:1px solid var(--line);border-radius:var(--r-md);
+    padding:13px 15px;overflow:auto;line-height:1.5}
+  main pre code{background:none;padding:0;color:#C9CEDF;font-size:12px}
+  main blockquote{margin:1em 0;border-left:3px solid var(--brass-dim);background:var(--ink2);
+    border-radius:0 var(--r-md) var(--r-md) 0;padding:2px 16px;color:var(--muted)}
+  main table{border-collapse:collapse;width:100%;margin:1em 0;font-size:13px;display:block;overflow-x:auto}
+  main th,main td{text-align:left;padding:8px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+  main th{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+  main tr:hover td{background:var(--ink2)}
+  main hr{border:none;border-top:1px solid var(--line);margin:1.8em 0}
+  main img{max-width:100%;border-radius:var(--r-md)}
+  main input[type=checkbox]{accent-color:var(--brass);margin-right:6px}
+  .doc-foot{margin-top:44px;border-top:1px solid var(--line);padding-top:14px;
+    font-family:var(--mono);font-size:10px;color:var(--faint)}
+
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="doc-mast">
+      <span class="eyebrow"><b>▸</b> LaserReady — Phase 0 Landing Copy</span>
+      <span class="src">phase0-landing-copy.md</span>
+    </div>
+    <main>
+<h1 id="laserready-phase-0-landing-copy">LaserReady — Phase 0 Landing Copy</h1>
+<blockquote>
+<p>Phase 0 ships one thing: a <strong>free file checker</strong> that tells you if a cut file will actually cut,<br>
+before you waste material. It does not repair or export yet — that's Phase 1, and the email list is<br>
+how people hear when it lands. Every line below is written to be honest enough to keep.</p>
+</blockquote>
+<hr>
+<h2 id="hero">Hero</h2>
+<p><strong>Headline:</strong><br>
+Will that file actually cut? Check before you burn.</p>
+<p><strong>Subhead:</strong><br>
+Drop in any SVG or DXF — one you bought, one an AI made, or one you drew — and LaserReady tells you exactly<br>
+what will go wrong on the bed: open paths, double lines, hidden rasters, features too thin for your material.<br>
+Free. No account to run your first check.</p>
+<p><strong>Primary CTA button:</strong> Check my file<br>
+<strong>Secondary CTA (link):</strong> How it works ↓</p>
+<hr>
+<h2 id="the-problem-section">The problem (section)</h2>
+<p><strong>You bought the file. It still didn't cut right.</strong></p>
+<p>You find out the same way every time — after the material's already on the bed. The outline had a gap, so the<br>
+part never released. Two lines sat on top of each other and double-burned. A "cut" layer came in as engrave.<br>
+A curve was actually 4,000 nodes and the head stuttered the whole way around. None of it showed on screen.</p>
+<p>Marketplace files, AI-generated files, hand-traced files — they all hit the same wall, because "looks right in<br>
+a preview" and "cuts right on a laser" are two different things.</p>
+<hr>
+<h2 id="what-laserready-does-section">What LaserReady does (section)</h2>
+<p><strong>LaserReady reads your file the way your laser will, and flags the problems first.</strong></p>
+<p>Upload an SVG or DXF from anywhere — Etsy, a design bundle, an AI generator, your own software. LaserReady<br>
+walks the geometry and gives you a plain-English report: what's wrong, where it is, and how bad it is. No<br>
+guessing, no test-cut-to-find-out.</p>
+<p>It doesn't care where the file came from. That's the point — every other tool only checks files <em>it</em> made.</p>
+<hr>
+<h2 id="the-guarantee-tease-for-the-launch-list">The guarantee (tease — for the launch list)</h2>
+<p><strong>Soon: we don't just find the problems. We fix them, and we back it.</strong></p>
+<p>Phase 1 adds one-click repair and clean export (SVG, DXF, mm-accurate, machine-ready). And it comes with a<br>
+promise no one else in this space will make:</p>
+<p><strong>Every file we export passes our full structural check — closed paths, no double lines, correct scale,<br>
+correct cut/engrave layers — or your next month is free.</strong></p>
+<p>We can guarantee that because we check the exact file we hand you, and we keep a copy to prove it. We won't<br>
+promise it cuts perfectly on your machine at your settings — nobody honestly can. We promise the file itself<br>
+is sound. <strong>Get on the list to be first in.</strong></p>
+<p><strong>CTA:</strong> Email me when repair + the guarantee launch → [ email field ] [ Notify me ]</p>
+<hr>
+<h2 id="how-it-works-3-steps">How it works (3 steps)</h2>
+<ol>
+<li><strong>Upload.</strong> SVG or DXF, from any source. Tell us your machine and material thickness (optional, but it<br>
+   sharpens the check).</li>
+<li><strong>We inspect.</strong> LaserReady checks path integrity, scale, layers, and whether any feature is too thin to<br>
+   survive your material.</li>
+<li><strong>You get the report.</strong> Plain English, problem by problem, worst-first — before you spend a sheet.</li>
+</ol>
+<hr>
+<h2 id="what-we-check-section-lifts-straight-from-the-validator">What we check (section — lifts straight from the validator)</h2>
+<ul>
+<li><strong>Open paths</strong> — the #1 cause of parts that won't release and lines that double-burn.</li>
+<li><strong>Duplicate &amp; overlapping lines</strong> — double burns, doubled cut time.</li>
+<li><strong>Scale &amp; units</strong> — is it actually the size you think, and will it fit your bed?</li>
+<li><strong>Thin features</strong> — anything narrow enough to burn through your material, flagged against the thickness you enter.</li>
+<li><strong>Cut vs engrave</strong> — filled shapes that will engrave when you meant to cut.</li>
+<li><strong>Hidden rasters</strong> — a bitmap smuggled into a "cut" file that your laser can't cut.</li>
+<li><strong>Node bloat</strong> — paths dense enough to make the head stutter or the file choke on import.</li>
+</ul>
+<hr>
+<h2 id="the-honest-part-section-this-box-is-a-feature-not-fine-print">The honest part (section — this box is a feature, not fine print)</h2>
+<p><strong>What we won't pretend.</strong></p>
+<p>We can't see your laser. Power, speed, focus, lens, air assist, and the exact board you loaded all affect the<br>
+final burn, and those are yours to dial in. LaserReady guarantees the <em>file</em> is structurally sound — closed,<br>
+clean, correctly scaled and layered. It's the difference between "the file is good" and "the cut is perfect."<br>
+We do the first one, completely. The second one is you and your machine — as it should be.</p>
+<hr>
+<h2 id="early-access-email-capture-the-phase-0-goal">Early access (email capture — the Phase 0 goal)</h2>
+<p><strong>Be first when repair + export land.</strong></p>
+<p>The checker's free forever. Repair, clean export, and the free-month guarantee are coming next — and the list<br>
+below is how you'll hear about it, plus any new machine profiles and features as they ship.</p>
+<p>[ Email field ]  [ Keep me posted ]</p>
+<p><em>No spam. Product updates only. Unsubscribe anytime.</em></p>
+<hr>
+<h2 id="faq">FAQ</h2>
+<p><strong>Is it really free?</strong><br>
+The checker is, and stays that way. It's how we prove LaserReady's worth before asking you for anything.</p>
+<p><strong>Do I need an account?</strong><br>
+Not for your first check. Drop a file and go. An email gets you on the early-access list and saved reports.</p>
+<p><strong>What files can I check?</strong><br>
+SVG and DXF today. Bought, AI-made, or self-drawn — source doesn't matter. Raster (PNG/JPG) support and<br>
+one-click repair come with Phase 1.</p>
+<p><strong>Does it work with my machine?</strong><br>
+The check is machine-agnostic. When export launches, you'll pick a profile (LightBurn, Glowforge, or a<br>
+generic colored-layer SVG) so the file comes out in the exact convention your laser expects.</p>
+<p><strong>Do you keep my designs?</strong><br>
+Your file is checked and not shared. When export launches, we keep a copy of <em>what we generated for you</em><br>
+only — that's what backs the guarantee — and nothing else.</p>
+<hr>
+<h3 id="build-notes-not-shown-on-page">Build notes (not shown on page)</h3>
+<ul>
+<li>Single job of the page: <strong>run a check + capture an email.</strong> Every section funnels to one of those two.</li>
+<li>Email capture appears twice (guarantee tease + early access) — both feed one list, tagged by source.</li>
+<li>Keep the "honest part" box visually prominent; it's the trust differentiator vs. the hype competitors.</li>
+<li>Don't claim repair/export exist yet. Phase 0 credibility depends on the checker being real and the rest being clearly "coming."</li>
+</ul>
+    </main>
+    <div class="doc-foot">house-style · converted from phase0-landing-copy.md · self-contained · bin/md2html.py</div>
+  </div>
+</body>
+</html>

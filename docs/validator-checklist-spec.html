@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LaserReady — Validator Check-List Spec</title>
+<style>
+  :root{
+    /* Ink (blueprint graphite — cool) */
+    --color-ink-950:#080e1b; --color-ink-900:#0f172a; --color-ink-800:#1e293b;
+    --color-ink-700:#334155; --color-ink-600:#475569; --color-ink-500:#64748b;
+    --color-ink-400:#94a3b8; --color-ink-300:#cbd5e1; --color-ink-200:#e2e8f0;
+    --color-ink-100:#f1f5f9;
+    /* Paper (warm kraft neutral) */
+    --color-paper-0:#ffffff; --color-paper-50:#faf9f7; --color-paper-100:#f5f4f1;
+    --color-paper-200:#eae7e1;
+    /* Ember (the laser — warm accent) */
+    --color-ember-50:#fff7ed; --color-ember-400:#fb923c; --color-ember-500:#f97316;
+    --color-ember-600:#ea580c; --color-ember-700:#c2410c;
+    /* Semantic check-result states — RESERVED */
+    --color-blocker-600:#dc2626; --color-blocker-300:#fca5a5; --color-blocker-50:#fef2f2;
+    --color-advisory-500:#f59e0b; --color-advisory-300:#fcd34d; --color-advisory-50:#fffbeb;
+    --color-pass-600:#16a34a; --color-pass-300:#86efac; --color-pass-50:#f0fdf4;
+    /* Type */
+    --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+      "Helvetica Neue", Arial, sans-serif;
+    --font-mono: ui-monospace, "SF Mono", "SFMono-Regular", Menlo, Consolas,
+      "Liberation Mono", monospace;
+    /* Radii (workshop-precise, not pill-soft) */
+    --radius-md:0.375rem; --radius-lg:0.5rem; --radius-xl:0.75rem;
+
+    /* Page-level semantic aliases (light) — mapped per BRAND-KIT §9 */
+    --bg-page: var(--color-paper-100);
+    --bg-card: var(--color-paper-0);
+    --bg-dark-section: var(--color-ink-900);
+    --text-body: var(--color-ink-900);
+    --text-muted: var(--color-ink-500);
+    --border-hair: var(--color-ink-200);
+    --border-strong: var(--color-ink-300);
+    --link: var(--color-ember-700);
+    --ready: var(--color-ember-700);
+    --cta-bg: var(--color-ember-700);
+    --cta-bg-hover: var(--color-ember-600);
+    --cta-text: #ffffff;
+    color-scheme: light;
+  }
+
+  *{box-sizing:border-box}
+  html{scrollbar-width:thin;scrollbar-color:var(--line) var(--ink)}
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-track{background:var(--ink)}
+  ::-webkit-scrollbar-thumb{background:var(--line);border-radius:6px;border:2px solid var(--ink)}
+  html,body{margin:0;background:var(--ink);color:var(--text);
+    font-family:var(--sans);line-height:1.62;-webkit-font-smoothing:antialiased}
+  body{background:radial-gradient(760px 300px at 50% -140px,rgba(227,165,82,.07),transparent 70%),var(--ink);
+    padding:26px 18px 80px;font-size:14.5px}
+  .wrap{max-width:800px;margin:0 auto}
+  .doc-mast{display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+    border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:22px}
+  .doc-mast .eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--faint)}
+  .doc-mast .eyebrow b{color:var(--brass)}
+  .doc-mast .src{font-family:var(--mono);font-size:10.5px;color:var(--faint)}
+  main h1,main h2,main h3,main h4{font-weight:800;letter-spacing:-.01em;line-height:1.25;color:var(--text)}
+  main h1{font-size:26px;margin:.2em 0 .5em}
+  main h2{font-size:20px;margin:1.7em 0 .5em;border-top:1px solid var(--line);padding-top:.8em}
+  main h3{font-size:16px;margin:1.4em 0 .4em}
+  main h4{font-size:13px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  main p{margin:.7em 0;color:var(--text)}
+  main a{color:var(--brass);text-decoration:none}
+  main a:hover{text-decoration:underline}
+  main strong{color:#fff}
+  main ul,main ol{margin:.6em 0;padding-left:1.4em}
+  main li{margin:.28em 0}
+  main li::marker{color:var(--faint)}
+  main code{font-family:var(--mono);font-size:.86em;color:#C9CEDF;background:var(--ink2);
+    padding:1px 5px;border-radius:4px}
+  main pre{background:var(--ink2);border:1px solid var(--line);border-radius:var(--r-md);
+    padding:13px 15px;overflow:auto;line-height:1.5}
+  main pre code{background:none;padding:0;color:#C9CEDF;font-size:12px}
+  main blockquote{margin:1em 0;border-left:3px solid var(--brass-dim);background:var(--ink2);
+    border-radius:0 var(--r-md) var(--r-md) 0;padding:2px 16px;color:var(--muted)}
+  main table{border-collapse:collapse;width:100%;margin:1em 0;font-size:13px;display:block;overflow-x:auto}
+  main th,main td{text-align:left;padding:8px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+  main th{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+  main tr:hover td{background:var(--ink2)}
+  main hr{border:none;border-top:1px solid var(--line);margin:1.8em 0}
+  main img{max-width:100%;border-radius:var(--r-md)}
+  main input[type=checkbox]{accent-color:var(--brass);margin-right:6px}
+  .doc-foot{margin-top:44px;border-top:1px solid var(--line);padding-top:14px;
+    font-family:var(--mono);font-size:10px;color:var(--faint)}
+
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="doc-mast">
+      <span class="eyebrow"><b>▸</b> LaserReady — Validator Check-List Spec</span>
+      <span class="src">validator-checklist-spec.md</span>
+    </div>
+    <main>
+<h1 id="laserready-validator-check-list-spec">LaserReady — Validator Check-List Spec</h1>
+<p>The validator is the whole product's spine. It takes <strong>(file, machine profile, material spec)</strong> and returns a<br>
+deterministic <strong>report</strong>. Phase 0 runs detection only. Phase 1 adds auto-fix + clean export, and the subset of<br>
+checks flagged <strong>Guaranteed</strong> becomes the money-back contract: <em>the file we export passes every Guaranteed check,<br>
+verified against our stored canonical copy, or a free month.</em></p>
+<h2 id="inputs">Inputs</h2>
+<table>
+<thead>
+<tr>
+<th>Input</th>
+<th>Required?</th>
+<th>Default</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>File</td>
+<td>yes</td>
+<td>—</td>
+<td>SVG or DXF (Phase 0). Raster→trace in Phase 1.</td>
+</tr>
+<tr>
+<td>Machine profile</td>
+<td>Phase 1 for export</td>
+<td>none in Phase 0</td>
+<td>Launch set: <strong>LightBurn</strong> (layer colors→cut/fill modes), <strong>Glowforge</strong> (operation-by-color: red=cut, blue=score, black=engrave), <strong>generic colored-layer SVG</strong> (clean color-separated layers for everyone else). More added later. Sets layer→operation + units convention.</td>
+</tr>
+<tr>
+<td>Material thickness (mm)</td>
+<td>no (sharpens checks)</td>
+<td>3.0</td>
+<td>Drives min-feature + fall-through thresholds.</td>
+</tr>
+<tr>
+<td>Intended real size</td>
+<td>only if file lacks units</td>
+<td>—</td>
+<td>Used to resolve unit-ambiguous files.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="severity-model">Severity model</h2>
+<ul>
+<li><strong>BLOCKER</strong> — will fail on the bed. If the check is in the Guaranteed set, a BLOCKER means the file is not yet guaranteeable (Phase 1 must auto-fix or the user must resolve).</li>
+<li><strong>WARNING</strong> — material/context dependent; may be fine, surfaced for judgment.</li>
+<li><strong>INFO</strong> — cosmetic/optimization; no cut risk.</li>
+</ul>
+<h2 id="global-tolerances-per-profile-overridable">Global tolerances (per-profile overridable)</h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Default</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>close_tol</code></td>
+<td>0.05 mm</td>
+<td>Endpoints within this = treated as coincident (path considered closed).</td>
+</tr>
+<tr>
+<td><code>join_tol</code></td>
+<td>0.50 mm</td>
+<td>Gaps ≤ this are auto-closeable (Phase 1); larger gaps flag for user.</td>
+</tr>
+<tr>
+<td><code>dupe_tol</code></td>
+<td>0.05 mm</td>
+<td>Segments within this of each other = duplicates.</td>
+</tr>
+<tr>
+<td><code>min_feature</code></td>
+<td>1.0 mm @ 3 mm ply</td>
+<td>Below this a cut feature is fragile; scales with material.</td>
+</tr>
+<tr>
+<td><code>burn_through</code></td>
+<td>0.5 mm</td>
+<td>Segment/bridge narrower than this tends to burn through.</td>
+</tr>
+<tr>
+<td><code>min_cut_area</code></td>
+<td>derived</td>
+<td>Closed contour smaller than this falls through bed slats.</td>
+</tr>
+<tr>
+<td><code>simplify_tol</code></td>
+<td>0.05 mm</td>
+<td>Max deviation when reducing nodes (feature-preserving).</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="checks">Checks</h2>
+<p>Each check: <strong>ID · name · detects · method · severity · auto-fix (Phase 1) · Guaranteed?</strong></p>
+<h3 id="a-path-integrity">A. Path integrity</h3>
+<ul>
+<li><strong>PC-01 · Open paths (cut)</strong> — subpaths on a cut layer whose start≠end beyond <code>close_tol</code>.<br>
+<em>Method:</em> per-subpath endpoint distance. <em>Severity:</em> BLOCKER. <em>Auto-fix:</em> close if gap ≤ <code>join_tol</code>, else flag with location. <strong>Guaranteed: YES.</strong></li>
+<li><strong>PC-02 · Duplicate / coincident lines</strong> — segments overlapping within <code>dupe_tol</code> (fully or partially).<br>
+<em>Method:</em> segment spatial index + overlap test. <em>Severity:</em> BLOCKER. <em>Auto-fix:</em> merge/remove the duplicate. <strong>Guaranteed: YES.</strong></li>
+<li><strong>PC-03 · Self-intersections</strong> — a path crossing itself.<br>
+<em>Method:</em> Bentley–Ottmann / GEOS <code>is_valid</code>. <em>Severity:</em> WARNING (BLOCKER if it breaks fill/offset). <em>Auto-fix:</em> offer noding/repair. Guaranteed: no (advisory).</li>
+<li><strong>PC-04 · Degenerate geometry</strong> — zero-length segments, stray single points, empty groups.<br>
+<em>Method:</em> length + point-count scan. <em>Severity:</em> INFO. <em>Auto-fix:</em> strip. Guaranteed: no.</li>
+</ul>
+<h3 id="b-geometry-hygiene">B. Geometry hygiene</h3>
+<ul>
+<li><strong>GH-01 · Node bloat</strong> — path node density above budget (avg segment &lt;&lt; <code>simplify_tol</code>, or nodes/mm over threshold).<br>
+<em>Method:</em> node count vs arc length. <em>Severity:</em> WARNING. <em>Auto-fix:</em> adaptive simplify to <code>simplify_tol</code>, <strong>preserving features by real-world size</strong> (don't delete a 0.8 mm real detail just because it's few points). Guaranteed: no (quality, not correctness).</li>
+<li><strong>GH-02 · Stroke-vs-fill ambiguity</strong> — filled shapes on a cut layer, or hairline strokes intended to cut.<br>
+<em>Method:</em> fill/stroke attributes + layer role. <em>Severity:</em> WARNING → routes to the layer-intent step (LO-02). Guaranteed: no.</li>
+</ul>
+<h3 id="c-sizing-scale">C. Sizing &amp; scale</h3>
+<ul>
+<li><strong>SZ-01 · Units present &amp; sane</strong> — SVG without real units, DXF without <code>$INSUNITS</code>.<br>
+<em>Method:</em> header/attribute parse. <em>Severity:</em> BLOCKER (ambiguous size). <em>Auto-fix:</em> user confirms intended size once; we set mm on export. <strong>Guaranteed: YES</strong> (export always carries valid mm).</li>
+<li><strong>SZ-02 · Scale sanity</strong> — bounding box implausible (e.g. &lt; 1 mm or &gt; 3 m).<br>
+<em>Method:</em> bbox vs range. <em>Severity:</em> WARNING. Guaranteed: no.</li>
+<li><strong>SZ-03 · Bed fit</strong> — bbox exceeds selected machine bed.<br>
+<em>Method:</em> bbox vs profile bed size. <em>Severity:</em> BLOCKER (won't fit) — only when a profile is chosen. <strong>Guaranteed: YES</strong> (for the selected profile).</li>
+</ul>
+<h3 id="d-features-vs-material">D. Features vs material</h3>
+<ul>
+<li><strong>FM-01 · Minimum feature width</strong> — any cut segment/bridge narrower than <code>min_feature</code> for the given thickness; harder flag below <code>burn_through</code>.<br>
+<em>Method:</em> local width estimate (medial axis / offset test). <em>Severity:</em> WARNING. <em>Auto-fix:</em> suggest heavier style / thicker bridge / downscale. Guaranteed: no (depends on material truth we can't verify).</li>
+<li><strong>FM-02 · Fall-through / orphan contours</strong> — closed cut contour with area &lt; <code>min_cut_area</code>.<br>
+<em>Method:</em> area filter. <em>Severity:</em> WARNING. <em>Auto-fix (Phase 1):</em> optional removal or bridge. Guaranteed: no.</li>
+<li><strong>FM-03 · Floating islands (stencils)</strong> — disconnected interior pieces with no bridge.<br>
+<em>Method:</em> connectivity graph. <em>Severity:</em> WARNING. <em>Auto-fix (Phase 1):</em> auto-bridge, default 1 mm, adjustable. Guaranteed: no.</li>
+</ul>
+<h3 id="e-layers-operations">E. Layers &amp; operations</h3>
+<ul>
+<li><strong>LO-01 · Layer→operation mapping valid</strong> — every layer maps to a cut/engrave/score op the selected machine understands.<br>
+<em>Method:</em> map against profile. <em>Severity:</em> BLOCKER (unmapped layer). <strong>Guaranteed: YES</strong> (export conforms to the chosen profile).</li>
+<li><strong>LO-02 · Cut/engrave/score intent confirmed</strong> — user has assigned/confirmed each shape's operation (the user-selectable-before-export step).<br>
+<em>Method:</em> interactive; default heuristic (stroke→cut, fill→engrave) then user override. <em>Severity:</em> BLOCKER until confirmed on export. <strong>Guaranteed: YES</strong> (we export exactly the confirmed intent).</li>
+</ul>
+<h3 id="f-format-validity-mostly-export-side">F. Format validity (mostly export-side)</h3>
+<ul>
+<li><strong>FV-01 · Valid, importable SVG</strong> — well-formed; only laser-safe elements (no unsupported filters/effects baked in).<br>
+<em>Severity:</em> BLOCKER if unparseable. <em>Auto-fix:</em> flatten/strip effects. Guaranteed: no (input-side); yes on our SVG export.</li>
+<li><strong>FV-02 · Valid DXF export</strong> — R12 / AC1009, closed LWPOLYLINE entities, <code>$INSUNITS</code>=mm, no arcs-as-facets where true curves are possible.<br>
+<em>Severity:</em> export gate. <strong>Guaranteed: YES</strong> (our DXF imports without an "unclosed paths" warning).</li>
+<li><strong>FV-03 · Valid G-code export (scoped)</strong> — GRBL dialect; M3/M4/M5 laser mode; per-layer power/speed within declared bounds; no out-of-bounds moves.<br>
+<em>Severity:</em> export gate. <strong>Guaranteed: YES within the declared machine/controller scope</strong> (we name exactly which controllers this covers; outside that, not guaranteed).</li>
+</ul>
+<h3 id="g-raster">G. Raster</h3>
+<ul>
+<li><strong>RS-01 · Embedded raster in cut file</strong> — <code>&lt;image&gt;</code> / base64 bitmap living inside a cut layer.<br>
+<em>Method:</em> element scan. <em>Severity:</em> BLOCKER for cut (a laser can't cut a bitmap). <em>Auto-fix:</em> strip from cut, or route to engrave, or offer trace (Phase 1). <strong>Guaranteed: YES</strong> (no hidden raster in a guaranteed cut layer).</li>
+</ul>
+<hr>
+<h2 id="the-guaranteed-set-the-contract">The Guaranteed set (the contract)</h2>
+<p>A file is <strong>LaserReady-Guaranteed</strong> when, on our stored canonical export, all of these pass:</p>
+<p><code>PC-01</code> (closed) · <code>PC-02</code> (no duplicates) · <code>SZ-01</code> (valid mm units) · <code>SZ-03</code> (fits selected bed) ·<br>
+<code>LO-01</code> (valid layer mapping) · <code>LO-02</code> (confirmed intent) · <code>FV-02</code>/<code>FV-03</code> (valid DXF/G-code for target) ·<br>
+<code>RS-01</code> (no hidden raster in cut).</p>
+<p>Everything else (thin features, node bloat, self-intersections, fall-through) is reported as <strong>advisory</strong> — we<br>
+surface it, we can fix most of it, but we don't stake the money-back promise on properties that depend on the<br>
+user's material truth or aesthetic intent. This is the line that keeps the guarantee honest and cheap to honor.</p>
+<h2 id="report-schema-json-schema_version-2">Report schema (JSON) — schema_version 2</h2>
+<p>A report is a <strong>self-contained audit artifact</strong>: <code>(bytes + report)</code> must reproduce the verdict with no<br>
+out-of-band inputs. That is why it carries version stamps, the full resolved options, and the<br>
+unit-resolution provenance. The Phase-1 guarantee audit refuses to compare reports across mismatched<br>
+<code>validator_version</code>/<code>schema_version</code>.</p>
+<pre><code class="language-json">{
+  &quot;report_id&quot;: &quot;uuid&quot;,
+  &quot;created&quot;: &quot;ISO-8601&quot;,
+  &quot;validator_version&quot;: &quot;0.1.0&quot;,
+  &quot;schema_version&quot;: 2,
+  &quot;input&quot;: {
+    &quot;filename&quot;: &quot;str&quot;, &quot;format&quot;: &quot;svg|dxf&quot;, &quot;machine_profile&quot;: &quot;str|null&quot;,
+    &quot;options&quot;: {
+      &quot;material_mm&quot;: 3.0, &quot;intended_size_mm&quot;: &quot;[w, h]|null&quot;, &quot;bed_mm&quot;: &quot;[w, h]|null&quot;,
+      &quot;tolerances&quot;: { &quot;close_tol&quot;: 0.05, &quot;join_tol&quot;: 0.5, &quot;dupe_tol&quot;: 0.05, &quot;min_feature&quot;: 1.0, &quot;burn_through&quot;: 0.5, &quot;simplify_tol&quot;: 0.05 },
+      &quot;nodes_per_mm_max&quot;: 5, &quot;node_bloat_min_nodes&quot;: 100, &quot;flatten_tol_mm&quot;: 0.05, &quot;max_locations&quot;: 100
+    }
+  },
+  &quot;summary&quot;: {
+    &quot;guaranteed_pass&quot;: false,
+    &quot;blockers&quot;: 2, &quot;warnings&quot;: 3, &quot;info&quot;: 1,
+    &quot;bbox_mm&quot;: [w, h], &quot;layers&quot;: [{ &quot;name&quot;: &quot;str&quot;, &quot;op&quot;: &quot;cut|engrave|score|unassigned&quot; }],
+    &quot;units&quot;: { &quot;valid&quot;: true, &quot;source&quot;: &quot;svg-physical|svg-px-guess|dxf-insunits|dxf-unitless|intended-size&quot;, &quot;scale_to_mm&quot;: 1.0, &quot;resolved_by_intended_size&quot;: false }
+  },
+  &quot;checks&quot;: [
+    {
+      &quot;id&quot;: &quot;PC-01&quot;, &quot;name&quot;: &quot;Open paths (cut)&quot;,
+      &quot;severity&quot;: &quot;blocker&quot;, &quot;status&quot;: &quot;fail&quot;,
+      &quot;guaranteed&quot;: true, &quot;autofixable&quot;: true,
+      &quot;count&quot;: 4,
+      &quot;locations&quot;: [ { &quot;x_mm&quot;: 12.3, &quot;y_mm&quot;: 40.1, &quot;detail&quot;: &quot;gap 0.8mm at top of outline&quot; } ]
+    }
+  ],
+  &quot;canonical_export_ref&quot;: &quot;s3://.../report_id.dxf|null&quot;
+}
+</code></pre>
+<p><code>guaranteed_pass</code> additionally requires that the file contained actual vector geometry and that nothing<br>
+was skipped unvalidated — a file we only partially read (or read as empty) never claims the guarantee.<br>
+The per-check identity (name, severity, guaranteed, autofixable, plain-English explanation) lives in ONE<br>
+table in code (<code>packages/validator/src/checks/meta.ts</code>) mirroring this spec.</p>
+<h2 id="determinism-the-audit-trail-non-negotiable-for-the-guarantee">Determinism &amp; the audit trail (non-negotiable for the guarantee)</h2>
+<ul>
+<li>Same <strong>(file, profile, material)</strong> → identical verdict, every time. Pin geometry-lib versions; snapshot-test.</li>
+<li>On export, persist the <strong>exact exported bytes</strong> + this report, immutable, keyed by <code>report_id</code>.</li>
+<li>A guarantee claim re-runs the validator against the <strong>stored</strong> artifact, not a user-returned file. If a<br>
+  Guaranteed check fails on our copy → auto-apply the free-month Stripe credit and open a validator bug.<br>
+  If it passes on our copy → the failure was downstream (their edits or machine), politely out of scope.</li>
+</ul>
+<h2 id="suggested-build-order">Suggested build order</h2>
+<ol>
+<li>SVG + DXF parser → normalized internal geometry (polylines/beziers, mm-resolved).</li>
+<li><strong>PC-01, PC-02, SZ-01</strong> — the core guaranteed trio; ship these first, they carry most of the value.</li>
+<li><code>RS-01</code>, <code>SZ-03</code>, <code>LO-01/02</code> — complete the guaranteed set.</li>
+<li>Advisory checks (<code>GH</code>, <code>FM</code>) — the "smart" polish.</li>
+<li>Exporters (<code>FV-02/03</code>) + canonical-copy persistence + the Stripe remedy hook.</li>
+</ol>
+<p>Geometry: lean on <strong>Shapely/GEOS</strong> (validity, closing, dedupe/union, offset) and <strong>ezdxf</strong> (DXF). Don't hand-roll<br>
+robust polygon ops.</p>
+    </main>
+    <div class="doc-foot">house-style · converted from validator-checklist-spec.md · self-contained · bin/md2html.py</div>
+  </div>
+</body>
+</html>

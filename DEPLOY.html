@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DEPLOY.md — LaserReady (instructions for claude-code)</title>
+<style>
+  :root{
+    /* Ink (blueprint graphite — cool) */
+    --color-ink-950:#080e1b; --color-ink-900:#0f172a; --color-ink-800:#1e293b;
+    --color-ink-700:#334155; --color-ink-600:#475569; --color-ink-500:#64748b;
+    --color-ink-400:#94a3b8; --color-ink-300:#cbd5e1; --color-ink-200:#e2e8f0;
+    --color-ink-100:#f1f5f9;
+    /* Paper (warm kraft neutral) */
+    --color-paper-0:#ffffff; --color-paper-50:#faf9f7; --color-paper-100:#f5f4f1;
+    --color-paper-200:#eae7e1;
+    /* Ember (the laser — warm accent) */
+    --color-ember-50:#fff7ed; --color-ember-400:#fb923c; --color-ember-500:#f97316;
+    --color-ember-600:#ea580c; --color-ember-700:#c2410c;
+    /* Semantic check-result states — RESERVED */
+    --color-blocker-600:#dc2626; --color-blocker-300:#fca5a5; --color-blocker-50:#fef2f2;
+    --color-advisory-500:#f59e0b; --color-advisory-300:#fcd34d; --color-advisory-50:#fffbeb;
+    --color-pass-600:#16a34a; --color-pass-300:#86efac; --color-pass-50:#f0fdf4;
+    /* Type */
+    --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+      "Helvetica Neue", Arial, sans-serif;
+    --font-mono: ui-monospace, "SF Mono", "SFMono-Regular", Menlo, Consolas,
+      "Liberation Mono", monospace;
+    /* Radii (workshop-precise, not pill-soft) */
+    --radius-md:0.375rem; --radius-lg:0.5rem; --radius-xl:0.75rem;
+
+    /* Page-level semantic aliases (light) — mapped per BRAND-KIT §9 */
+    --bg-page: var(--color-paper-100);
+    --bg-card: var(--color-paper-0);
+    --bg-dark-section: var(--color-ink-900);
+    --text-body: var(--color-ink-900);
+    --text-muted: var(--color-ink-500);
+    --border-hair: var(--color-ink-200);
+    --border-strong: var(--color-ink-300);
+    --link: var(--color-ember-700);
+    --ready: var(--color-ember-700);
+    --cta-bg: var(--color-ember-700);
+    --cta-bg-hover: var(--color-ember-600);
+    --cta-text: #ffffff;
+    color-scheme: light;
+  }
+
+  *{box-sizing:border-box}
+  html{scrollbar-width:thin;scrollbar-color:var(--line) var(--ink)}
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-track{background:var(--ink)}
+  ::-webkit-scrollbar-thumb{background:var(--line);border-radius:6px;border:2px solid var(--ink)}
+  html,body{margin:0;background:var(--ink);color:var(--text);
+    font-family:var(--sans);line-height:1.62;-webkit-font-smoothing:antialiased}
+  body{background:radial-gradient(760px 300px at 50% -140px,rgba(227,165,82,.07),transparent 70%),var(--ink);
+    padding:26px 18px 80px;font-size:14.5px}
+  .wrap{max-width:800px;margin:0 auto}
+  .doc-mast{display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+    border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:22px}
+  .doc-mast .eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--faint)}
+  .doc-mast .eyebrow b{color:var(--brass)}
+  .doc-mast .src{font-family:var(--mono);font-size:10.5px;color:var(--faint)}
+  main h1,main h2,main h3,main h4{font-weight:800;letter-spacing:-.01em;line-height:1.25;color:var(--text)}
+  main h1{font-size:26px;margin:.2em 0 .5em}
+  main h2{font-size:20px;margin:1.7em 0 .5em;border-top:1px solid var(--line);padding-top:.8em}
+  main h3{font-size:16px;margin:1.4em 0 .4em}
+  main h4{font-size:13px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  main p{margin:.7em 0;color:var(--text)}
+  main a{color:var(--brass);text-decoration:none}
+  main a:hover{text-decoration:underline}
+  main strong{color:#fff}
+  main ul,main ol{margin:.6em 0;padding-left:1.4em}
+  main li{margin:.28em 0}
+  main li::marker{color:var(--faint)}
+  main code{font-family:var(--mono);font-size:.86em;color:#C9CEDF;background:var(--ink2);
+    padding:1px 5px;border-radius:4px}
+  main pre{background:var(--ink2);border:1px solid var(--line);border-radius:var(--r-md);
+    padding:13px 15px;overflow:auto;line-height:1.5}
+  main pre code{background:none;padding:0;color:#C9CEDF;font-size:12px}
+  main blockquote{margin:1em 0;border-left:3px solid var(--brass-dim);background:var(--ink2);
+    border-radius:0 var(--r-md) var(--r-md) 0;padding:2px 16px;color:var(--muted)}
+  main table{border-collapse:collapse;width:100%;margin:1em 0;font-size:13px;display:block;overflow-x:auto}
+  main th,main td{text-align:left;padding:8px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+  main th{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+  main tr:hover td{background:var(--ink2)}
+  main hr{border:none;border-top:1px solid var(--line);margin:1.8em 0}
+  main img{max-width:100%;border-radius:var(--r-md)}
+  main input[type=checkbox]{accent-color:var(--brass);margin-right:6px}
+  .doc-foot{margin-top:44px;border-top:1px solid var(--line);padding-top:14px;
+    font-family:var(--mono);font-size:10px;color:var(--faint)}
+
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="doc-mast">
+      <span class="eyebrow"><b>▸</b> DEPLOY.md — LaserReady (instructions for claude-code)</span>
+      <span class="src">DEPLOY.md</span>
+    </div>
+    <main>
+<h1 id="deploymd-laserready-instructions-for-claude-code">DEPLOY.md — LaserReady (instructions for claude-code)</h1>
+<blockquote>
+<p><strong>Audience: claude-code performing the deploy.</strong> This is the single source of truth for<br>
+deploying LaserReady. Deploy is done from the box via <strong>Hostinger MCP or SSH</strong> (both available).<br>
+LaserReady shares its VPS with a second tenant (LaserKerf) — the <strong>Shared box</strong> section below is<br>
+non-negotiable: follow it or you will break the neighbor.</p>
+</blockquote>
+<p>LaserReady is a <strong>static site</strong> (the validator runs client-side). Deploy = build a static image and<br>
+serve it behind the shared reverse proxy. Zero DB, zero host ports.</p>
+<hr>
+<h2 id="shared-box-proxy-coordination-contract-read-first-do-not-skip">Shared box — proxy coordination contract (READ FIRST, do not skip)</h2>
+<p>This Hostinger KVM 2 hosts <strong>two independent tenants</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Tenant</th>
+<th>Containers</th>
+<th>Box path</th>
+<th>Internal port range</th>
+<th>Public domains</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>LaserReady</strong> (this repo)</td>
+<td><code>laserready-web</code></td>
+<td><code>/srv/laserready</code></td>
+<td><strong>8100–8199</strong></td>
+<td><code>laserready.io</code>, <code>www.laserready.io</code></td>
+</tr>
+<tr>
+<td><strong>LaserKerf</strong></td>
+<td><code>laserkerf-web</code> (later <code>laserkerf-api</code>, <code>laserkerf-redis</code>)</td>
+<td><code>/srv/laserkerf</code></td>
+<td><strong>8000–8099</strong></td>
+<td><code>laserkerf.io</code>, <code>www.</code>, <code>app.</code>, (later <code>api.</code>, <code>downloads.</code>)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Shared infrastructure — owned jointly, coordinate before touching:</strong></p>
+<ul>
+<li>One Docker network literally named <strong><code>proxy</code></strong> (external). Both tenants attach to it. <strong>Never delete or recreate it.</strong></li>
+<li>One reverse-proxy container <strong><code>shared-caddy</code></strong> at <code>/srv/shared</code>, owns <code>:80</code>/<code>:443</code> + TLS. Its <code>/srv/shared/Caddyfile</code> holds one hostname block per tenant.</li>
+<li>(LaserKerf Phase B only) one Postgres engine <code>shared-postgres</code> — not used by LaserReady.</li>
+</ul>
+<p><strong>Rules claude-code MUST follow when deploying LaserReady:</strong></p>
+<ol>
+<li><strong>Stay in your lane.</strong> Only touch <code>/srv/laserready</code> and the <code>laserready-web</code> container. Never <code>stop</code>/<code>rm</code>/<code>restart</code> <code>laserkerf-*</code>, <code>shared-caddy</code>, or <code>shared-postgres</code>. Never run <code>docker compose down</code> from <code>/srv/shared</code> — that drops the proxy for <strong>both</strong> tenants.</li>
+<li><strong>Edit the shared Caddyfile additively.</strong> When touching LaserReady's hostname block in <code>/srv/shared/Caddyfile</code>, leave LaserKerf's block byte-for-byte intact. Then <code>caddy validate</code> and <code>caddy reload</code> — <strong>never restart</strong> the <code>shared-caddy</code> container (reload is zero-downtime; a restart drops the neighbor).</li>
+<li><strong>No published host ports.</strong> Reach the world only through <code>shared-caddy</code>. If a host port is ever unavoidable, stay in <strong>8100–8199</strong>.</li>
+<li><strong>Never modify LaserKerf's <code>.env</code>, files, DB, or containers.</strong></li>
+<li><strong>Snapshot before risky shared changes.</strong> Take a Hostinger VPS snapshot (via the Hostinger MCP) before editing anything under <code>/srv/shared</code>.</li>
+</ol>
+<p><strong>After any deploy, confirm you did not harm the neighbor:</strong></p>
+<pre><code class="language-bash">curl -s -o /dev/null -w 'laserkerf.io %{http_code}\n' https://laserkerf.io   # must still be 200 (or the same as before)
+</code></pre>
+<hr>
+<h2 id="access-hostinger-mcp-or-ssh">Access: Hostinger MCP or SSH</h2>
+<p>Deployment runs docker/shell commands on the box and occasionally manages DNS or snapshots. Use both:</p>
+<ul>
+<li><strong>Hostinger MCP (prefer for VPS lifecycle + DNS):</strong> list the VPS to get its IP/status, take a <strong>pre-deploy snapshot</strong>, and manage DNS records. If the Hostinger MCP exposes a run-command / exec tool, you may run the shell steps below through it. Check the connected Hostinger tools first.</li>
+<li><strong>SSH (for docker/compose):</strong> <code>ssh &lt;ssh-user&gt;@&lt;box-ip&gt;</code> then run the commands below. Get <code>&lt;box-ip&gt;</code> from the Hostinger MCP (VPS list) or the operator.</li>
+</ul>
+<p>Do not fetch or run anything outside these two paths.</p>
+<hr>
+<h2 id="one-time-setup-skip-steps-another-operator-already-did">One-time setup (skip steps another operator already did)</h2>
+<ol>
+<li><strong>Shared network</strong> (created once for the whole box):</li>
+</ol>
+<p><code>bash
+   docker network ls --format '{{.Name}}' | grep -qx proxy || docker network create proxy</code></p>
+<ol start="2">
+<li>
+<p><strong>Shared Caddy</strong> must be up at <code>/srv/shared</code> (owned jointly — if it isn't running, coordinate before creating it; see LaserKerf's DEPLOY.md which carries the identical shared-stack definition).</p>
+</li>
+<li>
+<p><strong>Clone LaserReady:</strong></p>
+</li>
+</ol>
+<p><code>bash
+   cd /srv &amp;&amp; git clone git@github.com:mjmiller41/LaserReady.io.git laserready</code></p>
+<ol start="4">
+<li><strong>Env</strong> (MailerLite, optional — empty ships capture disabled):</li>
+</ol>
+<p><code>bash
+   cd /srv/laserready &amp;&amp; cp deploy/.env.example deploy/.env
+   # set VITE_ML_ACCOUNT / VITE_ML_FORM_GUARANTEE / VITE_ML_FORM_EARLY (git-ignored, never commit)</code></p>
+<ol start="5">
+<li><strong>DNS:</strong> ensure <code>laserready.io</code> and <code>www.laserready.io</code> resolve to the box IP (manage via the Hostinger MCP DNS tools) before the first Caddy reload, so Let's Encrypt can issue.</li>
+</ol>
+<hr>
+<h2 id="deploy-update">Deploy / update</h2>
+<pre><code class="language-bash">cd /srv/laserready
+git pull
+docker compose -f deploy/docker-compose.yml --env-file deploy/.env up -d --build
+docker compose -f deploy/docker-compose.yml ps         # laserready-web healthy?
+</code></pre>
+<p>The image builds inside a throwaway Node stage (<code>cpus: 0.50</code> / <code>mem_limit: 128m</code> at runtime). If you must avoid any build load on the box, build locally (<code>pnpm --filter @laserready/web build</code>) and rsync <code>apps/web/dist/</code> up instead.</p>
+<p><strong>Add/confirm LaserReady's route in the shared Caddy</strong> (only if the hostname block isn't already present). Append to <code>/srv/shared/Caddyfile</code>, leaving LaserKerf's block untouched:</p>
+<pre><code class="language-caddy">laserready.io, www.laserready.io {
+    encode gzip
+    reverse_proxy laserready-web:80
+    header {
+        Strict-Transport-Security &quot;max-age=31536000; includeSubDomains&quot;
+        X-Content-Type-Options &quot;nosniff&quot;
+        Referrer-Policy &quot;strict-origin-when-cross-origin&quot;
+    }
+}
+</code></pre>
+<p>Then, from the box:</p>
+<pre><code class="language-bash">docker exec shared-caddy caddy validate --config /etc/caddy/Caddyfile
+docker exec shared-caddy caddy reload   --config /etc/caddy/Caddyfile   # zero-downtime; never `restart`
+</code></pre>
+<hr>
+<h2 id="verify">Verify</h2>
+<pre><code class="language-bash">curl -s https://laserready.io | grep -o '&lt;title&gt;[^&lt;]*'          # serves the app
+curl -s -o /dev/null -w 'laserkerf.io %{http_code}\n' https://laserkerf.io   # neighbor still 200
+</code></pre>
+<p>Then one real end-to-end check in a browser: drop <code>samples/open-path.svg</code> on the live site and confirm the <strong>"Not laser-ready — 1 blocker / gap 0.8 mm"</strong> report.</p>
+<hr>
+<h2 id="tag-rollback">Tag + rollback</h2>
+<pre><code class="language-bash"># tag every deploy
+git tag -a v0.x.y -m &quot;What this deploy contains&quot; &amp;&amp; git push origin --tags
+
+# rollback = redeploy the previous tag (LaserReady only; never touch the neighbor)
+git checkout &lt;last-good-tag&gt;
+docker compose -f deploy/docker-compose.yml --env-file deploy/.env up -d --build
+</code></pre>
+<p>hPanel weekly VPS snapshots (managed via the Hostinger MCP) are the catastrophic-case backup for the whole box.</p>
+<hr>
+<h2 id="functional-stack-files-do-not-delete-these-are-the-deploy">Functional stack files (do not delete — these ARE the deploy)</h2>
+<p><code>deploy/docker-compose.yml</code> · <code>deploy/Dockerfile</code> · <code>deploy/nginx.conf</code> · <code>deploy/Caddyfile.snippet</code> · <code>deploy/.env.example</code></p>
+    </main>
+    <div class="doc-foot">house-style · converted from DEPLOY.md · self-contained · bin/md2html.py</div>
+  </div>
+</body>
+</html>

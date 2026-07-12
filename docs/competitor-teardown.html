@@ -1,0 +1,529 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Competitive Teardown — AI &quot;Laser-Ready&quot; Vector Tools</title>
+<style>
+  :root{
+    /* Ink (blueprint graphite — cool) */
+    --color-ink-950:#080e1b; --color-ink-900:#0f172a; --color-ink-800:#1e293b;
+    --color-ink-700:#334155; --color-ink-600:#475569; --color-ink-500:#64748b;
+    --color-ink-400:#94a3b8; --color-ink-300:#cbd5e1; --color-ink-200:#e2e8f0;
+    --color-ink-100:#f1f5f9;
+    /* Paper (warm kraft neutral) */
+    --color-paper-0:#ffffff; --color-paper-50:#faf9f7; --color-paper-100:#f5f4f1;
+    --color-paper-200:#eae7e1;
+    /* Ember (the laser — warm accent) */
+    --color-ember-50:#fff7ed; --color-ember-400:#fb923c; --color-ember-500:#f97316;
+    --color-ember-600:#ea580c; --color-ember-700:#c2410c;
+    /* Semantic check-result states — RESERVED */
+    --color-blocker-600:#dc2626; --color-blocker-300:#fca5a5; --color-blocker-50:#fef2f2;
+    --color-advisory-500:#f59e0b; --color-advisory-300:#fcd34d; --color-advisory-50:#fffbeb;
+    --color-pass-600:#16a34a; --color-pass-300:#86efac; --color-pass-50:#f0fdf4;
+    /* Type */
+    --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+      "Helvetica Neue", Arial, sans-serif;
+    --font-mono: ui-monospace, "SF Mono", "SFMono-Regular", Menlo, Consolas,
+      "Liberation Mono", monospace;
+    /* Radii (workshop-precise, not pill-soft) */
+    --radius-md:0.375rem; --radius-lg:0.5rem; --radius-xl:0.75rem;
+
+    /* Page-level semantic aliases (light) — mapped per BRAND-KIT §9 */
+    --bg-page: var(--color-paper-100);
+    --bg-card: var(--color-paper-0);
+    --bg-dark-section: var(--color-ink-900);
+    --text-body: var(--color-ink-900);
+    --text-muted: var(--color-ink-500);
+    --border-hair: var(--color-ink-200);
+    --border-strong: var(--color-ink-300);
+    --link: var(--color-ember-700);
+    --ready: var(--color-ember-700);
+    --cta-bg: var(--color-ember-700);
+    --cta-bg-hover: var(--color-ember-600);
+    --cta-text: #ffffff;
+    color-scheme: light;
+  }
+
+  *{box-sizing:border-box}
+  html{scrollbar-width:thin;scrollbar-color:var(--line) var(--ink)}
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-track{background:var(--ink)}
+  ::-webkit-scrollbar-thumb{background:var(--line);border-radius:6px;border:2px solid var(--ink)}
+  html,body{margin:0;background:var(--ink);color:var(--text);
+    font-family:var(--sans);line-height:1.62;-webkit-font-smoothing:antialiased}
+  body{background:radial-gradient(760px 300px at 50% -140px,rgba(227,165,82,.07),transparent 70%),var(--ink);
+    padding:26px 18px 80px;font-size:14.5px}
+  .wrap{max-width:800px;margin:0 auto}
+  .doc-mast{display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+    border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:22px}
+  .doc-mast .eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--faint)}
+  .doc-mast .eyebrow b{color:var(--brass)}
+  .doc-mast .src{font-family:var(--mono);font-size:10.5px;color:var(--faint)}
+  main h1,main h2,main h3,main h4{font-weight:800;letter-spacing:-.01em;line-height:1.25;color:var(--text)}
+  main h1{font-size:26px;margin:.2em 0 .5em}
+  main h2{font-size:20px;margin:1.7em 0 .5em;border-top:1px solid var(--line);padding-top:.8em}
+  main h3{font-size:16px;margin:1.4em 0 .4em}
+  main h4{font-size:13px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  main p{margin:.7em 0;color:var(--text)}
+  main a{color:var(--brass);text-decoration:none}
+  main a:hover{text-decoration:underline}
+  main strong{color:#fff}
+  main ul,main ol{margin:.6em 0;padding-left:1.4em}
+  main li{margin:.28em 0}
+  main li::marker{color:var(--faint)}
+  main code{font-family:var(--mono);font-size:.86em;color:#C9CEDF;background:var(--ink2);
+    padding:1px 5px;border-radius:4px}
+  main pre{background:var(--ink2);border:1px solid var(--line);border-radius:var(--r-md);
+    padding:13px 15px;overflow:auto;line-height:1.5}
+  main pre code{background:none;padding:0;color:#C9CEDF;font-size:12px}
+  main blockquote{margin:1em 0;border-left:3px solid var(--brass-dim);background:var(--ink2);
+    border-radius:0 var(--r-md) var(--r-md) 0;padding:2px 16px;color:var(--muted)}
+  main table{border-collapse:collapse;width:100%;margin:1em 0;font-size:13px;display:block;overflow-x:auto}
+  main th,main td{text-align:left;padding:8px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+  main th{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+  main tr:hover td{background:var(--ink2)}
+  main hr{border:none;border-top:1px solid var(--line);margin:1.8em 0}
+  main img{max-width:100%;border-radius:var(--r-md)}
+  main input[type=checkbox]{accent-color:var(--brass);margin-right:6px}
+  .doc-foot{margin-top:44px;border-top:1px solid var(--line);padding-top:14px;
+    font-family:var(--mono);font-size:10px;color:var(--faint)}
+
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="doc-mast">
+      <span class="eyebrow"><b>▸</b> Competitive Teardown — AI &quot;Laser-Ready&quot; Vector Tools</span>
+      <span class="src">competitor-teardown.md</span>
+    </div>
+    <main>
+<h1 id="competitive-teardown-ai-laser-ready-vector-tools">Competitive Teardown — AI "Laser-Ready" Vector Tools</h1>
+<h2 id="bottom-line-up-front">Bottom line up front</h2>
+<p>Across all five tools, the same gap repeats: <strong>they generate or trace a vector, but none of them guarantee a<br>
+first-pass, machine-ready cut file.</strong> Every one of them either (a) explicitly disclaims a clean first cut,<br>
+(b) requires manual cleanup in LightBurn/Inkscape/Illustrator, or (c) outputs raster that still needs tracing.<br>
+The unmet job is not "make a vector" — that's commoditized — it's <strong>validate and repair a vector so it cuts<br>
+right the first time</strong>: close open paths, dedupe/merge double lines, control node count, assign cut-vs-engrave<br>
+layers, apply per-material kerf, size to true mm, and export DXF/G-code. No incumbent in this set does the whole chain.</p>
+<p>The single most important nuance: <strong>the two closest competitors, VectoSolve and StencilCut, have already built most of the laser<br>
+plumbing.</strong> VectoSolve: closed-path enforcement, CUT/ENGRAVE layers, R12 DXF, raster stripping, a free Cut File Checker, nesting, G-code.<br>
+StencilCut: auto-bridging of floating islands, closed-POLYLINE R12 DXF in true mm, a manual kerf-offset tool, and — most importantly —<br>
+a real <strong>preflight / pre-cut checker</strong> that flags open paths, thin lines, orphan dots, duplicate cuts, and bed overflow <em>before download</em>.<br>
+Yet <strong>both stop at "claims," not "guarantees"</strong>: VectoSolve says outright "anyone who promises [first-try] is lying to you," and StencilCut<br>
+admits its AI is non-deterministic and thin-line/lettering failures recur. So the pre-cut-checker and closed-path-DXF ideas I flagged as the<br>
+wedge in batch 1 are <strong>already precedented</strong> — the remaining opening is a true <em>guarantee</em> + production features (batch/API/nesting) +<br>
+independent proof that files actually cut clean. The "easy" version of this product is already partly built, by more than one team, and iterating fast.</p>
+<h2 id="feature-hole-matrix">Feature-hole matrix</h2>
+<p>Legend: ✅ real feature · ⚠️ partial / claimed-only / manual · ❌ absent · — n/a</p>
+<table>
+<thead>
+<tr>
+<th>Capability</th>
+<th>VectorWitch</th>
+<th>VectoSolve</th>
+<th>Recraft V4</th>
+<th>SVG Genie</th>
+<th>FLUX3DP / Beam Studio</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Text → native SVG</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅ (best-in-class)</td>
+<td>✅</td>
+<td>❌ (raster only)</td>
+</tr>
+<tr>
+<td>Image → vector (trace)</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅ (desktop)</td>
+<td>⚠️ (separate Image Trace step)</td>
+</tr>
+<tr>
+<td>AI output is true vector (not raster)</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>❌ (raster PNG, up to 4K)</td>
+</tr>
+<tr>
+<td>Built-in editor</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅ (raster-centric)</td>
+<td>✅</td>
+<td>✅ (Beam Studio)</td>
+</tr>
+<tr>
+<td>SVG export</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅ (from Beam Studio)</td>
+</tr>
+<tr>
+<td><strong>DXF export</strong></td>
+<td>❌</td>
+<td>✅ (R12)</td>
+<td>❌</td>
+<td>⚠️ (separate converter, flattens curves→lines)</td>
+<td>✅ (import/edit)</td>
+</tr>
+<tr>
+<td><strong>G-code export</strong></td>
+<td>❌</td>
+<td>✅ (GRBL)</td>
+<td>❌</td>
+<td>❌</td>
+<td>⚠️ (machine-driver, not AI output)</td>
+</tr>
+<tr>
+<td><strong>Closed-path guarantee</strong></td>
+<td>❌ (open paths seen in real test)</td>
+<td>⚠️ (claimed; disclaims first-cut)</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><strong>Cut-vs-engrave layer separation</strong></td>
+<td>❌</td>
+<td>⚠️ (auto, but filled art needs manual reassign)</td>
+<td>❌</td>
+<td>⚠️ (marketing only)</td>
+<td>✅ (manual layers)</td>
+</tr>
+<tr>
+<td><strong>Kerf / offset compensation</strong></td>
+<td>❌</td>
+<td>❌ (guide only, no auto feature)</td>
+<td>❌</td>
+<td>❌</td>
+<td>⚠️ (manual Offset tool, not true kerf)</td>
+</tr>
+<tr>
+<td><strong>Node cleanup / simplify for cut</strong></td>
+<td>❌</td>
+<td>⚠️ (Optimize SVG)</td>
+<td>⚠️ (dense on complex art)</td>
+<td>⚠️ (speckle/optimize)</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><strong>Nesting / sheet layout</strong></td>
+<td>❌</td>
+<td>✅ (free tool)</td>
+<td>❌</td>
+<td>❌</td>
+<td>⚠️ (align/distribute only)</td>
+</tr>
+<tr>
+<td><strong>Material / machine presets</strong></td>
+<td>❌</td>
+<td>⚠️ (compat claims; G-code params)</td>
+<td>❌</td>
+<td>❌</td>
+<td>✅ (power/speed per material)</td>
+</tr>
+<tr>
+<td><strong>True mm sizing</strong></td>
+<td>❌</td>
+<td>⚠️ (DXF scale issues noted)</td>
+<td>❌</td>
+<td>⚠️ (units undocumented)</td>
+<td>✅ (machine-bound)</td>
+</tr>
+<tr>
+<td>Pre-cut file checker</td>
+<td>❌</td>
+<td>✅ (free, flags open paths/double lines/nodes)</td>
+<td>❌</td>
+<td>❌</td>
+<td>⚠️ (troubleshooting docs)</td>
+</tr>
+<tr>
+<td>Batch</td>
+<td>❌</td>
+<td>✅ (≤50)</td>
+<td>✅ (API async)</td>
+<td>✅ (desktop folders)</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>API</td>
+<td>❌</td>
+<td>⚠️ (business page sells it; consumer FAQ "in dev")</td>
+<td>✅ (full REST)</td>
+<td>❌</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>Commercial license</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅ (paid only)</td>
+<td>✅ (paid only)</td>
+<td>— (machine software)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="per-product-capsules">Per-product capsules</h2>
+<p><strong>VectorWitch</strong> — young UK solo-operator PWA (Beta / v2.0), $10–$40/mo (100–800 credits, no rollover, no free tier).<br>
+Style-rich (8 vector + 4 engraving styles), bundled craft tools (bg remover, depth map, 3D relief, upscaler), built-in editor.<br>
+Laser claims ("zero duplicate lines," "cuts perfectly") are <strong>marketing + stock-avatar testimonials.</strong> The one independent<br>
+laser test on record (LightBurn forum, Mar 2026) <strong>failed</strong>: imported "already traced," had <strong>open paths</strong>, laser-incompatible<br>
+shading, and distorted internal detail needing manual repair. Hard gaps: no DXF/EPS/G-code, no API, no batch, no kerf/material/<br>
+machine profiles, credits burned on failed generations.</p>
+<p><strong>VectoSolve</strong> — the most laser-serious entrant. Fresh (Mar 2026), solo-built (France), aggressively SEO'd. Credit packs<br>
+from <strong>$6.99/25 conversions</strong> (verified), laser annual plan ~$49/yr, API plans $29–$299/mo. Real laser plumbing: closed-path<br>
+enforcement, CUT/ENGRAVE separation, R12 DXF, G-code (Laser Pack $9.99/100), raster stripping, <strong>free Cut File Checker</strong>,<br>
+<strong>free nesting</strong>, plus box/hinge/gear generators. <strong>But it explicitly declines to promise a clean first cut</strong> ("we are not going<br>
+to promise it nails every file on the first try — anyone who promises that is lying"), has <strong>no automated kerf-offset</strong>, and<br>
+requires <strong>manual CUT-layer reassignment for filled graphics.</strong> Almost no independent validation (2 public ratings). Iterates fast — the main competitive risk.</p>
+<p><strong>Recraft V4</strong> — not a laser tool at all; a general design platform with best-in-class <strong>native SVG</strong> generation ($10–$48/mo;<br>
+API native-SVG ~$0.08–$0.30/image). Genuinely editable vectors, but <strong>fill-based geometry (wrong shape for cutting)</strong>, node<br>
+bloat on complex art, flat single-<code>&lt;g&gt;</code> grouping, and <strong>zero laser awareness</strong> — no DXF/G-code, no cut/engrave layers, no<br>
+closed paths, no kerf/nesting/material presets, no true mm. Best treated as an <strong>upstream feeder</strong> to a laser-prep tool, not a<br>
+rival. Independent gripes: credits don't roll over, near-impossible refunds, reliability outages, credits deducted on failed gens.</p>
+<p><strong>SVG Genie</strong> — small/early ($9–$29 credit packs, $19–$39/mo, $99 desktop tracer). Markets to laser/Cricut makers but ships<br>
+<strong>no real laser engineering</strong>: no closed-path guarantee, no kerf, no true cut/engrave layering, no machine presets, no G-code.<br>
+AI output is <strong>SVG-only</strong> (DXF is a separate manual step), and its <strong>DXF converter flattens Bézier curves to line segments</strong><br>
+(faceted cuts) with undocumented units. Independent failure evidence is thin; harshest claims come from a competitor. Confirms<br>
+demand, leaves the guarantee wide open. (⚠️ Naming: distinct from <strong>GenieSVG / geniesvg.com</strong>, an actual laser-focused tool — see below.)</p>
+<p><strong>FLUX3DP / Beam Studio AI</strong> — laser <em>hardware</em> company; Beam Studio AI (beta, ~Jan 2026) generates <strong>raster images</strong> ("engraving-<br>
+ready," up to 4K), not cut-ready vector. ~16 generations/$1. Its own "202" guide tells users to prompt "until it's ready to<br>
+<strong>trace to SVG</strong>" — a vendor-confirmed manual raster→vector step with the classic double-edge/excess-node/open-path problems.<br>
+Real laser features (layers, material presets, manual Offset) live in Beam Studio and are <strong>manual</strong>, not AI-driven. Name collides<br>
+with Black Forest Labs' FLUX.1 image models — also raster-only.</p>
+<h2 id="feature-hole-matrix-batch-2-laser-native-tools">Feature-hole matrix — batch 2 (laser-native tools)</h2>
+<p>Legend: ✅ real feature · ⚠️ partial / claimed-only / manual · ❌ absent · — n/a</p>
+<table>
+<thead>
+<tr>
+<th>Capability</th>
+<th>GenieSVG</th>
+<th>LaserBurn AI</th>
+<th>StencilCut</th>
+<th>SVGMaker</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Text → native SVG</td>
+<td>⚠️ (AI image→trace)</td>
+<td>⚠️ (AI art→trace)</td>
+<td>✅ (AI SVG gen)</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Image → vector (trace)</td>
+<td>✅</td>
+<td>✅ (stylized recreation, not literal)</td>
+<td>✅</td>
+<td>✅ (AI + VTracer)</td>
+</tr>
+<tr>
+<td>AI output is true vector</td>
+<td>⚠️ (traced)</td>
+<td>⚠️ (traced from raster)</td>
+<td>⚠️ (traced)</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Built-in editor</td>
+<td>❌</td>
+<td>❌</td>
+<td>✅ (laser editor, not full node editor)</td>
+<td>✅ (full-ish)</td>
+</tr>
+<tr>
+<td>SVG export</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>DXF export</strong></td>
+<td>❌</td>
+<td>⚠️ (claimed, not in real workflow)</td>
+<td>✅ (R12, closed, mm)</td>
+<td>✅ (convert step)</td>
+</tr>
+<tr>
+<td><strong>G-code export</strong></td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><strong>Closed-path guarantee</strong></td>
+<td>❌</td>
+<td>❌</td>
+<td>✅ (claimed, unverified)</td>
+<td>❌ (admits fragmentation)</td>
+</tr>
+<tr>
+<td><strong>Cut-vs-engrave layer separation</strong></td>
+<td>❌</td>
+<td>⚠️ (silhouette-only cut)</td>
+<td>⚠️ (separate outputs, not 1 mixed file)</td>
+<td>❌ (manual color-coding)</td>
+</tr>
+<tr>
+<td><strong>Kerf / offset compensation</strong></td>
+<td>❌</td>
+<td>⚠️ (only in box generator)</td>
+<td>⚠️ (manual offset tool)</td>
+<td>❌ (manual, user test-cut)</td>
+</tr>
+<tr>
+<td><strong>Node cleanup / simplify for cut</strong></td>
+<td>⚠️ (vague "path cleanup")</td>
+<td>⚠️ (SVGO optimize)</td>
+<td>⚠️ (bridge fixes, no node push)</td>
+<td>⚠️ (manual editor tools)</td>
+</tr>
+<tr>
+<td><strong>Nesting / sheet layout</strong></td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><strong>Material / machine presets</strong></td>
+<td>⚠️ (claimed, undetailed)</td>
+<td>❌</td>
+<td>⚠️ (tonal/style presets)</td>
+<td>❌ (defers to machine)</td>
+</tr>
+<tr>
+<td><strong>True mm sizing</strong></td>
+<td>❌</td>
+<td>❌ (dimensionless)</td>
+<td>✅ (mm-locked, key selling point)</td>
+<td>⚠️ (user instruction only)</td>
+</tr>
+<tr>
+<td><strong>Pre-cut file checker</strong></td>
+<td>❌</td>
+<td>❌</td>
+<td>✅ (real preflight — best in class)</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>Batch</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>✅ (API, ≤10)</td>
+</tr>
+<tr>
+<td>API</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>✅ (REST + MCP — its real moat)</td>
+</tr>
+<tr>
+<td>Commercial license</td>
+<td>⚠️ (not stated)</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅ (incl. free tier)</td>
+</tr>
+<tr>
+<td>Independent validation</td>
+<td>❌ none found</td>
+<td>❌ none found</td>
+<td>❌ none found</td>
+<td>⚠️ ~25 Trustpilot</td>
+</tr>
+</tbody>
+</table>
+<h2 id="per-product-capsules-batch-2">Per-product capsules — batch 2</h2>
+<p><strong>GenieSVG</strong> (geniesvg.com) — brand-new solo/indie <strong>Lovable SPA</strong> (Supabase + Stripe), launch-promo pricing. Free 10 conversions,<br>
+$35/100-credit pack, <strong>$3.99/mo "48 HRS ONLY" promo</strong> for unlimited. Three advertised tools: AI image gen, image→SVG, and a one-sentence<br>
+"Laser Preparation (path cleanup + material settings)." <strong>SVG-only output</strong> — no DXF/G-code/PDF/EPS anywhere. No editor, no machine profiles,<br>
+no kerf/layer/nesting, <strong>no closed-path or first-pass guarantee</strong> — "laser-ready" is a bare marketing claim. Self-reported traction (110k<br>
+vectors / 11k users / 4.8★) is <strong>uncorroborated</strong>; no PH/G2/TAAFT/forum footprint. Weakest, least-proven entrant — pure whitespace, but also least evidence anyone's using it.</p>
+<p><strong>LaserBurn AI</strong> (laserburnai.com, indie "Pardesco") — AI art generator (Gemini/Imagen) <strong>+ tracer</strong>, not a literal photo tracer (it<br>
+regenerates a stylized version, then traces). v1.0 Mar 2026. Pay-as-you-go: $5/10, $15/40, $25/80 gens; free PNG→SVG tracer + box/hinge<br>
+generators. Cut layer = <strong>outer silhouette only</strong>; engrave layer = threshold-derived raster fill. <strong>DXF and true-mm claims appear<br>
+aspirational</strong> — the real download walkthrough is PNG + 3 SVGs, no DXF. Vendor openly admits AI "isn't reliable for clean layer separation"<br>
+on multi-layer builds, and tracing failures aren't refunded. No closed-path guarantee, no checker, kerf only in the separate box tool.<br>
+Competes on <strong>hobbyist art convenience ($0.31–$0.50/design)</strong>, not cut reliability. ⚠️ Name collides with LONGER3D's unrelated "LaserBurn" machine software.</p>
+<p><strong>StencilCut</strong> (stencilcut.com) — <strong>the closest existing product to the "first-pass laser-ready" vision.</strong> Photo→stencil/engrave pipeline<br>
+with trained subject-segmentation, <strong>auto-bridging of floating islands</strong>, 14 cut/engrave styles, a free in-browser laser editor, and<br>
+<strong>closed-POLYLINE R12 DXF written in true mm</strong>. Its standout is a genuine <strong>preflight checker</strong> (flags floating pieces, sub-1.5mm thin lines,<br>
+tiny fall-through holes, open paths, duplicate cuts, bed overflow — with one-click fixes before download). Cheap one-time credits: free 5,<br>
+$2.99/15, $7.99/50, $14.99/100; <strong>SVG/DXF downloads always free</strong> (credits only for AI gen). Gaps: <strong>not a real node editor</strong> (can't push<br>
+Béziers), <strong>no batch, no API, no nesting, manual kerf only</strong>, cut and engrave are separate outputs (not one clean mixed-layer file), and<br>
+AI is <strong>non-deterministic</strong> (sometimes regenerate). Tagline "files that cut right the first time" is a <strong>claim with zero independent proof</strong><br>
+and its own docs concede thin-line/lettering failures. This is the competitor to benchmark against — it has already built the checker + mm-DXF spine.</p>
+<p><strong>SVGMaker</strong> (svgmaker.io, GenWave LLC) — <strong>broad AI-SVG platform, not a laser tool.</strong> Launched Sep 2025, ~25 Trustpilot reviews (~4.4).<br>
+Orchestrates 14+ external image models; rich format export (SVG/PDF/EPS/AI/DXF/PS + PNG/JPG/WebP + JSX/HTML) but <strong>no G-code</strong>. Its real moat<br>
+is a <strong>developer REST API + MCP server</strong> (Figma/Framer plugins too), positioned "best API for developers," not for makers. Laser is an <strong>SEO<br>
+content play</strong>: its own guides tell users to manually remove fills, outline strokes, Union overlaps, color-code cut/engrave, then convert to<br>
+DXF — and it openly documents AI-output defects (decimal bloat, <strong>path fragmentation/open paths</strong>, redundant nodes) plus "always test-cut first."<br>
+No kerf, no auto-layering, no closed-path guarantee, no material/machine profiles, no checker. Free tier + from $10/25 credits. Competes on breadth + API, cedes laser polish entirely.</p>
+<h2 id="cross-product-failure-patterns-the-recurring-pain">Cross-product failure patterns (the recurring pain)</h2>
+<ol>
+<li><strong>Open / unclosed paths</strong> — output previews fine but imports with gaps; laser skips them or wanders. Seen in the real VectorWitch test; the failure class VectoSolve's Cut File Checker exists to catch.</li>
+<li><strong>Double / duplicate lines</strong> — traced strokes have two edges → double-burn; "zero duplicate lines" is claimed but not verified.</li>
+<li><strong>Node bloat</strong> — AI/traced art carries hundreds of excess anchor points; slows machines, some CAM rejects it; needs manual Simplify.</li>
+<li><strong>Fills vs. strokes</strong> — generators output color-fill regions (engrave logic), not stroke contours (cut logic); filled art lands on the wrong layer.</li>
+<li><strong>Raster smuggled into "vector"</strong> — un-vectorizable regions left as bitmap (FLUX by design; VectoSolve warns of hidden raster).</li>
+<li><strong>Wrong physical scale</strong> — DXF without proper viewBox/units imports at wrong size, wasting stock.</li>
+<li><strong>Complex/photo inputs degrade</strong> — everyone is fine on flat logos/silhouettes, poor on photos/gradients/fine detail.</li>
+<li><strong>Kerf is nobody's solved problem</strong> — at best a manual guide or offset tool; no automatic per-material compensation anywhere.</li>
+<li><strong>Credits burned on failures / no rollover / weak refunds</strong> — recurring billing friction (VectorWitch, Recraft especially).</li>
+</ol>
+<h2 id="feature-holes-the-wedge-what-none-of-them-fully-do">Feature holes = the wedge (what none of them fully do)</h2>
+<blockquote>
+<p><strong>Updated after batch 2:</strong> the wedge is narrower than batch 1 implied. StencilCut already ships the <strong>pre-cut checker + closed-path mm DXF</strong>,<br>
+and VectoSolve ships a <strong>Cut File Checker + nesting + G-code</strong>. So "add a validator and closed paths" is no longer novel. What remains genuinely<br>
+unclaimed across all nine tools: <strong>G-code is near-absent, true per-material kerf automation is absent everywhere, nesting exists only in VectoSolve,<br>
+batch/API exist only in SVGMaker/VectoSolve, and — critically — nobody has independent proof or a real guarantee.</strong> The moat is now execution + proof, not idea.</p>
+</blockquote>
+<p>The defensible product is a <strong>laser-prep / validation-and-repair layer</strong>, ideally model-agnostic (could even sit downstream of<br>
+Recraft/VectorWitch output), that delivers what the matrix shows as mostly ❌/⚠️ across the board:</p>
+<ul>
+<li><strong>Guaranteed closed paths</strong> with auto-repair (close gaps within tolerance) — nobody guarantees this.</li>
+<li><strong>Automatic double-line/overlap dedupe + merge</strong> — claimed, never verified; a real, testable guarantee is open.</li>
+<li><strong>Node budget control</strong> tuned for cutting (simplify to a target while preserving small features) — only partial anywhere.</li>
+<li><strong>Automatic cut-vs-engrave-vs-score layer assignment</strong> that handles <em>filled</em> art correctly — VectoSolve/FLUX need manual reassign.</li>
+<li><strong>True per-material kerf compensation engine</strong> — genuinely absent across all five.</li>
+<li><strong>True-mm sizing + reliable DXF/G-code</strong> with correct units and real curves (not flattened polylines) — SVG Genie/others fail here.</li>
+<li><strong>A machine-profile library</strong> (Glowforge/xTool/OMTech/LightBurn) that outputs the right color/layer mapping per machine — only FLUX has presets, and only for its own hardware.</li>
+<li><strong>A trustworthy pre-cut "will this cut?" checker as the product's spine</strong>, with an actual guarantee/backstop ("or we fix it") — VectoSolve ships the checker but won't make the promise.</li>
+</ul>
+<h2 id="new-competitors-surfaced">New competitors surfaced</h2>
+<p>Batch 2 (GenieSVG, LaserBurn AI, StencilCut, SVGMaker) is now researched and folded into the matrix/capsules above.<br>
+Still <strong>not</strong> covered and worth a batch 3 if this advances:</p>
+<ul>
+<li><strong>StencilVector</strong> (stencilvector.com) — direct StencilCut rival (AI photo→laser stencil); StencilCut publishes head-to-head pages against it, so it's a real competitor.</li>
+<li><strong>FreeStencilMaker</strong> (freestencilmaker.com/laser-cutting-stencil-maker) — adjacent free tool.</li>
+<li><strong>Vector Magic / Vectorizer.AI</strong> — general vectorizers laser users fall back to (referenced repeatedly as the "clean DXF" baseline).</li>
+</ul>
+<h2 id="honest-evidence-caveats">Honest evidence caveats</h2>
+<ul>
+<li><strong>Reddit and Facebook groups were inaccessible</strong> this pass; independent user-failure threads are under-sampled. The LightBurn forum VectorWitch thread is the strongest real-world datapoint and it's a single thread.</li>
+<li><strong>VectoSolve and SVG Genie's "independent tests" are largely self-authored</strong> comparison blogs that rank themselves #1 — discount accordingly.</li>
+<li>Several ratings VectorWitch/VectoSolve cite come from <strong>vendor-curated or ~2-review</strong> sources; entrenchment is probably lower than marketing implies, which cuts both ways (easier to enter, but demand less proven).</li>
+</ul>
+    </main>
+    <div class="doc-foot">house-style · converted from competitor-teardown.md · self-contained · bin/md2html.py</div>
+  </div>
+</body>
+</html>

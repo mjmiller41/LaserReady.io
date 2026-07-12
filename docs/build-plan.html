@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LaserReady — Build Plan &amp; Stack</title>
+<style>
+  :root{
+    /* Ink (blueprint graphite — cool) */
+    --color-ink-950:#080e1b; --color-ink-900:#0f172a; --color-ink-800:#1e293b;
+    --color-ink-700:#334155; --color-ink-600:#475569; --color-ink-500:#64748b;
+    --color-ink-400:#94a3b8; --color-ink-300:#cbd5e1; --color-ink-200:#e2e8f0;
+    --color-ink-100:#f1f5f9;
+    /* Paper (warm kraft neutral) */
+    --color-paper-0:#ffffff; --color-paper-50:#faf9f7; --color-paper-100:#f5f4f1;
+    --color-paper-200:#eae7e1;
+    /* Ember (the laser — warm accent) */
+    --color-ember-50:#fff7ed; --color-ember-400:#fb923c; --color-ember-500:#f97316;
+    --color-ember-600:#ea580c; --color-ember-700:#c2410c;
+    /* Semantic check-result states — RESERVED */
+    --color-blocker-600:#dc2626; --color-blocker-300:#fca5a5; --color-blocker-50:#fef2f2;
+    --color-advisory-500:#f59e0b; --color-advisory-300:#fcd34d; --color-advisory-50:#fffbeb;
+    --color-pass-600:#16a34a; --color-pass-300:#86efac; --color-pass-50:#f0fdf4;
+    /* Type */
+    --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+      "Helvetica Neue", Arial, sans-serif;
+    --font-mono: ui-monospace, "SF Mono", "SFMono-Regular", Menlo, Consolas,
+      "Liberation Mono", monospace;
+    /* Radii (workshop-precise, not pill-soft) */
+    --radius-md:0.375rem; --radius-lg:0.5rem; --radius-xl:0.75rem;
+
+    /* Page-level semantic aliases (light) — mapped per BRAND-KIT §9 */
+    --bg-page: var(--color-paper-100);
+    --bg-card: var(--color-paper-0);
+    --bg-dark-section: var(--color-ink-900);
+    --text-body: var(--color-ink-900);
+    --text-muted: var(--color-ink-500);
+    --border-hair: var(--color-ink-200);
+    --border-strong: var(--color-ink-300);
+    --link: var(--color-ember-700);
+    --ready: var(--color-ember-700);
+    --cta-bg: var(--color-ember-700);
+    --cta-bg-hover: var(--color-ember-600);
+    --cta-text: #ffffff;
+    color-scheme: light;
+  }
+
+  *{box-sizing:border-box}
+  html{scrollbar-width:thin;scrollbar-color:var(--line) var(--ink)}
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-track{background:var(--ink)}
+  ::-webkit-scrollbar-thumb{background:var(--line);border-radius:6px;border:2px solid var(--ink)}
+  html,body{margin:0;background:var(--ink);color:var(--text);
+    font-family:var(--sans);line-height:1.62;-webkit-font-smoothing:antialiased}
+  body{background:radial-gradient(760px 300px at 50% -140px,rgba(227,165,82,.07),transparent 70%),var(--ink);
+    padding:26px 18px 80px;font-size:14.5px}
+  .wrap{max-width:800px;margin:0 auto}
+  .doc-mast{display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+    border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:22px}
+  .doc-mast .eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--faint)}
+  .doc-mast .eyebrow b{color:var(--brass)}
+  .doc-mast .src{font-family:var(--mono);font-size:10.5px;color:var(--faint)}
+  main h1,main h2,main h3,main h4{font-weight:800;letter-spacing:-.01em;line-height:1.25;color:var(--text)}
+  main h1{font-size:26px;margin:.2em 0 .5em}
+  main h2{font-size:20px;margin:1.7em 0 .5em;border-top:1px solid var(--line);padding-top:.8em}
+  main h3{font-size:16px;margin:1.4em 0 .4em}
+  main h4{font-size:13px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  main p{margin:.7em 0;color:var(--text)}
+  main a{color:var(--brass);text-decoration:none}
+  main a:hover{text-decoration:underline}
+  main strong{color:#fff}
+  main ul,main ol{margin:.6em 0;padding-left:1.4em}
+  main li{margin:.28em 0}
+  main li::marker{color:var(--faint)}
+  main code{font-family:var(--mono);font-size:.86em;color:#C9CEDF;background:var(--ink2);
+    padding:1px 5px;border-radius:4px}
+  main pre{background:var(--ink2);border:1px solid var(--line);border-radius:var(--r-md);
+    padding:13px 15px;overflow:auto;line-height:1.5}
+  main pre code{background:none;padding:0;color:#C9CEDF;font-size:12px}
+  main blockquote{margin:1em 0;border-left:3px solid var(--brass-dim);background:var(--ink2);
+    border-radius:0 var(--r-md) var(--r-md) 0;padding:2px 16px;color:var(--muted)}
+  main table{border-collapse:collapse;width:100%;margin:1em 0;font-size:13px;display:block;overflow-x:auto}
+  main th,main td{text-align:left;padding:8px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+  main th{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+  main tr:hover td{background:var(--ink2)}
+  main hr{border:none;border-top:1px solid var(--line);margin:1.8em 0}
+  main img{max-width:100%;border-radius:var(--r-md)}
+  main input[type=checkbox]{accent-color:var(--brass);margin-right:6px}
+  .doc-foot{margin-top:44px;border-top:1px solid var(--line);padding-top:14px;
+    font-family:var(--mono);font-size:10px;color:var(--faint)}
+
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="doc-mast">
+      <span class="eyebrow"><b>▸</b> LaserReady — Build Plan &amp; Stack</span>
+      <span class="src">build-plan.md</span>
+    </div>
+    <main>
+<h1 id="laserready-build-plan-stack">LaserReady — Build Plan &amp; Stack</h1>
+<blockquote>
+<p>Deployment/hosting is out of scope for this doc — see <code>DEPLOY.md</code> at the repo root.</p>
+</blockquote>
+<h2 id="0-the-architecture-in-one-idea">0. The architecture in one idea</h2>
+<p>The design that answers both "lightweight fast front" and "fast powerful back":</p>
+<p><strong>Do the Phase-0 geometry where the compute already is — the user's browser. Keep the server's job small. When<br>
+Phase 1 (repair/export/guarantee) needs a heavy geometry engine, run it as a queued, concurrency-capped,<br>
+CPU-niced service so it never steals cycles from other work.</strong></p>
+<p>The front is lightweight because it's static; "fast" because each check runs locally with zero server<br>
+round-trip. The back is "fast and powerful" by doing almost nothing in Phase 0, then becoming a dedicated<br>
+Python geometry service in Phase 1. Bonus: <strong>files never leave the browser</strong> in Phase 0 — a real privacy<br>
+selling point, and it adds zero server load.</p>
+<h2 id="1-recommended-stack">1. Recommended stack</h2>
+<h3 id="phase-0-the-free-checker-build-test-first">Phase 0 (the free checker — build + test first)</h3>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Recommendation</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Front</strong></td>
+<td><strong>Preact + Vite + TypeScript + Tailwind</strong>, static build</td>
+<td>Your React mental model, ~4 KB runtime, tiny fast bundles. (Alt: Svelte for the absolute lightest; plain React for zero context-switch.)</td>
+</tr>
+<tr>
+<td><strong>Validator</strong></td>
+<td><strong>Standalone TypeScript package</strong>, runs <strong>in the browser</strong> (Web Worker)</td>
+<td>The spine from <code>validator-checklist-spec.md</code>. No server compute; instant results; private by default.</td>
+</tr>
+<tr>
+<td>Validator deps</td>
+<td><code>dxf-parser</code>, <code>svg-pathdata</code> (+ small custom geometry)</td>
+<td>Parse DXF entities and SVG path data; endpoint/overlap/units math is light TS. Heavy polygon ops deferred to Phase 1.</td>
+</tr>
+<tr>
+<td>Heavy check runs</td>
+<td><strong>Web Worker</strong></td>
+<td>Keeps the UI smooth on big files; off the main thread. Uses the browser's CPU, not the box's.</td>
+</tr>
+<tr>
+<td><strong>Thin API</strong> (optional)</td>
+<td><strong>Node/TS or PHP 8</strong> container + Postgres</td>
+<td>Only for saved reports + basic analytics if wanted. Not required to ship the checker.</td>
+</tr>
+<tr>
+<td><strong>Email list</strong></td>
+<td><strong>MailerLite</strong> (free tier)</td>
+<td>Hosted list = free announcements + double-opt-in + GDPR handling. Don't build list management. Added in the go-to-market step (0b), not before.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="phase-1-repair-export-guarantee-same-box-later">Phase 1 (repair / export / guarantee — same box, later)</h3>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Recommendation</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Geometry engine</strong></td>
+<td><strong>Python FastAPI</strong> service: Shapely 2.x, ezdxf, an SVGnest/Deepnest-derived nester</td>
+<td>Shapely 2 bundles GEOS in its wheels (installs without root); robust close/dedupe/offset/union; ezdxf writes clean R12/mm DXF. This is your "fast + powerful" back.</td>
+</tr>
+<tr>
+<td>How it runs</td>
+<td>A <strong>queued, concurrency-capped, CPU-niced</strong> service</td>
+<td>The queue + nice keep interactive work responsive.</td>
+</tr>
+<tr>
+<td><strong>Guarantee audit</strong></td>
+<td>Reuse the <strong>same TS validator</strong> via Node</td>
+<td>One source of truth for the guaranteed checks → determinism. Clean split: <strong>TS validator = verdicts</strong> (client + audit); <strong>Python = geometry mutation + file generation</strong>.</td>
+</tr>
+<tr>
+<td>Canonical storage</td>
+<td><strong>Cloudflare R2</strong> (S3-compatible)</td>
+<td>Store the exact exported bytes + report per <code>report_id</code> for the guarantee's audit trail. Cheap, no egress fees.</td>
+</tr>
+<tr>
+<td><strong>Billing</strong></td>
+<td><strong>Stripe</strong></td>
+<td>Subscriptions + auto-apply the free-month coupon when a stored-copy guaranteed check fails.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-repo-structure-monorepo">2. Repo structure (monorepo)</h2>
+<pre><code>laserready/
+  packages/validator/     # TS, framework-agnostic, unit-tested — the spine. Runs in browser AND Node.
+  apps/web/               # Preact + Vite front (imports @laserready/validator)
+  apps/api/               # (optional) Node/PHP thin API — saved reports, analytics
+  services/geometry/      # Python FastAPI — repair, offset/kerf, nesting, DXF/G-code export (Phase 1)
+  samples/                # real + synthetic test files (open paths, dupes, unit-less DXF, embedded raster…)
+  deploy/                 # deploy stack files (see /DEPLOY.md)
+  docs/
+</code></pre>
+<p>The <strong>validator being a standalone package is the key design decision.</strong> It runs client-side for Phase 0 and,<br>
+unchanged, server-side (Node) for the Phase 1 guarantee re-check — so the client and the audit can never<br>
+disagree. Ship it with a real test suite against <code>samples/</code> from day one.</p>
+<h2 id="3-why-this-is-fast">3. Why this is fast</h2>
+<ul>
+<li><strong>Front:</strong> static Preact, tiny JS, Tailwind purged to a few KB. First paint near-instant; nothing to server-render.</li>
+<li><strong>Per-check latency:</strong> zero network — the validator runs locally in a Web Worker on the user's machine.</li>
+<li><strong>Server load in Phase 0:</strong> ~nothing (an optional email POST / report save). The checker adds no CPU pressure.</li>
+<li><strong>Phase 1 power:</strong> the Python engine does one hard job well, run as a background job with a concurrency cap so<br>
+  bursts (nesting/offset/export) never peg the CPUs.</li>
+</ul>
+<h2 id="4-milestones">4. Milestones</h2>
+<p>Phase 0 splits into <strong>0a (build + test the checker)</strong> and <strong>0b (go-to-market layer)</strong>. Landing copy and email<br>
+capture are deliberately <strong>0b — after the checker is built, tested, and deployed.</strong> Build the thing, prove it<br>
+works, then wrap it in marketing.</p>
+<p><strong>Phase 0a — build &amp; test the checker</strong><br>
+1. <strong>M1 — Validator core.</strong> <code>packages/validator</code>: PC-01 (open paths), PC-02 (duplicates), SZ-01 (units) + the<br>
+   report JSON schema, with unit tests on real <code>samples/</code>. ~60% of the value; ship it first.<br>
+2. <strong>M2 — Minimal functional UI.</strong> Drag-drop upload → Web Worker → worst-first report. Just enough interface to<br>
+   run and eyeball the validator on real files. Not the marketing page.<br>
+3. <strong>M3 — Breadth + tests.</strong> DXF parsing solid; advisory checks (RS-01 embedded raster, GH-01 node bloat,<br>
+   FM-01 min-feature); expand the test suite.<br>
+4. <strong>M4 — Deploy &amp; end-to-end test.</strong> Build the static image and test the live checker on real files<br>
+   (deployment: see <code>/DEPLOY.md</code>).</p>
+<p><strong>Phase 0b — go-to-market (after 0a is proven)</strong><br>
+5. <strong>M5 — Landing + capture.</strong> Wire the copy from <code>phase0-landing-copy.md</code> around the working checker; add the<br>
+   "honest part" box; MailerLite capture (two points); privacy-friendly analytics (e.g. Plausible). Seed with<br>
+   real files gathered from the community.</p>
+<p><strong>GATE — demand check</strong> (per decision-brief) before spending on Phase 1.</p>
+<p><strong>Phase 1</strong> — Python geometry service, export (SVG/DXF/G-code), machine profiles (LightBurn, Glowforge,<br>
+generic colored-layer SVG), canonical-copy storage, Stripe, the free-month guarantee.</p>
+<h2 id="5-costs">5. Costs</h2>
+<ul>
+<li><strong>Phase 0:</strong> domain (~$10–15/yr) + hosting + MailerLite free = ~$0 extra. (<code>laserready.io</code> is the project domain.)</li>
+<li><strong>Phase 1:</strong> Cloudflare R2 (pennies) + Stripe (% per txn).</li>
+</ul>
+<h2 id="6-risks-notes">6. Risks &amp; notes</h2>
+<ul>
+<li><strong>Client-side geometry limits.</strong> Very large DXFs (10k+ entities) can lag in-browser — enforce a file-size cap,<br>
+  run in a Web Worker, show progress.</li>
+<li><strong>DXF zoo.</strong> Start with LINE / LWPOLYLINE / POLYLINE / ARC / CIRCLE / SPLINE; handle blocks/inserts later.</li>
+<li><strong>SVG transforms + unit resolution to mm</strong> is the fiddly correctness work (nested transforms, viewBox, %,<br>
+  in/mm/px). Test it hard — most "wrong size" bugs live here.</li>
+<li><strong>Determinism = the guarantee.</strong> One shared TS validator (client + server audit), pinned deps, snapshot tests.</li>
+<li><strong>Don't pre-build Phase 1.</strong> The geometry service, Stripe, and R2 are real time — hold them behind the demand gate.</li>
+<li><strong>Phase-1 geometry must be queued, concurrency-capped, and CPU-niced</strong> so it never stalls interactive work.</li>
+</ul>
+<h2 id="7-todays-starter-if-you-want-to-move-now">7. Today's starter (if you want to move now)</h2>
+<ol>
+<li><code>npm create vite@latest</code> → Preact + TS; add Tailwind. Commit.</li>
+<li>Scaffold <code>packages/validator</code> with the report schema + a stub <code>validate(bytes, opts)</code>; drop 3–4 known-bad<br>
+   files into <code>samples/</code> (one open path, one duplicate-line, one unit-less DXF).</li>
+<li>Implement <strong>PC-01</strong> first, red-green against a sample. That single check, visibly working on a real bad file,<br>
+   is your proof-of-life.</li>
+</ol>
+    </main>
+    <div class="doc-foot">house-style · converted from build-plan.md · self-contained · bin/md2html.py</div>
+  </div>
+</body>
+</html>
