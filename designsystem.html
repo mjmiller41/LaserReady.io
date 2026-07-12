@@ -1,0 +1,718 @@
+<!--
+  LaserReady.io — Design System reference (self-contained, single file).
+  Extracted from the real repo, NOT invented:
+    - brand/tokens.css            (Tailwind v4 @theme — primary source of truth)
+    - brand/BRAND-KIT.md          (color/type/voice rules)
+    - apps/web/src/styles.css     (focus ring, dark-mode strategy)
+    - apps/web/src/**             (Landing, ReportView, DropZone, EmailCapture components)
+    - brand/logo/{mark,wordmark}.svg (marks, inlined below)
+
+  Fonts: the product ships NO webfonts. Real stacks (from tokens.css):
+    --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif
+    --font-mono: ui-monospace, "SF Mono", "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace
+  This page uses those exact stacks — zero network requests.
+
+  Story: blueprint INK on kraft PAPER, cut by an EMBER laser.
+  Rule: ember = brand + primary action. red/amber/green = check-result states, RESERVED.
+-->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LaserReady.io · Design System</title>
+<style>
+  /* ===== Tokens — copied verbatim from brand/tokens.css ===================== */
+  :root {
+    /* Ink (blueprint graphite — cool) */
+    --color-ink-950:#080e1b; --color-ink-900:#0f172a; --color-ink-800:#1e293b;
+    --color-ink-700:#334155; --color-ink-600:#475569; --color-ink-500:#64748b;
+    --color-ink-400:#94a3b8; --color-ink-300:#cbd5e1; --color-ink-200:#e2e8f0;
+    --color-ink-100:#f1f5f9;
+    /* Paper (warm kraft neutral) */
+    --color-paper-0:#ffffff; --color-paper-50:#faf9f7; --color-paper-100:#f5f4f1;
+    --color-paper-200:#eae7e1;
+    /* Ember (the laser — warm accent) */
+    --color-ember-50:#fff7ed; --color-ember-400:#fb923c; --color-ember-500:#f97316;
+    --color-ember-600:#ea580c; --color-ember-700:#c2410c;
+    /* Semantic check-result states — RESERVED */
+    --color-blocker-600:#dc2626; --color-blocker-300:#fca5a5; --color-blocker-50:#fef2f2;
+    --color-advisory-500:#f59e0b; --color-advisory-300:#fcd34d; --color-advisory-50:#fffbeb;
+    --color-pass-600:#16a34a; --color-pass-300:#86efac; --color-pass-50:#f0fdf4;
+    /* Type */
+    --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+      "Helvetica Neue", Arial, sans-serif;
+    --font-mono: ui-monospace, "SF Mono", "SFMono-Regular", Menlo, Consolas,
+      "Liberation Mono", monospace;
+    /* Radii (workshop-precise, not pill-soft) */
+    --radius-md:0.375rem; --radius-lg:0.5rem; --radius-xl:0.75rem;
+
+    /* Page-level semantic aliases (light) — mapped per BRAND-KIT §9 */
+    --bg-page: var(--color-paper-100);
+    --bg-card: var(--color-paper-0);
+    --bg-dark-section: var(--color-ink-900);
+    --text-body: var(--color-ink-900);
+    --text-muted: var(--color-ink-500);
+    --border-hair: var(--color-ink-200);
+    --border-strong: var(--color-ink-300);
+    --link: var(--color-ember-700);
+    --ready: var(--color-ember-700);
+    --cta-bg: var(--color-ember-700);
+    --cta-bg-hover: var(--color-ember-600);
+    --cta-text: #ffffff;
+    color-scheme: light;
+  }
+
+  /* Dark mode — "the blueprint, inverted." Same ramps remapped, zero new chrome. */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg-page: var(--color-ink-950);
+      --bg-card: var(--color-ink-900);
+      --bg-dark-section: var(--color-ink-950);
+      --text-body: var(--color-ink-100);
+      --text-muted: var(--color-ink-400);
+      --border-hair: var(--color-ink-800);
+      --border-strong: var(--color-ink-700);
+      --link: var(--color-ember-400);
+      --ready: var(--color-ember-500);
+      /* The one deliberate adaptation: dark ink text on bright ember (AA ~6.8:1) */
+      --cta-bg: var(--color-ember-500);
+      --cta-bg-hover: var(--color-ember-400);
+      --cta-text: var(--color-ink-950);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg-page: var(--color-ink-950);
+    --bg-card: var(--color-ink-900);
+    --bg-dark-section: var(--color-ink-950);
+    --text-body: var(--color-ink-100);
+    --text-muted: var(--color-ink-400);
+    --border-hair: var(--color-ink-800);
+    --border-strong: var(--color-ink-700);
+    --link: var(--color-ember-400);
+    --ready: var(--color-ember-500);
+    --cta-bg: var(--color-ember-500);
+    --cta-bg-hover: var(--color-ember-400);
+    --cta-text: var(--color-ink-950);
+    color-scheme: dark;
+  }
+
+  /* ===== Base ============================================================== */
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    font-family: var(--font-sans);
+    background: var(--bg-page);
+    color: var(--text-body);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+  :focus-visible { outline: 2px solid var(--color-ember-500); outline-offset: 2px; }
+  h1,h2,h3,h4 { line-height: 1.2; margin: 0; }
+  p { margin: 0; }
+  code, .mono { font-family: var(--font-mono); }
+  em { font-style: italic; }
+
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 20px; }
+  .prose { max-width: 65ch; }
+
+  /* ===== Masthead ========================================================= */
+  .masthead {
+    background: var(--bg-dark-section);
+    color: #fff;
+    border-bottom: 1px solid var(--color-ink-800);
+  }
+  .masthead .wrap { padding-top: 40px; padding-bottom: 40px; }
+  .brandline { display:flex; align-items:center; gap:12px; }
+  .brandline svg { width: 40px; height: 40px; display:block; }
+  .wordmark {
+    font-weight: 800; letter-spacing: -0.02em; font-size: 1.375rem; color:#fff;
+  }
+  .wordmark .ready { color: var(--color-ember-500); }
+  .masthead h1 { margin-top: 20px; font-size: clamp(1.9rem, 5vw, 3rem); font-weight: 800; letter-spacing:-0.02em; }
+  .masthead .note {
+    margin-top: 14px; max-width: 60ch; color: var(--color-ink-300);
+    border-left: 3px solid var(--color-ember-500); padding-left: 14px; font-size: 0.95rem;
+  }
+
+  /* ===== Section scaffolding ============================================== */
+  section.block { padding: 48px 0; border-bottom: 1px solid var(--border-hair); }
+  .eyebrow {
+    font-size: 0.8125rem; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.06em; color: var(--text-muted);
+  }
+  .block h2 { font-size: 1.5rem; font-weight: 700; margin-top: 6px; }
+  .block .lede { margin-top: 10px; color: var(--text-muted); }
+  .grid { display: grid; gap: 16px; }
+  .cols-2 { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+  .cols-3 { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+  .stack > * + * { margin-top: 16px; }
+  .row { display:flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+
+  /* ===== Color swatches =================================================== */
+  .swatch {
+    border: 1px solid var(--border-hair); border-radius: var(--radius-md);
+    overflow: hidden; background: var(--bg-card);
+  }
+  .swatch .chip { height: 72px; }
+  .swatch .meta { padding: 8px 10px; font-size: 0.8125rem; }
+  .swatch .meta .name { font-weight: 600; }
+  .swatch .meta .hex { color: var(--text-muted); font-family: var(--font-mono); font-size: 0.75rem; }
+  .swatch .meta .use { color: var(--text-muted); font-size: 0.72rem; margin-top: 2px; }
+  .group-label { grid-column: 1 / -1; font-weight: 600; font-size: 0.9rem; margin-top: 6px; }
+  .group-label small { color: var(--text-muted); font-weight: 400; }
+
+  /* ===== Type specimens =================================================== */
+  .spec { border-bottom: 1px dashed var(--border-hair); padding: 12px 0; display:flex; flex-wrap:wrap; gap: 8px 24px; align-items: baseline; }
+  .spec:last-child { border-bottom: 0; }
+  .spec .label { flex: 0 0 200px; font-size: 0.78rem; color: var(--text-muted); }
+  .spec .sample { flex: 1 1 320px; }
+  .display { font-size: clamp(2rem,5vw,3rem); font-weight: 800; letter-spacing: -0.02em; }
+  .h2s { font-size: 1.5rem; font-weight: 700; }
+  .verdict-t { font-size: 1.25rem; font-weight: 700; }
+  .cardtitle { font-size: 1rem; font-weight: 600; }
+  .body-t { font-size: 1rem; }
+  .small-t { font-size: 0.875rem; }
+  .instrument { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); }
+  .eyebrow-t { font-size: 0.875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+
+  /* ===== Spacing / radius tokens ========================================== */
+  .token-row { display:flex; align-items:center; gap: 16px; padding: 10px 0; border-bottom: 1px dashed var(--border-hair); }
+  .token-row:last-child { border-bottom: 0; }
+  .token-row .tname { flex: 0 0 160px; font-family: var(--font-mono); font-size: 0.8rem; }
+  .token-row .tval { flex: 0 0 90px; color: var(--text-muted); font-size: 0.8rem; }
+  .radius-demo { background: var(--color-ember-500); width: 56px; height: 40px; }
+  .space-demo { background: var(--color-ink-400); height: 20px; }
+
+  /* ===== Components ======================================================= */
+  .card {
+    background: var(--bg-card); border: 1px solid var(--border-hair);
+    border-radius: var(--radius-md); padding: 16px;
+  }
+  .demo { background: var(--bg-card); border: 1px solid var(--border-hair); border-radius: var(--radius-lg); padding: 20px; }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    font-family: var(--font-sans); font-weight: 700; font-size: 1rem;
+    padding: 12px 24px; border-radius: var(--radius-md); border: 0; cursor: pointer;
+    background: var(--cta-bg); color: var(--cta-text); text-decoration: none;
+    transition: background-color .12s ease;
+  }
+  .btn:hover { background: var(--cta-bg-hover); }
+  .btn.sm { padding: 8px 20px; font-size: 0.875rem; }
+  .btn-secondary {
+    background: var(--color-ink-900); color: #fff; font-weight: 600; font-size: 0.875rem;
+    padding: 8px 16px; border-radius: var(--radius-md); border: 0; cursor: pointer;
+  }
+  .btn-secondary:hover { background: var(--color-ink-700); }
+  :root[data-theme="dark"] .btn-secondary,
+  .btn-secondary { }
+  .btn:disabled, .btn-secondary:disabled { opacity: 0.5; cursor: not-allowed; }
+  .link { color: var(--link); text-decoration: underline; font-weight: 500; cursor: pointer; }
+
+  label.field { display:block; font-size: 0.875rem; color: var(--text-muted); }
+  .input, input[type=text].input, input[type=email].input, input[type=number].input {
+    margin-top: 6px; display: block; width: 100%;
+    background: var(--bg-card); color: var(--text-body);
+    border: 1px solid var(--border-strong); border-radius: var(--radius-md);
+    padding: 8px 12px; font-size: 0.875rem; font-family: var(--font-sans);
+  }
+  .input::placeholder { color: var(--color-ink-400); }
+
+  /* Dropzone (radius-xl, dashed) */
+  .dropzone {
+    border: 2px dashed var(--border-strong); border-radius: var(--radius-xl);
+    background: var(--bg-card); padding: 40px 24px; text-align: center; cursor: pointer;
+    transition: border-color .12s, background-color .12s;
+  }
+  .dropzone:hover { border-color: var(--color-ember-400); }
+  .dropzone.drag { border-color: var(--color-ember-500); background: var(--color-ember-50); }
+  :root[data-theme="dark"] .dropzone.drag { background: rgba(249,115,22,.10); }
+  .dropzone .dz-title { font-size: 1.125rem; font-weight: 600; }
+  .dropzone .dz-sub { margin-top: 4px; font-size: 0.875rem; color: var(--text-muted); }
+  .dropzone .dz-fine { margin-top: 12px; font-size: 0.75rem; color: var(--color-ink-400); }
+
+  /* Status badges — solid saturated fills in both themes */
+  .badge {
+    display:inline-flex; align-items:center; justify-content:center;
+    width: 20px; height: 20px; border-radius: 999px; color:#fff;
+    font-size: 0.72rem; font-weight: 700; flex: 0 0 auto;
+  }
+  .badge.fail { background: var(--color-blocker-600); }
+  .badge.warn { background: var(--color-advisory-500); }
+  .badge.pass { background: var(--color-pass-600); }
+
+  /* Verdict cards (translucent tints on dark per BRAND-KIT §9) */
+  .verdict { border: 1px solid; border-radius: var(--radius-lg); padding: 12px 16px; }
+  .verdict h3 { font-size: 1.25rem; font-weight: 700; }
+  .verdict p { margin-top: 4px; font-size: 0.875rem; opacity: .85; }
+  .verdict.fail { background: var(--color-blocker-50); border-color: var(--color-blocker-300); color:#7f1d1d; }
+  .verdict.warn { background: var(--color-advisory-50); border-color: var(--color-advisory-300); color:#78350f; }
+  .verdict.pass { background: var(--color-pass-50); border-color: var(--color-pass-300); color:#14532d; }
+  :root[data-theme="dark"] .verdict.fail { background: rgba(220,38,38,.10); border-color: rgba(220,38,38,.40); color: var(--color-blocker-300); }
+  :root[data-theme="dark"] .verdict.warn { background: rgba(245,158,11,.10); border-color: rgba(245,158,11,.40); color: var(--color-advisory-300); }
+  :root[data-theme="dark"] .verdict.pass { background: rgba(22,163,74,.12); border-color: rgba(22,163,74,.40); color: var(--color-pass-300); }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .verdict.fail { background: rgba(220,38,38,.10); border-color: rgba(220,38,38,.40); color: var(--color-blocker-300); }
+    :root:not([data-theme="light"]) .verdict.warn { background: rgba(245,158,11,.10); border-color: rgba(245,158,11,.40); color: var(--color-advisory-300); }
+    :root:not([data-theme="light"]) .verdict.pass { background: rgba(22,163,74,.12); border-color: rgba(22,163,74,.40); color: var(--color-pass-300); }
+  }
+
+  /* Check card — left status border */
+  .check {
+    list-style: none; background: var(--bg-card); border: 1px solid var(--border-hair);
+    border-left: 4px solid; border-radius: var(--radius-md); padding: 16px;
+    display:flex; gap: 12px; align-items: flex-start;
+  }
+  .check.fail { border-left-color: var(--color-blocker-600); }
+  .check.warn { border-left-color: var(--color-advisory-500); }
+  .check.pass { border-left-color: var(--color-pass-600); }
+  .check h4 { font-size: 1rem; font-weight: 600; display:flex; flex-wrap:wrap; align-items:center; gap: 8px; }
+  .check .id { font-family: var(--font-mono); font-size: 0.75rem; color: var(--color-ink-400); font-weight:400; }
+  .check .count { background: var(--color-ink-100); color: var(--color-ink-600); border-radius: 999px; padding: 1px 8px; font-size: 0.72rem; font-weight: 500; }
+  :root[data-theme="dark"] .check .count { background: var(--color-ink-800); color: var(--color-ink-300); }
+  .check .expl { margin-top: 4px; font-size: 0.875rem; color: var(--text-muted); }
+  .check .loc { margin-top: 8px; font-size: 0.875rem; }
+  .check .loc .coord { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); }
+
+  /* The honest box — heavy ink stamp, never a footnote */
+  .honest {
+    border: 2px solid var(--color-ink-900); background: var(--bg-card);
+    border-radius: var(--radius-lg); padding: 20px;
+  }
+  :root[data-theme="dark"] .honest { border-color: var(--color-ink-200); }
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .honest { border-color: var(--color-ink-200); } }
+  .honest h3 { font-weight: 800; }
+  .honest p { margin-top: 8px; font-size: 0.9rem; color: var(--text-muted); }
+
+  /* Numbered step */
+  .step { display:flex; gap:14px; align-items:flex-start; }
+  .step .num {
+    flex:0 0 auto; width:32px; height:32px; border-radius:999px;
+    background: var(--color-ink-900); color:#fff; font-weight:700;
+    display:flex; align-items:center; justify-content:center;
+  }
+  :root[data-theme="dark"] .step .num { background: var(--color-ink-700); }
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .step .num { background: var(--color-ink-700); } }
+
+  /* FAQ disclosure */
+  details.faq { border-top: 1px solid var(--border-hair); padding: 12px 0; }
+  details.faq summary { cursor:pointer; list-style:none; font-weight:600; }
+  details.faq summary::-webkit-details-marker { display:none; }
+  details.faq summary .caret { color: var(--color-ember-600); display:inline-block; transition: transform .12s; margin-right: 8px; }
+  :root[data-theme="dark"] details.faq summary .caret { color: var(--color-ember-400); }
+  details.faq[open] summary .caret { transform: rotate(90deg); }
+  details.faq p { margin-top: 8px; padding-left: 24px; color: var(--text-muted); font-size: 0.9rem; }
+
+  /* Dark-section demo panel (hero/footer surfaces) */
+  .darkpanel { background: var(--color-ink-900); color:#fff; border-radius: var(--radius-lg); padding: 24px; }
+  .darkpanel .muted { color: var(--color-ink-300); }
+
+  /* ===== Decision component (restyled to LaserReady tokens) =============== */
+  .decisions {
+    background: var(--bg-card); border: 1px solid var(--border-hair);
+    border-radius: var(--radius-lg); padding: 20px; display: block;
+  }
+  .decisions .decision { padding: 14px 0; border-bottom: 1px dashed var(--border-hair); }
+  .decisions .decision:first-child { padding-top: 0; }
+  .decisions .q { font-weight: 600; margin-bottom: 10px; }
+  .decisions .opts { display:flex; flex-direction: column; gap: 8px; }
+  .decisions .opt {
+    display:flex; gap: 10px; align-items: flex-start; cursor: pointer;
+    border: 1px solid var(--border-hair); border-radius: var(--radius-md);
+    padding: 10px 12px; font-size: 0.9rem; transition: border-color .12s, background-color .12s;
+  }
+  .decisions .opt:hover { border-color: var(--color-ember-400); }
+  .decisions .opt input { margin-top: 3px; accent-color: var(--color-ember-600); }
+  .decisions .opt b { font-weight: 700; }
+  .decisions textarea {
+    width: 100%; background: var(--bg-card); color: var(--text-body);
+    border: 1px solid var(--border-strong); border-radius: var(--radius-md);
+    padding: 8px 12px; font-family: var(--font-sans); font-size: 0.9rem; resize: vertical;
+  }
+  .decisions #out-d1 { margin-top: 12px; min-height: 90px; font-family: var(--font-mono); font-size: 0.8rem; }
+  .decisions .btn { margin-top: 14px; }
+  .toast {
+    display:inline-block; margin-left: 10px; font-size: 0.8rem; font-weight: 600;
+    color: var(--color-pass-600); opacity: 0; transition: opacity .2s;
+  }
+  :root[data-theme="dark"] .toast { color: var(--color-pass-300); }
+  .toast.show { opacity: 1; }
+
+  /* Theme toggle */
+  .themebar { position: sticky; top: 0; z-index: 5; background: var(--bg-page); border-bottom: 1px solid var(--border-hair); }
+  .themebar .wrap { display:flex; justify-content: flex-end; align-items:center; gap:8px; padding: 8px 20px; }
+  .themebar button {
+    font: inherit; font-size: 0.8rem; padding: 4px 12px; cursor: pointer;
+    background: var(--bg-card); color: var(--text-body);
+    border: 1px solid var(--border-strong); border-radius: var(--radius-md);
+  }
+
+  @media (max-width: 560px) {
+    .spec .label { flex-basis: 100%; }
+    .token-row { flex-wrap: wrap; }
+  }
+</style>
+
+<div class="themebar">
+  <div class="wrap">
+    <span class="instrument" style="margin-right:auto">theme</span>
+    <button type="button" onclick="setTheme('light')">Light</button>
+    <button type="button" onclick="setTheme('dark')">Dark</button>
+    <button type="button" onclick="setTheme('')">System</button>
+  </div>
+</div>
+
+<!-- ===================== MASTHEAD ===================== -->
+<header class="masthead">
+  <div class="wrap">
+    <div class="brandline">
+      <!-- mark.svg, inlined verbatim from brand/logo/mark.svg -->
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" role="img" aria-label="LaserReady">
+        <rect width="40" height="40" rx="9" fill="#0f172a"/>
+        <g stroke="#334155" stroke-width="1.5" stroke-linecap="round" fill="none">
+          <path d="M6 10 V6 H10"/><path d="M30 6 H34 V10"/>
+          <path d="M34 30 V34 H30"/><path d="M10 34 H6 V30"/>
+        </g>
+        <path d="M11 20.5 L17 26.5 L30 12" fill="none" stroke="#f97316" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="11" cy="20.5" r="2.3" fill="#dc2626"/>
+      </svg>
+      <span class="wordmark">Laser<span class="ready">Ready</span></span>
+    </div>
+    <h1>LaserReady.io · Design System</h1>
+    <p class="note">House style for LaserReady.io — read this before generating HTML artifacts for this project.</p>
+    <p class="note" style="border-color:var(--color-ink-600); color:var(--color-ink-400); font-size:.85rem">
+      Story: blueprint <b>INK</b> on kraft <b>PAPER</b>, cut by an <b>EMBER</b> laser.
+      Ember = brand &amp; primary action. Red / amber / green = check-result states, <b>reserved</b>.
+    </p>
+  </div>
+</header>
+
+<!-- ===================== COLOR ===================== -->
+<section class="block">
+  <div class="wrap">
+    <p class="eyebrow">Foundations</p>
+    <h2>Color</h2>
+    <p class="lede prose">Named for a maker's mental model. Every swatch below is a real token from <code>brand/tokens.css</code>.</p>
+
+    <div class="grid cols-3" style="margin-top:24px">
+      <div class="group-label">Ink <small>— blueprint graphite (cool). Text, dark sections, chrome, borders.</small></div>
+      <!-- ink ramp -->
+      <div class="swatch"><div class="chip" style="background:#080e1b"></div><div class="meta"><div class="name">ink-950</div><div class="hex">#080e1b</div><div class="use">darkest dark surface</div></div></div>
+      <div class="swatch"><div class="chip" style="background:#0f172a"></div><div class="meta"><div class="name">ink-900</div><div class="hex">#0f172a</div><div class="use">primary text, dark sections</div></div></div>
+      <div class="swatch"><div class="chip" style="background:#1e293b"></div><div class="meta"><div class="name">ink-800</div><div class="hex">#1e293b</div><div class="use">elevated dark surface</div></div></div>
+      <div class="swatch"><div class="chip" style="background:#334155"></div><div class="meta"><div class="name">ink-700</div><div class="hex">#334155</div><div class="use">dark hover, crop marks</div></div></div>
+      <div class="swatch"><div class="chip" style="background:#475569"></div><div class="meta"><div class="name">ink-600</div><div class="hex">#475569</div><div class="use">&nbsp;</div></div></div>
+      <div class="swatch"><div class="chip" style="background:#64748b"></div><div class="meta"><div class="name">ink-500</div><div class="hex">#64748b</div><div class="use">muted / meta text</div></div></div>
+      <div class="swatch"><div class="chip" style="background:#94a3b8"></div><div class="meta"><div class="name">ink-400</div><div class="hex">#94a3b8</div><div class="use">disabled, faint captions</div></div></div>
+      <div class="swatch"><div class="chip" style="background:#cbd5e1"></div><div class="meta"><div class="name">ink-300</div><div class="hex">#cbd5e1</div><div class="use">input &amp; card borders</div></div></div>
+      <div class="swatch"><div class="chip" style="background:#e2e8f0"></div><div class="meta"><div class="name">ink-200</div><div class="hex">#e2e8f0</div><div class="use">hairline dividers</div></div></div>
+      <div class="swatch"><div class="chip" style="background:#f1f5f9"></div><div class="meta"><div class="name">ink-100</div><div class="hex">#f1f5f9</div><div class="use">cool alt surface</div></div></div>
+
+      <div class="group-label">Paper <small>— warm kraft neutral. Page &amp; card surfaces.</small></div>
+      <div class="swatch"><div class="chip" style="background:#ffffff; box-shadow: inset 0 0 0 1px var(--border-hair)"></div><div class="meta"><div class="name">paper-0</div><div class="hex">#ffffff</div><div class="use">cards, dropzone</div></div></div>
+      <div class="swatch"><div class="chip" style="background:#faf9f7"></div><div class="meta"><div class="name">paper-50</div><div class="hex">#faf9f7</div><div class="use">subtle surface</div></div></div>
+      <div class="swatch"><div class="chip" style="background:#f5f4f1"></div><div class="meta"><div class="name">paper-100</div><div class="hex">#f5f4f1</div><div class="use">page background</div></div></div>
+      <div class="swatch"><div class="chip" style="background:#eae7e1"></div><div class="meta"><div class="name">paper-200</div><div class="hex">#eae7e1</div><div class="use">warm edge / border</div></div></div>
+
+      <div class="group-label">Ember <small>— the laser (warm accent). Identity + primary action ONLY.</small></div>
+      <div class="swatch"><div class="chip" style="background:#fff7ed"></div><div class="meta"><div class="name">ember-50</div><div class="hex">#fff7ed</div><div class="use">tint fills, hover wash</div></div></div>
+      <div class="swatch"><div class="chip" style="background:#fb923c"></div><div class="meta"><div class="name">ember-400</div><div class="hex">#fb923c</div><div class="use">accent / dark-mode hover</div></div></div>
+      <div class="swatch"><div class="chip" style="background:#f97316"></div><div class="meta"><div class="name">ember-500</div><div class="hex">#f97316</div><div class="use">"Ready", mark, focus ring</div></div></div>
+      <div class="swatch"><div class="chip" style="background:#ea580c"></div><div class="meta"><div class="name">ember-600</div><div class="hex">#ea580c</div><div class="use">CTA hover</div></div></div>
+      <div class="swatch"><div class="chip" style="background:#c2410c"></div><div class="meta"><div class="name">ember-700</div><div class="hex">#c2410c</div><div class="use">CTA bg, links (AA on white)</div></div></div>
+
+      <div class="group-label">Semantic — check-result states <small>— RESERVED. Never for brand/UI chrome.</small></div>
+      <div class="swatch"><div class="chip" style="background:#dc2626"></div><div class="meta"><div class="name">blocker-600</div><div class="hex">#dc2626</div><div class="use">fail badge / border</div></div></div>
+      <div class="swatch"><div class="chip" style="background:#fca5a5"></div><div class="meta"><div class="name">blocker-300</div><div class="hex">#fca5a5</div><div class="use">verdict border</div></div></div>
+      <div class="swatch"><div class="chip" style="background:#fef2f2"></div><div class="meta"><div class="name">blocker-50</div><div class="hex">#fef2f2</div><div class="use">verdict background</div></div></div>
+      <div class="swatch"><div class="chip" style="background:#f59e0b"></div><div class="meta"><div class="name">advisory-500</div><div class="hex">#f59e0b</div><div class="use">warn badge (yellow-amber)</div></div></div>
+      <div class="swatch"><div class="chip" style="background:#fcd34d"></div><div class="meta"><div class="name">advisory-300</div><div class="hex">#fcd34d</div><div class="use">verdict border</div></div></div>
+      <div class="swatch"><div class="chip" style="background:#fffbeb"></div><div class="meta"><div class="name">advisory-50</div><div class="hex">#fffbeb</div><div class="use">verdict background</div></div></div>
+      <div class="swatch"><div class="chip" style="background:#16a34a"></div><div class="meta"><div class="name">pass-600</div><div class="hex">#16a34a</div><div class="use">pass badge / border</div></div></div>
+      <div class="swatch"><div class="chip" style="background:#86efac"></div><div class="meta"><div class="name">pass-300</div><div class="hex">#86efac</div><div class="use">verdict border</div></div></div>
+      <div class="swatch"><div class="chip" style="background:#f0fdf4"></div><div class="meta"><div class="name">pass-50</div><div class="hex">#f0fdf4</div><div class="use">verdict background</div></div></div>
+    </div>
+
+    <p class="lede prose" style="margin-top:20px">
+      <b>Contrast rule:</b> buttons are 16px bold (not WCAG "large text"), so a resting button
+      background with white text must be <code>ember-700</code> (#c2410c, ~5.9:1). <code>ember-600/500</code>
+      are hover / accent only. On dark fields the CTA flips to <code>ink-950</code> text on <code>ember-500</code>.
+    </p>
+  </div>
+</section>
+
+<!-- ===================== TYPOGRAPHY ===================== -->
+<section class="block">
+  <div class="wrap">
+    <p class="eyebrow">Foundations</p>
+    <h2>Typography</h2>
+    <p class="lede prose">
+      System stack, <b>zero webfont bytes</b>. Monospace is the "instrument readout" — check IDs
+      (<code>PC-01</code>) and mm coordinates render mono to feel like a caliper display.
+    </p>
+
+    <div class="grid" style="grid-template-columns: 1fr; margin-top:20px; gap:0">
+      <div class="card" style="margin-bottom:16px">
+        <div class="instrument">--font-sans</div>
+        <div class="body-t" style="margin-top:4px">ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif</div>
+      </div>
+      <div class="card">
+        <div class="instrument">--font-mono</div>
+        <div class="mono" style="margin-top:4px; font-size:.9rem">ui-monospace, "SF Mono", "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace</div>
+      </div>
+    </div>
+
+    <div style="margin-top:28px">
+      <div class="spec"><div class="label">Hero display · 3–5rem / 800 / -0.02em</div><div class="sample display">Check before you burn.</div></div>
+      <div class="spec"><div class="label">Section head (H2) · 1.5rem / 700</div><div class="sample h2s">What we check</div></div>
+      <div class="spec"><div class="label">Verdict (H2) · 1.25rem / 700</div><div class="sample verdict-t">Not laser-ready — 2 blockers</div></div>
+      <div class="spec"><div class="label">Card title · 1rem / 600</div><div class="sample cardtitle">Open paths</div></div>
+      <div class="spec"><div class="label">Body · 1rem / 400 / relaxed</div><div class="sample body-t">Drop in any SVG or DXF and LaserReady tells you exactly what will go wrong on the bed.</div></div>
+      <div class="spec"><div class="label">Small / meta · 0.875rem</div><div class="sample small-t">or click to choose a file — up to 15 MB</div></div>
+      <div class="spec"><div class="label">Instrument (IDs, coords) · 0.75rem mono</div><div class="sample instrument">PC-01 · (128.4, 92.0) mm</div></div>
+      <div class="spec"><div class="label">Eyebrow · 0.875rem / 600 / uppercase</div><div class="sample eyebrow-t">Found in this file — worst first</div></div>
+    </div>
+    <p class="lede prose" style="margin-top:16px">Body copy max width ~65ch. Never justify; left-align.</p>
+  </div>
+</section>
+
+<!-- ===================== SPACING / RADIUS ===================== -->
+<section class="block">
+  <div class="wrap">
+    <p class="eyebrow">Foundations</p>
+    <h2>Radius &amp; spacing</h2>
+    <p class="lede prose">Radii are workshop-precise, not pill-soft. These three are the only radius tokens in <code>brand/tokens.css</code>.</p>
+
+    <div class="card" style="margin-top:20px">
+      <div class="token-row"><span class="tname">--radius-md</span><span class="tval">0.375rem</span><span class="radius-demo" style="border-radius:.375rem"></span><span class="small-t" style="color:var(--text-muted)">cards, buttons, inputs</span></div>
+      <div class="token-row"><span class="tname">--radius-lg</span><span class="tval">0.5rem</span><span class="radius-demo" style="border-radius:.5rem"></span><span class="small-t" style="color:var(--text-muted)">verdict, honest-part box</span></div>
+      <div class="token-row"><span class="tname">--radius-xl</span><span class="tval">0.75rem</span><span class="radius-demo" style="border-radius:.75rem"></span><span class="small-t" style="color:var(--text-muted)">dropzone</span></div>
+    </div>
+
+    <p class="lede prose" style="margin-top:24px">
+      Spacing follows the Tailwind 0.25rem scale used across the components (padding <code>p-4</code>/<code>p-6</code>,
+      section rhythm <code>py-10</code>–<code>py-14</code>, gaps <code>gap-2</code>–<code>gap-4</code>). Common steps:
+    </p>
+    <div class="card" style="margin-top:12px">
+      <div class="token-row"><span class="tname">2 · 0.5rem</span><span class="tval">8px</span><span class="space-demo" style="width:8px"></span><span class="small-t" style="color:var(--text-muted)">tight gaps, badge padding</span></div>
+      <div class="token-row"><span class="tname">3 · 0.75rem</span><span class="tval">12px</span><span class="space-demo" style="width:12px"></span><span class="small-t" style="color:var(--text-muted)">list gaps</span></div>
+      <div class="token-row"><span class="tname">4 · 1rem</span><span class="tval">16px</span><span class="space-demo" style="width:16px"></span><span class="small-t" style="color:var(--text-muted)">card padding, container px</span></div>
+      <div class="token-row"><span class="tname">6 · 1.5rem</span><span class="tval">24px</span><span class="space-demo" style="width:24px"></span><span class="small-t" style="color:var(--text-muted)">honest box / dropzone pad</span></div>
+      <div class="token-row"><span class="tname">10 · 2.5rem</span><span class="tval">40px</span><span class="space-demo" style="width:40px"></span><span class="small-t" style="color:var(--text-muted)">section vertical rhythm</span></div>
+    </div>
+    <p class="lede prose" style="margin-top:16px">
+      Focus ring (from <code>tokens.css</code> / <code>styles.css</code>):
+      <code>2px solid ember-500</code>, offset <code>2px</code> — try tabbing to any control here.
+    </p>
+  </div>
+</section>
+
+<!-- ===================== COMPONENTS ===================== -->
+<section class="block">
+  <div class="wrap">
+    <p class="eyebrow">Components</p>
+    <h2>Live examples</h2>
+    <p class="lede prose">Rendered with the extracted tokens. These mirror the real Preact components in <code>apps/web/src/</code>.</p>
+
+    <!-- Buttons -->
+    <h3 class="cardtitle" style="margin-top:28px">Buttons &amp; links</h3>
+    <div class="demo" style="margin-top:10px">
+      <div class="row">
+        <a class="btn" href="#" onclick="return false">Check my file</a>
+        <button class="btn sm" type="button">Notify me</button>
+        <button class="btn-secondary" type="button">Set size &amp; re-check</button>
+        <button class="btn" type="button" disabled>Sending…</button>
+        <a class="link" href="#" onclick="return false">How it works ↓</a>
+      </div>
+      <p class="small-t" style="color:var(--text-muted); margin-top:12px">
+        Primary CTA: <code>ember-700</code> bg → <code>ember-600</code> hover. Secondary: <code>ink-900</code>.
+        Links on paper: <code>ember-700</code>.
+      </p>
+    </div>
+
+    <!-- Inputs -->
+    <h3 class="cardtitle" style="margin-top:28px">Inputs</h3>
+    <div class="demo" style="margin-top:10px">
+      <div class="row" style="align-items:flex-end; gap:20px">
+        <label class="field" style="flex:1 1 200px">Email address
+          <input class="input" type="email" placeholder="you@example.com">
+        </label>
+        <label class="field" style="flex:0 0 120px">Width (mm)
+          <input class="input" type="number" placeholder="120">
+        </label>
+        <label class="field" style="flex:0 0 120px">Height (mm)
+          <input class="input" type="number" placeholder="80">
+        </label>
+      </div>
+    </div>
+
+    <!-- Dropzone -->
+    <h3 class="cardtitle" style="margin-top:28px">Dropzone</h3>
+    <div class="dropzone" style="margin-top:10px" tabindex="0" role="button" aria-label="Choose or drop a file"
+         ondragover="event.preventDefault();this.classList.add('drag')"
+         ondragleave="this.classList.remove('drag')"
+         ondrop="event.preventDefault();this.classList.remove('drag')">
+      <p class="dz-title">Drop your SVG or DXF here</p>
+      <p class="dz-sub">or click to choose a file — up to 15 MB</p>
+      <p class="dz-fine">Your file never leaves this browser. All checks run locally.</p>
+    </div>
+
+    <!-- Status badges -->
+    <h3 class="cardtitle" style="margin-top:28px">Status badges</h3>
+    <div class="demo" style="margin-top:10px">
+      <div class="row">
+        <span class="row" style="gap:8px"><span class="badge fail">✕</span> <span class="small-t">Fail — blocker-600</span></span>
+        <span class="row" style="gap:8px"><span class="badge warn">!</span> <span class="small-t">Warn — advisory-500</span></span>
+        <span class="row" style="gap:8px"><span class="badge pass">✓</span> <span class="small-t">Pass — pass-600</span></span>
+      </div>
+    </div>
+
+    <!-- Verdict cards -->
+    <h3 class="cardtitle" style="margin-top:28px">Verdict cards</h3>
+    <div class="stack" style="margin-top:10px">
+      <div class="verdict fail">
+        <h3>Not laser-ready — 2 blockers</h3>
+        <p>lantern.svg · 210 × 148 mm · Cut → cut, Engrave → engrave</p>
+      </div>
+      <div class="verdict warn">
+        <h3>Structurally sound — 1 warning to review</h3>
+        <p>badge.dxf · 90 × 90 mm</p>
+      </div>
+      <div class="verdict pass">
+        <h3>Looks structurally sound</h3>
+        <p>coaster.svg · 100 × 100 mm · Cut → cut</p>
+      </div>
+    </div>
+
+    <!-- Check cards -->
+    <h3 class="cardtitle" style="margin-top:28px">Check cards</h3>
+    <ul class="stack" style="margin-top:10px; padding:0">
+      <li class="check fail">
+        <span class="badge fail">✕</span>
+        <div style="min-width:0; flex:1">
+          <h4>Open paths <span class="id">PC-01</span> <span class="count">3 found</span></h4>
+          <p class="expl">Open contours won't release the part and can double-burn at the seam.</p>
+          <ul class="stack" style="margin-top:8px; padding:0; list-style:none; --stack-gap:4px">
+            <li class="loc"><span class="coord">(128.4, 92.0) mm — </span>gap of 0.8 mm between endpoints</li>
+            <li class="loc"><span class="coord">(64.1, 15.2) mm — </span>unclosed subpath</li>
+            <li class="loc"><a class="link" href="#" onclick="return false">Show 1 more</a></li>
+          </ul>
+        </div>
+      </li>
+      <li class="check warn">
+        <span class="badge warn">!</span>
+        <div style="min-width:0; flex:1">
+          <h4>Thin features <span class="id">TF-01</span> <span class="count">1 found</span></h4>
+          <p class="expl">A feature is narrow enough to burn through at your stated material thickness.</p>
+          <ul class="stack" style="margin-top:8px; padding:0; list-style:none">
+            <li class="loc"><span class="coord">(12.0, 44.6) mm — </span>0.4 mm bridge vs 3 mm ply</li>
+          </ul>
+        </div>
+      </li>
+      <li class="check pass">
+        <span class="badge pass">✓</span>
+        <div style="min-width:0; flex:1">
+          <h4>Scale &amp; units <span class="id">SZ-01</span></h4>
+        </div>
+      </li>
+    </ul>
+
+    <!-- Content card grid -->
+    <h3 class="cardtitle" style="margin-top:28px">Content cards</h3>
+    <ul class="grid cols-2" style="margin-top:10px; padding:0; list-style:none">
+      <li class="card"><strong>Open paths</strong><span style="color:var(--text-muted)"> — the #1 cause of parts that won't release and lines that double-burn.</span></li>
+      <li class="card"><strong>Duplicate &amp; overlapping lines</strong><span style="color:var(--text-muted)"> — double burns, doubled cut time.</span></li>
+      <li class="card"><strong>Scale &amp; units</strong><span style="color:var(--text-muted)"> — is it actually the size you think, and will it fit your bed?</span></li>
+      <li class="card"><strong>Hidden rasters</strong><span style="color:var(--text-muted)"> — a bitmap smuggled into a "cut" file that your laser can't cut.</span></li>
+    </ul>
+
+    <!-- Numbered steps -->
+    <h3 class="cardtitle" style="margin-top:28px">Numbered steps</h3>
+    <ol class="stack" style="margin-top:10px; padding:0; list-style:none">
+      <li class="step"><span class="num">1</span><p><strong>Upload.</strong> SVG or DXF, from any source. Tell us your material thickness and bed size.</p></li>
+      <li class="step"><span class="num">2</span><p><strong>We inspect.</strong> LaserReady checks path integrity, scale, layers, and thin features.</p></li>
+      <li class="step"><span class="num">3</span><p><strong>You get the report.</strong> Plain English, problem by problem, worst-first.</p></li>
+    </ol>
+
+    <!-- Honest box -->
+    <h3 class="cardtitle" style="margin-top:28px">The "What we won't pretend" box <span class="small-t" style="color:var(--text-muted); font-weight:400">— a first-class brand element</span></h3>
+    <aside class="honest" style="margin-top:10px">
+      <h3>What we won't pretend</h3>
+      <p>We can't see your laser. Power, speed, focus, lens, air assist, and the exact board you
+      loaded all affect the final burn — those are yours to dial in. This report says whether the
+      <em>file</em> is structurally sound: closed, clean, correctly scaled and layered.
+      "The file is good" and "the cut is perfect" are different promises — we make the first one.</p>
+    </aside>
+
+    <!-- FAQ -->
+    <h3 class="cardtitle" style="margin-top:28px">Disclosure (FAQ)</h3>
+    <div style="margin-top:10px">
+      <details class="faq" open><summary><span class="caret">▸</span>Is it really free?</summary><p>The checker is, and stays that way. It's how we prove LaserReady's worth before asking you for anything.</p></details>
+      <details class="faq"><summary><span class="caret">▸</span>Do I need an account?</summary><p>Not for your first check. Drop a file and go.</p></details>
+    </div>
+
+    <!-- Dark section surface -->
+    <h3 class="cardtitle" style="margin-top:28px">Dark section (hero / footer surface)</h3>
+    <div class="darkpanel" style="margin-top:10px">
+      <span class="wordmark" style="font-size:0.95rem">Laser<span class="ready" style="color:var(--color-ember-500)">Ready</span></span>
+      <h3 style="font-size:1.5rem; font-weight:800; margin-top:10px">Will that file actually cut?<br><span style="color:var(--color-ember-500)">Check before you burn.</span></h3>
+      <p class="muted" style="margin-top:10px; max-width:60ch">Drop in any SVG or DXF and LaserReady tells you exactly what will go wrong on the bed. On a dark field the CTA flips to bright ember with ink text.</p>
+      <a class="btn" href="#" onclick="return false" style="margin-top:14px; background:var(--color-ember-500); color:var(--color-ink-950)">Check my file</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== DECISION COMPONENT ===================== -->
+<section class="block" style="border-bottom:0">
+  <div class="wrap">
+    <p class="eyebrow">Interactive</p>
+    <h2>Decision component</h2>
+    <p class="lede prose">
+      Resolve open design decisions on this page, then copy them back to Claude as markdown.
+      Restyled with LaserReady tokens; behavior is identical to the shared pattern.
+    </p>
+
+    <form class="decisions" id="d1" style="margin-top:20px">
+      <div class="decision" data-decision data-label="Default theme for new artifacts">
+        <p class="q">Which theme should a new LaserReady HTML artifact default to?</p>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="q1" value="Light (paper-100)"><span><b>Light (paper-100)</b> — matches the shipped app default; warm kraft surface.</span></label>
+          <label class="opt"><input type="radio" name="q1" value="System (prefers-color-scheme)"><span><b>System</b> — follow the OS, toggle available. The app's real strategy.</span></label>
+          <label class="opt"><input type="radio" name="q1" value="Dark (ink-950)"><span><b>Dark (ink-950)</b> — the blueprint, inverted.</span></label>
+        </div>
+      </div>
+      <div class="decision" data-decision data-label="CTA emphasis">
+        <p class="q">How prominent should the primary CTA be on a marketing artifact?</p>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="q2" value="Single ember CTA"><span><b>One ember-700 CTA</b> — one action per screen, maker-calm.</span></label>
+          <label class="opt"><input type="radio" name="q2" value="CTA + secondary link"><span><b>CTA + underlined link</b> — primary action plus a low-key "how it works".</span></label>
+        </div>
+      </div>
+      <div class="decision" data-decision data-label="Notes">
+        <textarea name="notes" rows="2" placeholder="Notes for Claude…"></textarea>
+      </div>
+      <button type="button" class="btn" onclick="copyDecisions('d1')">Copy my choices</button>
+      <span class="toast" id="toast-d1">✓ copied</span>
+      <textarea id="out-d1" readonly></textarea>
+    </form>
+  </div>
+</section>
+
+<script>
+function copyDecisions(formId){
+  var form=document.getElementById(formId); var md="## Decisions\n";
+  form.querySelectorAll("[data-decision]").forEach(function(d){
+    var label=d.dataset.label||"";
+    var checks=[].slice.call(d.querySelectorAll("input:checked")).map(function(i){return i.value;});
+    var texts=[].slice.call(d.querySelectorAll("textarea,input[type=text]")).map(function(t){return t.value.trim();}).filter(Boolean);
+    md+="- **"+label+"**: "+([].concat(checks,texts).join(", ")||"(no answer)")+"\n";
+  });
+  var out=document.getElementById("out-"+formId); if(out)out.value=md;
+  if(navigator.clipboard)navigator.clipboard.writeText(md).catch(function(){});
+  var t=document.getElementById("toast-"+formId); if(t){t.classList.add("show");setTimeout(function(){t.classList.remove("show");},2200);}
+}
+function setTheme(mode){
+  var r=document.documentElement;
+  if(mode){ r.setAttribute("data-theme", mode); } else { r.removeAttribute("data-theme"); }
+}
+</script>
