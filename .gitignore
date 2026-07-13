@@ -34,3 +34,6 @@ Thumbs.db
 
 # gstack per-project runtime logs (browse audit, network, session state)
 .gstack/
+
+# Claude local
+.claude/
