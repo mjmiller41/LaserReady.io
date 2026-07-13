@@ -8,6 +8,27 @@
  */
 @custom-variant dark (&:where(.dark, .dark *));
 
+/*
+ * Ember = brand & primary action (warm orange), per the brand kit's load-bearing
+ * rule: red/amber/green are reserved for check-result states, so action must be a
+ * different hue from the amber warning state. Scale mirrors the brand kit's
+ * --ember-* vars (50/400/500/600/700) and fills the remaining Tailwind-standard
+ * shades so utilities like text-ember-900 / dark:bg-ember-950 resolve.
+ */
+@theme {
+  --color-ember-50: #fff7ed;
+  --color-ember-100: #ffedd5;
+  --color-ember-200: #fed7aa;
+  --color-ember-300: #fdba74;
+  --color-ember-400: #fb923c;
+  --color-ember-500: #f97316;
+  --color-ember-600: #ea580c;
+  --color-ember-700: #c2410c;
+  --color-ember-800: #9a3412;
+  --color-ember-900: #7c2d12;
+  --color-ember-950: #431407;
+}
+
 /* Let form controls, scrollbars, etc. pick the right native palette. */
 :root {
   color-scheme: light;
@@ -18,6 +39,6 @@
 
 /* Focus visibility — keyboard users must always see where they are. */
 :focus-visible {
-  outline: 2px solid #f59e0b;
+  outline: 2px solid #f97316; /* ember-500 — focus is an action affordance, not a warning */
   outline-offset: 2px;
 }

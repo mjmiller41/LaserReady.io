@@ -109,7 +109,7 @@ function CheckCard({ check }: { check: CheckResult }) {
                 <li>
                   <button
                     type="button"
-                    class="text-sm font-medium text-amber-700 underline hover:text-amber-900 dark:text-amber-400 dark:hover:text-amber-300"
+                    class="text-sm font-medium text-ember-700 underline hover:text-ember-900 dark:text-ember-400 dark:hover:text-ember-300"
                     onClick={() => setExpanded(true)}
                   >
                     Show {hiddenCount} more
