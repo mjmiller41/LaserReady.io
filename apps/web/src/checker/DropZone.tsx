@@ -37,8 +37,8 @@ export function DropZone({ onFile, busy }: Props) {
       }}
       class={`cursor-pointer rounded-xl border-2 border-dashed p-8 text-center transition-colors sm:p-12 ${
         dragOver
-          ? 'border-amber-500 bg-amber-50 dark:bg-amber-950'
-          : 'border-slate-300 bg-white hover:border-amber-400 dark:border-slate-600 dark:bg-slate-900 dark:hover:border-amber-500'
+          ? 'border-ember-500 bg-ember-50 dark:bg-ember-950'
+          : 'border-slate-300 bg-white hover:border-ember-400 dark:border-slate-600 dark:bg-slate-900 dark:hover:border-ember-500'
       }`}
     >
       <input

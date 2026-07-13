@@ -60,12 +60,12 @@ export function Landing() {
       <header class="bg-slate-900 text-white dark:bg-slate-900">
         <div class="mx-auto max-w-3xl px-4 py-14 sm:py-20">
           <p class="text-sm font-bold tracking-tight">
-            Laser<span class="text-amber-500">Ready</span>
+            Laser<span class="text-ember-500">Ready</span>
           </p>
           <h1 class="mt-4 text-3xl font-extrabold leading-tight sm:text-5xl">
             Will that file actually cut?
             <br />
-            <span class="text-amber-500">Check before you burn.</span>
+            <span class="text-ember-500">Check before you burn.</span>
           </h1>
           <p class="mt-5 max-w-2xl text-base leading-relaxed text-slate-300 sm:text-lg">
             Drop in any SVG or DXF — one you bought, one an AI made, or one you drew — and
@@ -77,7 +77,7 @@ export function Landing() {
             <a
               href="#checker"
               onClick={scrollToChecker}
-              class="rounded-md bg-amber-600 px-6 py-3 text-base font-bold text-white hover:bg-amber-500"
+              class="rounded-md bg-ember-600 px-6 py-3 text-base font-bold text-white hover:bg-ember-500"
             >
               Check my file
             </a>
@@ -142,7 +142,7 @@ export function Landing() {
               Phase 1 adds one-click repair and clean export (SVG, DXF, mm-accurate,
               machine-ready). And it comes with a promise no one else in this space will make:
             </p>
-            <p class="mt-4 border-l-4 border-amber-500 pl-4 text-lg font-semibold leading-relaxed">
+            <p class="mt-4 border-l-4 border-ember-500 pl-4 text-lg font-semibold leading-relaxed">
               Every file we export passes our full structural check — closed paths, no double
               lines, correct scale, correct cut/engrave layers — or your next month is free.
             </p>
@@ -253,7 +253,7 @@ export function Landing() {
               {FAQ.map(([q, a]) => (
                 <details key={q} class="group py-3">
                   <summary class="cursor-pointer list-none font-semibold text-slate-900 marker:hidden dark:text-slate-100">
-                    <span aria-hidden="true" class="mr-2 inline-block text-amber-600 transition-transform group-open:rotate-90 dark:text-amber-400">
+                    <span aria-hidden="true" class="mr-2 inline-block text-ember-600 transition-transform group-open:rotate-90 dark:text-ember-400">
                       ▸
                     </span>
                     {q}
@@ -269,7 +269,7 @@ export function Landing() {
       <footer class="bg-slate-900">
         <div class="mx-auto max-w-3xl px-4 py-8 text-sm text-slate-400">
           <p>
-            Laser<span class="text-amber-500">Ready</span> — cut-file validation for makers.
+            Laser<span class="text-ember-500">Ready</span> — cut-file validation for makers.
             Your files never leave your browser.
           </p>
           <p class="mt-2 text-xs">
