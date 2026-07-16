@@ -17,7 +17,7 @@ faq:
 
 Sending a vector file to a laser cutter that is not "laser-ready" wastes material, time, and sometimes a whole sheet of expensive acrylic. A laser-ready SVG is unambiguous: every path tells the machine exactly what to do.
 
-Here is the 8-point checklist we built the [LaserReady checker](/) around.
+Here is the 8-point checklist we built the [LaserReady checker](/) around. For the full walkthrough behind each point, see [How to make an SVG laser-ready: the complete guide](/blog/how-to-make-svg-laser-ready).
 
 ## 1. Close every path meant to cut
 
@@ -59,4 +59,4 @@ Features smaller than the beam kerf will not resolve. Check thin bridges and tin
 
 ---
 
-Run all eight and your file will cut the way you designed it. Want this checked automatically? [Upload your SVG](/) and get a readiness report in seconds.
+Run all eight and your file will cut the way you designed it. Want this checked automatically? [Upload your SVG](/) and get a readiness report in seconds. Still not cutting right? See [Why won't my file cut? The complete troubleshooting guide](/blog/why-wont-my-file-cut).
