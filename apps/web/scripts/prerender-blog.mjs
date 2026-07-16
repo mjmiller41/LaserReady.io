@@ -33,7 +33,7 @@ const INDEX_HTML = join(CWD, 'index.html');
  * snippets. Best-effort: if a snippet isn't found we simply omit it.
  */
 function extractSharedHead() {
-  let src = '';
+  let src;
   try {
     src = readFileSync(INDEX_HTML, 'utf8');
   } catch {

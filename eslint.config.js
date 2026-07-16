@@ -14,4 +14,20 @@ export default tseslint.config(
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
     },
   },
+  {
+    // Node build scripts (blog prerender pipeline) run outside the browser.
+    files: ['**/scripts/**/*.mjs'],
+    languageOptions: {
+      globals: {
+        process: 'readonly',
+        console: 'readonly',
+        Buffer: 'readonly',
+        URL: 'readonly',
+      },
+    },
+    rules: {
+      // Code-span placeholders use \x00 sentinels; the control char is intentional.
+      'no-control-regex': 'off',
+    },
+  },
 );
