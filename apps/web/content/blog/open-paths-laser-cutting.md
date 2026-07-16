@@ -67,6 +67,8 @@ The fix is always the same idea — **make the endpoints meet** — with tool-sp
 - Avoid deleting stray segments that silently open a shape.
 - Run a final check before every cut. Open paths, [duplicate lines, wrong scale, and hidden rasters](/blog/laser-ready-svg-checklist) are all cheaper to catch on screen than on the sheet.
 
+Open paths are one of six causes covered in [Why won't my file cut? The complete troubleshooting guide](/blog/why-wont-my-file-cut).
+
 ---
 
 Open paths are boring once you can see them — and invisible until you can. Want them flagged for you? [Upload your SVG to the free checker](/) and get a readiness report in seconds, before you waste material.

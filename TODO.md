@@ -29,7 +29,7 @@ Ordered by that logic. Items marked _(deleted)_ died with the three removed mark
 
 ## 3. Content rebuild — optional, decide before investing
 
-- [ ] **2 cornerstone blog posts** _(deleted)_ — `how-to-make-svg-laser-ready`, `why-wont-my-file-cut`.
+- [x] **2 cornerstone blog posts** — rebuilt: `how-to-make-svg-laser-ready`, `why-wont-my-file-cut` (LRD-CON1).
 - [ ] **Editorial calendar + community playbook + nurture-sequence spec** _(deleted)_.
 - [ ] **Funnel + MRR baseline report** _(deleted)_.
 

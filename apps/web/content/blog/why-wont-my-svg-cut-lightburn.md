@@ -119,4 +119,4 @@ Work through the causes in order — most files get fixed at cause 1 or 2. If yo
 
 The [free LaserReady checker](/) surfaces all five in one pass: open paths, wrong stroke/fill, embedded rasters, and scale issues are all flagged the moment you upload. Run it before you start troubleshooting in LightBurn and you'll know exactly which cause you're dealing with.
 
-For the open-path fix in depth — with Inkscape, Illustrator, and LightBurn steps — see [Open paths: why your laser scores instead of cuts](/blog/open-paths-laser-cutting).
+For the open-path fix in depth — with Inkscape, Illustrator, and LightBurn steps — see [Open paths: why your laser scores instead of cuts](/blog/open-paths-laser-cutting). Not on LightBurn, or want the software-agnostic version? See [Why won't my file cut? The complete troubleshooting guide](/blog/why-wont-my-file-cut).
