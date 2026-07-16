@@ -1,10 +1,15 @@
 import { useState } from 'preact/hooks';
 import { track } from '../analytics';
+import { getUtmParams } from './utm';
 
 /**
  * MailerLite embedded-form capture. Two instances on the page (guarantee tease +
  * early access) post to two different MailerLite forms — that IS the "tagged by
  * source" requirement: each form feeds the same list under its own group.
+ *
+ * UTM params (utm_source/medium/campaign/term/content), if present on the landing
+ * URL, ride along as MailerLite custom fields and analytics props — so a signup
+ * says which *channel* drove it, not just which form on the page it came from.
  *
  * Config is baked at build time (VITE_ML_*, see deploy/.env.example). Without it the
  * form renders visibly disabled instead of pretending to work — honesty over polish.
@@ -33,19 +38,24 @@ export function EmailCapture({ formId, cta, idPrefix }: Props) {
     if (!configured || status === 'sending') return;
     setStatus('sending');
     try {
+      const utm: Record<string, string> = {};
+      for (const [key, value] of Object.entries(getUtmParams())) {
+        if (value) utm[key] = value;
+      }
+      const body = new URLSearchParams({ 'fields[email]': email, 'ml-submit': '1', anticsrf: 'true' });
+      for (const [key, value] of Object.entries(utm)) {
+        body.set(`fields[${key}]`, value);
+      }
       const res = await fetch(
         `https://assets.mailerlite.com/jsonp/${ACCOUNT}/forms/${formId}/subscribe`,
-        {
-          method: 'POST',
-          body: new URLSearchParams({ 'fields[email]': email, 'ml-submit': '1', anticsrf: 'true' }),
-        },
+        { method: 'POST', body },
       );
       const data: unknown = await res.json().catch(() => null);
       const success =
         res.ok && !(typeof data === 'object' && data !== null && (data as { success?: boolean }).success === false);
       setStatus(success ? 'done' : 'error');
-      // Funnel event — which form converted (guarantee vs early), no email sent.
-      if (success) track('signup', { source: idPrefix });
+      // Funnel event — which form converted (guarantee vs early) AND which channel drove it, no email sent.
+      if (success) track('signup', { source: idPrefix, ...utm });
     } catch {
       setStatus('error');
     }
